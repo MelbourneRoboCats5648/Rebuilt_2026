@@ -29,8 +29,14 @@ void DriveModule::SetDirectionEncoderConfig(turn_t magOffset){
 }
 
 void DriveModule::SetDirectionMotorConfig(){
-
-
+    TalonFXConfiguration directionMotorConfig;
+    directionMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    directionMotorConfig.CurrentLimits.SupplyCurrentLimit = 40_A;
+    directionMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 30_A;
+    directionMotorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
+     directionMotorConfig.MotorOutput.Inverted = true;  // +V should rotate the motor counter-clockwis
+    directionMotorConfig.MotorOutput.NeutralMode = NeutralModeValue::Brake; // fixme - check if this should be Brake or Coast
+    m_directionMotor.GetConfigurator().Apply(directionMotorConfig);
 
 }
 
