@@ -22,4 +22,18 @@ namespace DriveModuleConstants {
         ampere_t kLowerCurrentLimit = 30_A;
         second_t kLowerLimitTime = 0.1_s;
     };
+    namespace SpeedMotor {
+        double kGearRatio = 1;
+        double kP = 0.0;
+        double kI = 0.0;
+        double kD = 0.0;
+        double kS = 0.0;
+        double kV = 0.0;
+        double kA = 0.0;
+
+        ampere_t kMaxCurrent = 50_A;
+        ampere_t kLowerCurrentLimit = 60_A;
+        second_t kLowerLimitTime = 0.1_s;
+    };
+
 };

@@ -40,7 +40,22 @@ void DriveModule::SetDirectionMotorConfig(){
 }
 
 void DriveModule::SetSpeedMotorConfig(){
-
-
+    TalonFXConfiguration speedMotorConfig;
+    speedMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+    speedMotorConfig.Feedback.SensorToMechanismRatio = SpeedMotor::kGearRatio;
+    speedMotorConfig.ClosedLoopGeneral.ContinuousWrap = false;
+    speedMotorConfig.Slot0.kP = SpeedMotor::kP;
+    speedMotorConfig.Slot0.kI = SpeedMotor::kI;
+    speedMotorConfig.Slot0.kD = SpeedMotor::kD;
+    speedMotorConfig.Slot0.kV = SpeedMotor::kV;
+    speedMotorConfig.Slot0.kS = SpeedMotor::kS;
+    speedMotorConfig.Slot0.kA = SpeedMotor::kA;
+    speedMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    speedMotorConfig.CurrentLimits.SupplyCurrentLimit = SpeedMotor::kMaxCurrent;
+    speedMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = SpeedMotor::kLowerCurrentLimit;
+    speedMotorConfig.CurrentLimits.SupplyCurrentLowerTime = SpeedMotor::kLowerLimitTime;
+    speedMotorConfig.MotorOutput.Inverted = true;  // +V should rotate the motor counter-clockwise
+    speedMotorConfig.MotorOutput.NeutralMode = NeutralModeValue::Brake;
     
+    m_speedMotor.GetConfigurator().Apply(speedMotorConfig);
 }
