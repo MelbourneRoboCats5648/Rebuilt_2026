@@ -27,4 +27,9 @@ private:
         DirectionController::kP, DirectionController::kI, DirectionController::kD,
         { DirectionController::kMaxVel, DirectionController::kMaxAcc }
     };
+
+    void SetSpeedMotorConfig();
+    void SetDirectionMotorConfig();
+    void SetDirectionEncoderConfig(turn_t magOffset);
+
 };
