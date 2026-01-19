@@ -24,8 +24,8 @@ private:
     CANcoder m_directionEncoder;
 
     frc::ProfiledPIDController<radians> m_directionController{
-        DirectionController::kP, DirectionController::kI, DirectionController::kD,
-        { DirectionController::kMaxVel, DirectionController::kMaxAcc }
+        DirectionMotor::kP, DirectionMotor::kI, DirectionMotor::kD,
+        { DirectionMotor::kMaxVel, DirectionMotor::kMaxAcc }
     };
 
     void SetSpeedMotorConfig();
