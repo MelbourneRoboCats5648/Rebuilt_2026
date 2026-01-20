@@ -4,11 +4,13 @@
 #include <units/angular_acceleration.h>
 #include <units/current.h>
 #include <units/time.h>
+#include <units/length.h>
 
 using namespace units::angular_velocity;
 using namespace units::angular_acceleration;
 using namespace units::current;
 using namespace units::time;
+using namespace units::length;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
@@ -34,6 +36,8 @@ namespace DriveModuleConstants {
         ampere_t kMaxCurrent = 50_A;
         ampere_t kLowerCurrentLimit = 60_A;
         second_t kLowerLimitTime = 0.1_s;
+
+        meter_t kWheelCircumference = 0.5_m;
     };
 
 };

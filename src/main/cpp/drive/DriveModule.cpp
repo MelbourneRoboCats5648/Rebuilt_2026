@@ -4,6 +4,8 @@
 
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::signals;
+using namespace ctre::phoenix6::controls;
+using namespace units::voltage;
 
 
 
@@ -68,3 +70,23 @@ void DriveModule::StopMotors()
     m_directionMotor.Set(0);
     m_speedMotor.Set(0);
 }
+
+void DriveModule::SetState(frc::SwerveModuleState state){
+    // encoder range -0.5 + 0.5 
+    units::angle::radian_t encoderCurrentAngleRadians = 
+                            m_directionEncoder.GetAbsolutePosition().GetValue();
+    
+    state.Optimize(encoderCurrentAngleRadians);
+
+    state.CosineScale(encoderCurrentAngleRadians);
+
+    turns_per_second_t desiredWheelSpeed{(state.speed.value())/SpeedMotor::kWheelCircumference.value()};
+    m_speedMotor.SetControl(VelocityVoltage{desiredWheelSpeed});
+
+    double turnOutput=m_directionController.Calculate(
+        encoderCurrentAngleRadians, state.angle.Radians());
+
+    m_directionMotor.SetVoltage(volt_t{turnOutput});
+
+}
+

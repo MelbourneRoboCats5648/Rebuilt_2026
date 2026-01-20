@@ -5,6 +5,7 @@
 #include <units/angle.h>
 #include <frc/controller/ProfiledPIDController.h>
 
+#include <frc/kinematics/SwerveDriveKinematics.h>
 #include <constants/DriveConstants.h>
 
 using namespace units::angle;
@@ -20,7 +21,8 @@ public:
 
 public: 
     void StopMotors();
-    
+    void SetState(frc::SwerveModuleState state);
+
 private:
     TalonFX m_speedMotor;
     TalonFX m_directionMotor;
