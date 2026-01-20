@@ -18,6 +18,9 @@ public:
         turn_t magOffset
     );
 
+public: 
+    void StopMotors();
+    
 private:
     TalonFX m_speedMotor;
     TalonFX m_directionMotor;

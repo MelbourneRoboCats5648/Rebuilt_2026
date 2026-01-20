@@ -1,8 +1,11 @@
-#include <utilities/DriveModule.h>
+#include <drive/DriveModule.h>
 #include <ctre/phoenix6/core/CoreCANcoder.hpp>
+#include <ctre/phoenix6/CANBus.hpp>
 
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::signals;
+
+
 
 
 DriveModule::DriveModule(
@@ -58,4 +61,10 @@ void DriveModule::SetSpeedMotorConfig(){
     speedMotorConfig.MotorOutput.NeutralMode = NeutralModeValue::Brake;
     
     m_speedMotor.GetConfigurator().Apply(speedMotorConfig);
+}
+
+void DriveModule::StopMotors()
+{
+    m_directionMotor.Set(0);
+    m_speedMotor.Set(0);
 }
