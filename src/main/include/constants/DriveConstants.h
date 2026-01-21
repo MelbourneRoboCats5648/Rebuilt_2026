@@ -62,4 +62,5 @@ namespace DrivetrainConstants {
     };
 
     inline constexpr auto kMaxSpeed = 2.5_mps;
+    inline constexpr degree_t kInitialGyroAngle = 0_deg;
 };

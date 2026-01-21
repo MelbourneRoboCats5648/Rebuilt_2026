@@ -1,8 +1,16 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
-DriveSubsystem::DriveSubsystem() {
+using namespace ctre::phoenix6::configs;
 
+DriveSubsystem::DriveSubsystem() {
+    /* Configure Pigeon2 */
+    Pigeon2Configuration toApply{};
+
+    m_gyro.GetConfigurator().Apply(toApply);
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
+
+    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
 }
 
 void DriveSubsystem::Periodic() {
@@ -15,11 +23,11 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-
+    m_gyro.Reset();
 }
 
 degree_t DriveSubsystem::GetHeading() {
-
+    return m_gyro.GetRotation2d().Degrees();
 }
 
 /* kinematics/"set speed" */
