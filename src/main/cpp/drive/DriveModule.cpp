@@ -97,7 +97,7 @@ void DriveModule::ResetModulePosition()
 }
 
 units::meters_per_second_t DriveModule::GetSpeed(){
-    return(m_speedMotor.GetVelocity().GetValue().value() * SpeedMotor::kWheelCircumference.value()) * 1_mps;
+    return(m_speedMotor.GetVelocity().GetValueAsDouble() * SpeedMotor::kWheelCircumference.value()) * 1_mps;
 }
 
 frc::Rotation2d DriveModule::GetAngle() {
@@ -107,4 +107,11 @@ frc::Rotation2d DriveModule::GetAngle() {
 
 frc::SwerveModuleState DriveModule::GetState() {
     return {GetSpeed(), GetAngle()};
+}
+
+frc::SwerveModulePosition DriveModule::GetPosition() {
+    return {
+        m_speedMotor.GetPosition().GetValueAsDouble() * SpeedMotor::kWheelCircumference,
+        GetAngle()
+    };
 }

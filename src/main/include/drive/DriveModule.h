@@ -25,6 +25,7 @@ public:
     units::meters_per_second_t GetSpeed();
     frc::Rotation2d GetAngle();
     frc::SwerveModuleState GetState();
+    frc::SwerveModulePosition GetPosition();
 
 private:
     TalonFX m_speedMotor;
