@@ -4,6 +4,11 @@
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem() {
+    m_statePublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/SwerveStates").Publish();
+    m_posePublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
+        
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
@@ -15,6 +20,19 @@ DriveSubsystem::DriveSubsystem() {
 
 void DriveSubsystem::Periodic() {
 
+    m_statePublisher.Set(
+        std::vector{
+            m_frontLeftModule.GetState(),
+            m_frontRightModule.GetState(),
+            m_backLeftModule.GetState(),
+            m_backRightModule.GetState()
+        }
+    );
+    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
+                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
+                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
+
+    m_posePublisher.Set(m_poseEstimator.GetEstimatedPosition());
 }
 
 void DriveSubsystem::SimulationPeriodic() {
@@ -71,13 +89,21 @@ frc::SwerveDriveKinematics<4>& DriveSubsystem::GetKinematics() {
 
 /* odometry/pose estimation */
 frc::SwerveDrivePoseEstimator<4>& DriveSubsystem::GetPoseEstimator() {
-
+    return m_poseEstimator;
 }
 
 frc::Pose2d DriveSubsystem::GetPose() {
 
+    return m_poseEstimator.GetEstimatedPosition();
 }
 
-void DriveSubsystem::ResetPose(frc::Pose2d pose) {
 
+
+
+void DriveSubsystem::ResetPose(frc::Pose2d pose) 
+{
+    m_poseEstimator.ResetPosition(frc::Rotation2d{GetHeading()},
+                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
+                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
+                    pose);
 }
