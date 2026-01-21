@@ -36,5 +36,7 @@ private:
     void SetSpeedMotorConfig();
     void SetDirectionMotorConfig();
     void SetDirectionEncoderConfig(turn_t magOffset);
+    void ResetModulePosition();
+    
 
 };

@@ -83,10 +83,15 @@ void DriveModule::SetState(frc::SwerveModuleState state){
     turns_per_second_t desiredWheelSpeed{(state.speed.value())/SpeedMotor::kWheelCircumference.value()};
     m_speedMotor.SetControl(VelocityVoltage{desiredWheelSpeed});
 
-    double turnOutput=m_directionController.Calculate(
+    double turnOutput = m_directionController.Calculate(
         encoderCurrentAngleRadians, state.angle.Radians());
 
     m_directionMotor.SetVoltage(volt_t{turnOutput});
 
 }
 
+void DriveModule::ResetModulePosition()
+{
+    m_speedMotor.SetPosition(turn_t{0.0});
+
+}
