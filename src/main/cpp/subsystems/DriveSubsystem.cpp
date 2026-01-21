@@ -20,6 +20,11 @@ DriveSubsystem::DriveSubsystem() {
 
 void DriveSubsystem::Periodic() {
 
+    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
+                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
+                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
+
+    /* publish current state */
     m_statePublisher.Set(
         std::vector{
             m_frontLeftModule.GetState(),
@@ -28,10 +33,6 @@ void DriveSubsystem::Periodic() {
             m_backRightModule.GetState()
         }
     );
-    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
-                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
-                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
-
     m_posePublisher.Set(m_poseEstimator.GetEstimatedPosition());
 }
 
@@ -54,7 +55,7 @@ void DriveSubsystem::Drive(
     bool fieldRelative
 ) {
     auto states =
-       m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
+        m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
            fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                                xSpeed, ySpeed, rotSpeed, frc::Rotation2d{GetHeading()})
                          : frc::ChassisSpeeds{xSpeed, ySpeed, rotSpeed},
@@ -69,18 +70,15 @@ void DriveSubsystem::Stop() {
     m_frontRightModule.StopMotors();
     m_backLeftModule.StopMotors();
     m_backRightModule.StopMotors();
-
 }
 
 void DriveSubsystem::SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states) {
-   
-    m_kinematics.DesaturateWheelSpeeds(&states,
-                                         DrivetrainConstants::kMaxSpeed);
+    m_kinematics.DesaturateWheelSpeeds(&states, DrivetrainConstants::kMaxSpeed);
 
-  m_frontLeftModule.SetState(states[0]);
-  m_frontRightModule.SetState(states[1]);
-  m_backLeftModule.SetState(states[2]);
-  m_backRightModule.SetState(states[3]); 
+    m_frontLeftModule.SetState(states[0]);
+    m_frontRightModule.SetState(states[1]);
+    m_backLeftModule.SetState(states[2]);
+    m_backRightModule.SetState(states[3]); 
 }
 
 frc::SwerveDriveKinematics<4>& DriveSubsystem::GetKinematics() {
@@ -93,12 +91,8 @@ frc::SwerveDrivePoseEstimator<4>& DriveSubsystem::GetPoseEstimator() {
 }
 
 frc::Pose2d DriveSubsystem::GetPose() {
-
     return m_poseEstimator.GetEstimatedPosition();
 }
-
-
-
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose) 
 {
