@@ -16,6 +16,8 @@
 // #include <frc/controller/HolonomicDriveController.h> // TODO: do something about this
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
+#include <networktables/StructArrayTopic.h>
+#include <networktables/StructTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
 using namespace ctre::phoenix6::hardware;
@@ -83,4 +85,8 @@ private:
         { m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(), m_backLeftModule.GetPosition(), m_backRightModule.GetPosition() },
         frc::Pose2d{}
     };
+
+    nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
+    nt::StructPublisher<frc::Pose2d> m_posePublisher;
+
 };
