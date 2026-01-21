@@ -6,6 +6,10 @@ DriveSubsystem::DriveSubsystem() {
 
 void DriveSubsystem::Periodic() {
 
+    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
+                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
+                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
+
 }
 
 void DriveSubsystem::SimulationPeriodic() {
@@ -43,13 +47,19 @@ frc::SwerveDriveKinematics<4>& DriveSubsystem::GetKinematics() {
 
 /* odometry/pose estimation */
 frc::SwerveDrivePoseEstimator<4>& DriveSubsystem::GetPoseEstimator() {
-
+    return m_poseEstimator;
 }
 
 frc::Pose2d DriveSubsystem::GetPose() {
 
+    return m_poseEstimator.GetEstimatedPosition();
+
 }
 
-void DriveSubsystem::ResetPose(frc::Pose2d pose) {
-
+void DriveSubsystem::ResetPose(frc::Pose2d pose) 
+{
+    m_poseEstimator.ResetPosition(frc::Rotation2d{GetHeading()},
+                    {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
+                    m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
+                    pose);
 }
