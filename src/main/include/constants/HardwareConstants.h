@@ -1,21 +1,21 @@
 #pragma once
 
 namespace HardwareConstants {
-    int kGyroID;
+    inline constexpr int kGyroID = 14;
 
-    int kFrontLeftSpeedID;
-    int kFrontLeftDirectionID;
-    int kFrontLeftEncoderID;
+    inline constexpr int kFrontLeftSpeedID = 3;
+    inline constexpr int kFrontLeftDirectionID = 4;
+    inline constexpr int kFrontLeftEncoderID = 11;
 
-    int kFrontRightSpeedID;
-    int kFrontRightDirectionID;
-    int kFrontRightEncoderID;
+    inline constexpr int kFrontRightSpeedID = 1;
+    inline constexpr int kFrontRightDirectionID = 2;
+    inline constexpr int kFrontRightEncoderID = 10;
 
-    int kBackLeftSpeedID;
-    int kBackLeftDirectionID;
-    int kBackLeftEncoderID;
+    inline constexpr int kBackLeftSpeedID = 5;
+    inline constexpr int kBackLeftDirectionID = 6;
+    inline constexpr int kBackLeftEncoderID = 12;
 
-    int kBackRightSpeedID;
-    int kBackRightDirectionID;
-    int kBackRightEncoderID;
+    inline constexpr int kBackRightSpeedID = 7;
+    inline constexpr int kBackRightDirectionID = 8;
+    inline constexpr int kBackRightEncoderID = 13;
 };
