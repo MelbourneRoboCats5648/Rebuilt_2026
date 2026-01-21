@@ -18,46 +18,48 @@ using namespace units::length;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        double kP = 0.0;
-        double kI = 0.0;
-        double kD = 0.0;
-        radians_per_second_t kMaxVel = 0.0_rad_per_s;
-        radians_per_second_squared_t kMaxAcc = 0.0_rad_per_s_sq;
+        inline constexpr double kP = 0.0;
+        inline constexpr double kI = 0.0;
+        inline constexpr double kD = 0.0;
+        inline constexpr radians_per_second_t kMaxVel = 0.0_rad_per_s;
+        inline constexpr radians_per_second_squared_t kMaxAcc = 0.0_rad_per_s_sq;
 
-        ampere_t kMaxCurrent = 40_A;
-        ampere_t kLowerCurrentLimit = 30_A;
-        second_t kLowerLimitTime = 0.1_s;
+        inline constexpr ampere_t kMaxCurrent = 40_A;
+        inline constexpr ampere_t kLowerCurrentLimit = 30_A;
+        inline constexpr second_t kLowerLimitTime = 0.1_s;
     };
 
     namespace SpeedMotor {
-        double kGearRatio = 1;
-        double kP = 0.0;
-        double kI = 0.0;
-        double kD = 0.0;
-        double kS = 0.0;
-        double kV = 0.0;
-        double kA = 0.0;
+        inline constexpr double kGearRatio = 1;
+        inline constexpr double kP = 0.0;
+        inline constexpr double kI = 0.0;
+        inline constexpr double kD = 0.0;
+        inline constexpr double kS = 0.0;
+        inline constexpr double kV = 0.0;
+        inline constexpr double kA = 0.0;
 
-        ampere_t kMaxCurrent = 50_A;
-        ampere_t kLowerCurrentLimit = 60_A;
-        second_t kLowerLimitTime = 0.1_s;
+        inline constexpr ampere_t kMaxCurrent = 50_A;
+        inline constexpr ampere_t kLowerCurrentLimit = 60_A;
+        inline constexpr second_t kLowerLimitTime = 0.1_s;
 
-        meter_t kWheelCircumference = 0.5_m;
+        inline constexpr meter_t kWheelCircumference = 0.5_m;
     };
 
     namespace DirectionEncoder {
-        turn_t kFrontLeftOffset;
-        turn_t kFrontRightOffset;
-        turn_t kBackLeftOffset;
-        turn_t kBackRightOffset;
+        inline constexpr turn_t kFrontLeftOffset = -0.306640625_tr;
+        inline constexpr turn_t kFrontRightOffset = -0.1748046875_tr;
+        inline constexpr turn_t kBackLeftOffset = 0.01953125_tr;
+        inline constexpr turn_t kBackRightOffset = 0.07421875_tr;
     };
 };
 
 namespace DrivetrainConstants {
     namespace ModuleLocation {
-        frc::Translation2d kFrontLeft{+0.0_m, +0.0_m};
-        frc::Translation2d kFrontRight{+0.0_m, -0.0_m};
-        frc::Translation2d kBackLeft{-0.0_m, +0.0_m};
-        frc::Translation2d kBackRight{-0.0_m, -0.0_m};
+        inline constexpr frc::Translation2d kFrontLeft{+0.0_m, +0.0_m};
+        inline constexpr frc::Translation2d kFrontRight{+0.0_m, -0.0_m};
+        inline constexpr frc::Translation2d kBackLeft{-0.0_m, +0.0_m};
+        inline constexpr frc::Translation2d kBackRight{-0.0_m, -0.0_m};
     };
+
+    inline constexpr auto kMaxSpeed = 2.5_mps;
 };
