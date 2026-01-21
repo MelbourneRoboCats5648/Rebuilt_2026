@@ -60,4 +60,6 @@ namespace DrivetrainConstants {
         frc::Translation2d kBackLeft{-0.0_m, +0.0_m};
         frc::Translation2d kBackRight{-0.0_m, -0.0_m};
     };
+        degree_t kInitialGyroAngle = 0_deg;
+
 };
