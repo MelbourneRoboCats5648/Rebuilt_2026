@@ -95,3 +95,16 @@ void DriveModule::ResetModulePosition()
     m_speedMotor.SetPosition(turn_t{0.0});
 
 }
+
+units::meters_per_second_t DriveModule::GetSpeed(){
+    return(m_speedMotor.GetVelocity().GetValue().value() * SpeedMotor::kWheelCircumference.value()) * 1_mps;
+}
+
+frc::Rotation2d DriveModule::GetAngle() {
+    units::radian_t turnAngle = m_directionEncoder.GetAbsolutePosition().GetValue();
+    return turnAngle; 
+}
+
+frc::SwerveModuleState DriveModule::GetState() {
+    return {GetSpeed(), GetAngle()};
+}

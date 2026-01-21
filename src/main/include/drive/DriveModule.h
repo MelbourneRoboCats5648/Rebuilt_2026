@@ -22,6 +22,9 @@ public:
 public: 
     void StopMotors();
     void SetState(frc::SwerveModuleState state);
+    units::meters_per_second_t GetSpeed();
+    frc::Rotation2d GetAngle();
+    frc::SwerveModuleState GetState();
 
 private:
     TalonFX m_speedMotor;
