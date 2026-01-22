@@ -6,6 +6,8 @@ using namespace ctre::phoenix6::configs;
 DriveSubsystem::DriveSubsystem() {
     m_statePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/SwerveStates").Publish();
+    m_commandPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/CommandedStates").Publish();
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
         
@@ -74,6 +76,7 @@ void DriveSubsystem::Stop() {
 
 void DriveSubsystem::SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states) {
     m_kinematics.DesaturateWheelSpeeds(&states, DrivetrainConstants::kMaxSpeed);
+    m_commandPublisher.Set(states);
 
     m_frontLeftModule.SetState(states[0]);
     m_frontRightModule.SetState(states[1]);

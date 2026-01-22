@@ -7,8 +7,12 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
-#include "constants/Constants.h"
-#include "subsystems/ExampleSubsystem.h"
+#include "constants/OperatorConstants.h"
+#include "constants/DriveConstants.h"
+
+#include "subsystems/DriveSubsystem.h"
+
+#include <frc/filter/SlewRateLimiter.h>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -18,18 +22,25 @@
  * commands, and trigger mappings) should be declared here.
  */
 class RobotContainer {
- public:
-  RobotContainer();
+public:
+    RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+    frc2::CommandPtr GetAutonomousCommand();
 
- private:
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  frc2::CommandXboxController m_driverController{
-      OperatorConstants::kDriverControllerPort};
+private:
+    // Replace with CommandPS4Controller or CommandJoystick if needed
+    frc2::CommandXboxController m_driverController{
+        OperatorConstants::kDriverControllerPort
+    };
 
-  // The robot's subsystems are defined here...
-  ExampleSubsystem m_subsystem;
+    // The robot's subsystems are defined here...
+    DriveSubsystem m_drive{};
 
-  void ConfigureBindings();
+    void ConfigureBindings();
+
+    double PreprocessJoystickInput(double input);
+
+    frc::SlewRateLimiter<units::meters_per_second> m_xLimiter{DrivetrainConstants::kMaxAcceleration};
+    frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
+    frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
 };

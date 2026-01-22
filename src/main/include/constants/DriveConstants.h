@@ -6,6 +6,8 @@
 #include <units/time.h>
 #include <units/length.h>
 #include <units/angle.h>
+#include <units/velocity.h>
+#include <units/acceleration.h>
 
 #include <frc/geometry/Translation2d.h>
 
@@ -15,6 +17,8 @@ using namespace units::angular_acceleration;
 using namespace units::current;
 using namespace units::time;
 using namespace units::length;
+using namespace units::velocity;
+using namespace units::acceleration;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
@@ -62,6 +66,11 @@ namespace DrivetrainConstants {
         inline constexpr frc::Translation2d kBackRight{-0.0_m, -0.0_m};
     };
 
-    inline constexpr auto kMaxSpeed = 2.5_mps;
+    inline constexpr meters_per_second_t kMaxSpeed = 1.0_mps;
+    inline constexpr meters_per_second_squared_t kMaxAcceleration = 1.0_mps_sq;
+
+    inline constexpr radians_per_second_t kMaxAngularSpeed = 3.142_rad_per_s;
+    inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = 3.142_rad_per_s_sq;
+
     inline constexpr degree_t kInitialGyroAngle = 0_deg;
 };
