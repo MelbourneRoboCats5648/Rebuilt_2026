@@ -18,11 +18,11 @@ using namespace units::length;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        inline constexpr double kP = 0.0;
+        inline constexpr double kP = 6.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
-        inline constexpr radians_per_second_t kMaxVel = 0.0_rad_per_s;
-        inline constexpr radians_per_second_squared_t kMaxAcc = 0.0_rad_per_s_sq;
+        inline constexpr radians_per_second_t kMaxVel = 3.142_rad_per_s;
+        inline constexpr radians_per_second_squared_t kMaxAcc = 3.142_rad_per_s_sq;
 
         inline constexpr ampere_t kMaxCurrent = 40_A;
         inline constexpr ampere_t kLowerCurrentLimit = 30_A;
@@ -30,7 +30,7 @@ namespace DriveModuleConstants {
     };
 
     namespace SpeedMotor {
-        inline constexpr double kGearRatio = 1;
+        inline constexpr double kGearRatio = 6.75;
         inline constexpr double kP = 0.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
@@ -42,7 +42,8 @@ namespace DriveModuleConstants {
         inline constexpr ampere_t kLowerCurrentLimit = 60_A;
         inline constexpr second_t kLowerLimitTime = 0.1_s;
 
-        inline constexpr meter_t kWheelCircumference = 0.5_m;
+        inline constexpr meter_t kWheelRadius = 0.0508_m;
+        inline constexpr meter_t kWheelCircumference = 2 * std::numbers::pi * kWheelRadius;
     };
 
     namespace DirectionEncoder {
