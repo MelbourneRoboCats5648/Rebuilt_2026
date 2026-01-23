@@ -38,8 +38,8 @@ namespace DriveModuleConstants {
         inline constexpr double kP = 0.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
-        inline constexpr double kS = 0.0;
-        inline constexpr double kV = 0.0;
+        inline constexpr double kS = 0.1438; // found by linear regression (LR)
+        inline constexpr double kV = 0.7797; // found by LR
         inline constexpr double kA = 0.0;
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
