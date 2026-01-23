@@ -21,6 +21,7 @@ DriveModule::DriveModule(
     SetDirectionMotorConfig();
     SetDirectionEncoderConfig(magOffset);
 
+    m_directionController.EnableContinuousInput(-0.5_tr, 0.5_tr);
 }
 
 void DriveModule::SetDirectionEncoderConfig(turn_t magOffset){
