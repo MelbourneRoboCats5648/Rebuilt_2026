@@ -130,7 +130,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 }
 
   // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
-  frc2::CommandPtr DriveSubsystem::FollowTrajectory(frc::Trajectory trajectory) {
+  frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory) {
     return RunOnce([this, initialPose = trajectory.InitialPose()] {
                m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
                })

@@ -53,7 +53,7 @@ public:
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
-    frc2::CommandPtr FollowTrajectory(frc::Trajectory trajectory);
+    frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
