@@ -40,7 +40,7 @@ namespace DriveModuleConstants {
         inline constexpr double kD = 0.0;
         inline constexpr double kS = 0.1438; // found by linear regression (LR)
         inline constexpr double kV = 0.7797; // found by LR
-        inline constexpr double kA = 0.0;
+        inline constexpr double kA = 0.0;    // tried tuning this but appears to be unused
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
         inline constexpr ampere_t kLowerCurrentLimit = 60_A;
@@ -60,10 +60,10 @@ namespace DriveModuleConstants {
 
 namespace DrivetrainConstants {
     namespace ModuleLocation {
-        inline constexpr frc::Translation2d kFrontLeft{+0.0_m, +0.0_m};
-        inline constexpr frc::Translation2d kFrontRight{+0.0_m, -0.0_m};
-        inline constexpr frc::Translation2d kBackLeft{-0.0_m, +0.0_m};
-        inline constexpr frc::Translation2d kBackRight{-0.0_m, -0.0_m};
+        inline constexpr frc::Translation2d kFrontLeft{+0.26_m, +0.26_m};
+        inline constexpr frc::Translation2d kFrontRight{+0.26_m, -0.26_m};
+        inline constexpr frc::Translation2d kBackLeft{-0.26_m, +0.26_m};
+        inline constexpr frc::Translation2d kBackRight{-0.26_m, -0.26_m};
     };
 
     inline constexpr meters_per_second_t kMaxSpeed = 1.0_mps;
