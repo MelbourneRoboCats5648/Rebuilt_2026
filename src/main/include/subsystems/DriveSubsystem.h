@@ -13,7 +13,7 @@
 #include <units/velocity.h>
 
 #include <frc/kinematics/SwerveDriveKinematics.h>
-// #include <frc/controller/HolonomicDriveController.h> // TODO: do something about this
+#include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
 #include <networktables/StructArrayTopic.h>
@@ -53,6 +53,7 @@ public:
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
+    frc2::CommandPtr FollowTrajectory(frc::Trajectory trajectory);
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
@@ -90,6 +91,12 @@ private:
         { m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(), m_backLeftModule.GetPosition(), m_backRightModule.GetPosition() },
         frc::Pose2d{}
     };
+
+    frc::HolonomicDriveController m_holonomicController{
+      frc::PIDController{1.2, 0, 0}, frc::PIDController{1.2, 0, 0},
+      frc::ProfiledPIDController<units::radian>{
+        0.8, 0, 0, frc::TrapezoidProfile<units::radian>::Constraints{
+        6.28_rad_per_s, 3.14_rad_per_s / 1_s}}}; // fixme - update CONSTANTS
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 

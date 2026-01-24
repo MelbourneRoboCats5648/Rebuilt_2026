@@ -3,6 +3,8 @@
 
 #include <frc/trajectory/TrajectoryConfig.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc2/command/SwerveControllerCommand.h>
+
 
 using namespace ctre::phoenix6::configs;
 
@@ -67,7 +69,6 @@ void DriveSubsystem::Drive(
            frc::TimedRobot::kDefaultPeriod));
 
     SetModuleStates(states);
-
 }
 
 void DriveSubsystem::Stop() {
@@ -127,3 +128,20 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
   return traj;
 }
+
+  // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
+  frc2::CommandPtr DriveSubsystem::FollowTrajectory(frc::Trajectory trajectory) {
+    return RunOnce([this, initialPose = trajectory.InitialPose()] {
+               m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
+               })
+      .AndThen(
+        frc2::SwerveControllerCommand<4>(
+              trajectory, 
+              [this] { return GetPose(); },
+              m_kinematics,
+              m_holonomicController,
+              [this](std::array<frc::SwerveModuleState, 4> states) { SetModuleStates(states); }
+              ).ToPtr()
+      )
+      .FinallyDo([this] { this->Stop(); });
+  }
