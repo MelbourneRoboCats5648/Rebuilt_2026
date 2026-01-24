@@ -127,3 +127,20 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
 
   return traj;
 }
+
+//overloading 
+frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose,frc::Pose2d currentPose) {
+  frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
+                               DrivetrainConstants::kMaxAcceleration};
+
+  config.SetKinematics(m_kinematics);
+
+  // A trajectory to follow.  All units in meters.
+  auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
+      currentPose, //current pose from pose estimatior
+      {},
+      targetPose,
+      config);
+
+  return traj;
+}
