@@ -22,11 +22,11 @@ using namespace units::acceleration;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        inline constexpr double kP = 6.0;
+        inline constexpr double kP = 6.0; // equivalent to 0.9 V/(t/s)
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
-        inline constexpr radians_per_second_t kMaxVel = M_PI * 4_rad_per_s;
-        inline constexpr radians_per_second_squared_t kMaxAcc = M_PI * 8_rad_per_s_sq;
+        inline constexpr radians_per_second_t kMaxVel = (2 * M_PI) * 2_rad_per_s;
+        inline constexpr radians_per_second_squared_t kMaxAcc = (2 * M_PI) * 4_rad_per_s_sq;
 
         inline constexpr ampere_t kMaxCurrent = 40_A;
         inline constexpr ampere_t kLowerCurrentLimit = 30_A;
@@ -35,11 +35,11 @@ namespace DriveModuleConstants {
 
     namespace SpeedMotor {
         inline constexpr double kGearRatio = 6.75;
-        inline constexpr double kP = 0.0;
+        inline constexpr double kP = 2.5;    // value of 2.8 introduces instability on the 2025 robot base
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         inline constexpr double kS = 0.1438; // found by linear regression (LR)
-        inline constexpr double kV = 0.7797; // found by LR
+        inline constexpr double kV = 0.7797; // found by LR in units of Volts per (turns per second)
         inline constexpr double kA = 0.0;    // tried tuning this but appears to be unused
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
@@ -66,11 +66,11 @@ namespace DrivetrainConstants {
         inline constexpr frc::Translation2d kBackRight{-0.26_m, -0.26_m};
     };
 
-    inline constexpr meters_per_second_t kMaxSpeed = 1.0_mps;
-    inline constexpr meters_per_second_squared_t kMaxAcceleration = 1.0_mps_sq;
+    inline constexpr meters_per_second_t kMaxSpeed = 2.0_mps; // fixme - will need to increase this for comp
+    inline constexpr meters_per_second_squared_t kMaxAcceleration = 3.0_mps_sq;
 
-    inline constexpr radians_per_second_t kMaxAngularSpeed = 3.142_rad_per_s;
-    inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = 3.142_rad_per_s_sq;
+    inline constexpr radians_per_second_t kMaxAngularSpeed = (2 * M_PI) * 1_rad_per_s;
+    inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = (2 * M_PI) * 2_rad_per_s_sq;
 
     inline constexpr degree_t kInitialGyroAngle = 0_deg;
 };
