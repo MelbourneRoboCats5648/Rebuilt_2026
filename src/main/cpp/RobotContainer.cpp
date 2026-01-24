@@ -5,31 +5,48 @@
 #include "RobotContainer.h"
 
 #include <frc2/command/button/Trigger.h>
-
-#include "commands/Autos.h"
-#include "commands/ExampleCommand.h"
+#include <frc2/command/RunCommand.h>
 
 RobotContainer::RobotContainer() {
-  // Initialize all of your commands and subsystems here
+    // Initialize all of your commands and subsystems here
 
-  // Configure the button bindings
-  ConfigureBindings();
+    // Configure the button bindings
+    ConfigureBindings();
+}
+
+double RobotContainer::PreprocessJoystickInput(double input) {
+    double inputDeadband = frc::ApplyDeadband(input, OperatorConstants::kDeadband);
+    
+    /* scaling */
+    double sign = (inputDeadband < 0.0) ? -1.0 : 1.0;
+    return sign * inputDeadband * inputDeadband;
 }
 
 void RobotContainer::ConfigureBindings() {
-  // Configure your trigger bindings here
+    // Configure your trigger bindings here
 
-  // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  frc2::Trigger([this] {
-    return m_subsystem.ExampleCondition();
-  }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
+    m_drive.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+            meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                * DrivetrainConstants::kMaxSpeed
+            );
+            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetRightX())
+                * DrivetrainConstants::kMaxAngularSpeed
+            );
 
-  // Schedule `ExampleMethodCommand` when the Xbox controller's B button is
-  // pressed, cancelling on release.
-  m_driverController.B().WhileTrue(m_subsystem.ExampleMethodCommand());
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
+        },
+        { &m_drive }
+    ));
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-  // An example command will be run in autonomous
-  return autos::ExampleAuto(&m_subsystem);
+    // An example command will be run in autonomous
+
 }
