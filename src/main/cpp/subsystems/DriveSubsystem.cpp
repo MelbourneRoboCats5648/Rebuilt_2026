@@ -1,6 +1,9 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
+#include <frc/trajectory/TrajectoryConfig.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
+
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem() {
@@ -103,4 +106,24 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);
+}
+
+frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
+  // Set up config for trajectory
+  frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
+                               DrivetrainConstants::kMaxAcceleration};
+
+  // Add kinematics to ensure max speed is actually obeyed
+  config.SetKinematics(m_kinematics);
+
+  auto currentPose = m_poseEstimator.GetEstimatedPosition();
+
+  // A trajectory to follow.  All units in meters.
+  auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
+      currentPose, //current pose from pose estimatior
+      {},
+      targetPose,
+      config);
+
+  return traj;
 }

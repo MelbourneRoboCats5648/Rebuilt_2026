@@ -20,6 +20,8 @@
 #include <networktables/StructTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
+#include <frc/trajectory/Trajectory.h>
+
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
 
@@ -48,6 +50,8 @@ public:
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
+
+    frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
