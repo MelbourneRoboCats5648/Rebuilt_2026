@@ -71,10 +71,7 @@ void DriveSubsystem::Drive(
 }
 
 void DriveSubsystem::Stop() {
-    m_frontLeftModule.StopMotors();
-    m_frontRightModule.StopMotors();
-    m_backLeftModule.StopMotors();
-    m_backRightModule.StopMotors();
+    Drive(0_mps, 0_mps, 0_rad_per_s, false);
 }
 
 void DriveSubsystem::SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states) {
