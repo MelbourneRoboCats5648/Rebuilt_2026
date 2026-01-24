@@ -52,7 +52,7 @@ public:
     void ResetPose(frc::Pose2d pose);
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
-    frc::Trajectory CreateTrajectory(frc::Pose2d targetPose,frc::Pose2d currentPose);
+    frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
