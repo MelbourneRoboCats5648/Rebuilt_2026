@@ -56,6 +56,9 @@ public:
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
     frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
 
+    frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
+    frc2::CommandPtr AlignHeadingCommand(radian_t heading);
+
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
 
@@ -93,6 +96,15 @@ private:
         frc::Pose2d{}
     };
 
+    frc::ProfiledPIDController<units::radians> m_thetaController{
+        Autonomous::ThetaController::kP,
+        Autonomous::ThetaController::kI,
+        Autonomous::ThetaController::kD,
+        frc::TrapezoidProfile<units::radian>::Constraints{
+            kMaxAngularSpeed, kMaxAngularAcceleration
+        }
+    };
+
     frc::HolonomicDriveController m_holonomicController{
         frc::PIDController{
             Autonomous::XYController::kP,
@@ -104,14 +116,7 @@ private:
             Autonomous::XYController::kI,
             Autonomous::XYController::kD
         },
-        frc::ProfiledPIDController<units::radian>{
-            Autonomous::ThetaController::kP,
-            Autonomous::ThetaController::kI,
-            Autonomous::ThetaController::kD,
-            frc::TrapezoidProfile<units::radian>::Constraints{
-                kMaxAngularSpeed, kMaxAngularAcceleration
-            }
-        }
+        m_thetaController
     };
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 

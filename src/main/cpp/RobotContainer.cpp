@@ -47,10 +47,9 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    frc::Pose2d startPose{0_m, 0_m, 0_deg};
-    frc::Pose2d targetPose{2_m, 0_m, 90_deg};
-
+    frc::Pose2d startPose{0_m, 0_m, 90_deg};
+    frc::Pose2d targetPose{2_m, 0_m, 0_deg};
     frc::Trajectory traj = m_drive.CreateTrajectory(startPose, targetPose);
 
-    return m_drive.FollowTrajectoryCommand(traj);
+    return m_drive.AlignHeadingCommand(90_deg).AndThen(m_drive.FollowTrajectoryCommand(traj));
 }

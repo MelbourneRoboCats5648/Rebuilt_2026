@@ -5,7 +5,6 @@
 #include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc2/command/SwerveControllerCommand.h>
 
-
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem() {
@@ -29,13 +28,14 @@ DriveSubsystem::DriveSubsystem() {
     m_holonomicController.SetTolerance(
         frc::Pose2d(
             Autonomous::XYController::kTolerance, Autonomous::XYController::kTolerance, // translation
-            Autonomous::ThetaController::kTolerance // rotation
+            Autonomous::ThetaController::kPositionTolerance // rotation
         )
     );
+    m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
+    // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
 }
 
 void DriveSubsystem::Periodic() {
-
     m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
@@ -161,4 +161,26 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
               ).ToPtr()
       )
       .FinallyDo([this] { this->Stop(); });
-  }
+}
+
+frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> headingLambda) {
+    return RunOnce([this, headingLambda] {
+        radian_t heading = headingLambda();
+        m_thetaController.Reset(GetHeading());
+        m_thetaController.SetGoal(heading); // velocity = 0 by default
+    }).AndThen(
+        Run([this] {
+            radians_per_second_t angularRate{m_thetaController.Calculate(GetHeading())};
+            Drive(0_mps, 0_mps, angularRate, false);
+        }).Until([this] {
+            return m_thetaController.AtGoal();
+        })
+    ).FinallyDo([this] {
+        Stop();
+        m_thetaController.Reset(GetHeading()); // optional, but just to be safe here
+    });
+}
+
+frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
+    return AlignHeadingCommand([heading] { return heading; });
+}
