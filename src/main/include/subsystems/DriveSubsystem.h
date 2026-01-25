@@ -109,7 +109,7 @@ private:
             Autonomous::ThetaController::kI,
             Autonomous::ThetaController::kD,
             frc::TrapezoidProfile<units::radian>::Constraints{
-                kMaxAngularSpeed / 2.0, kMaxAngularAcceleration / 2.0
+                kMaxAngularSpeed, kMaxAngularAcceleration
             }
         }
     };
