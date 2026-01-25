@@ -24,6 +24,7 @@
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
+using namespace DrivetrainConstants;
 
 class DriveSubsystem : public frc2::SubsystemBase {
 public:
@@ -79,10 +80,10 @@ private:
     };
 
     frc::SwerveDriveKinematics<4> m_kinematics{
-        DrivetrainConstants::ModuleLocation::kFrontLeft,
-        DrivetrainConstants::ModuleLocation::kFrontRight,
-        DrivetrainConstants::ModuleLocation::kBackLeft,
-        DrivetrainConstants::ModuleLocation::kBackRight
+        ModuleLocation::kFrontLeft,
+        ModuleLocation::kFrontRight,
+        ModuleLocation::kBackLeft,
+        ModuleLocation::kBackRight
     };
     
     frc::SwerveDrivePoseEstimator<4> m_poseEstimator{
@@ -93,10 +94,25 @@ private:
     };
 
     frc::HolonomicDriveController m_holonomicController{
-      frc::PIDController{1.2, 0, 0}, frc::PIDController{1.2, 0, 0},
-      frc::ProfiledPIDController<units::radian>{
-        0.8, 0, 0, frc::TrapezoidProfile<units::radian>::Constraints{
-        6.28_rad_per_s, 3.14_rad_per_s / 1_s}}}; // fixme - update CONSTANTS
+        frc::PIDController{
+            Autonomous::XYController::kP,
+            Autonomous::XYController::kI,
+            Autonomous::XYController::kD
+        },
+        frc::PIDController{
+            Autonomous::XYController::kP,
+            Autonomous::XYController::kI,
+            Autonomous::XYController::kD
+        },
+        frc::ProfiledPIDController<units::radian>{
+            Autonomous::ThetaController::kP,
+            Autonomous::ThetaController::kI,
+            Autonomous::ThetaController::kD,
+            frc::TrapezoidProfile<units::radian>::Constraints{
+                kMaxAngularSpeed / 2.0, kMaxAngularAcceleration / 2.0
+            }
+        }
+    };
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 

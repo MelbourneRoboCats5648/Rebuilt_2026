@@ -73,4 +73,17 @@ namespace DrivetrainConstants {
     inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = (2 * M_PI) * 2_rad_per_s_sq;
 
     inline constexpr degree_t kInitialGyroAngle = 0_deg;
+
+    namespace Autonomous {
+        namespace XYController {
+            inline constexpr double kP = 1.0;
+            inline constexpr double kI = 0.0;
+            inline constexpr double kD = 0.0;
+        };
+        namespace ThetaController {
+            inline constexpr double kP = 2.0;
+            inline constexpr double kI = 0.0;
+            inline constexpr double kD = 0.0;
+        };
+    };
 };
