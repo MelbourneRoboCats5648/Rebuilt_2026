@@ -1,6 +1,11 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
+#include <frc/trajectory/TrajectoryConfig.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc2/command/SwerveControllerCommand.h>
+
+
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem() {
@@ -10,7 +15,9 @@ DriveSubsystem::DriveSubsystem() {
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/CommandedStates").Publish();
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
-        
+    m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
+    
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
@@ -18,6 +25,13 @@ DriveSubsystem::DriveSubsystem() {
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+
+    m_holonomicController.SetTolerance(
+        frc::Pose2d(
+            Autonomous::XYController::kTolerance, Autonomous::XYController::kTolerance, // translation
+            Autonomous::ThetaController::kTolerance // rotation
+        )
+    );
 }
 
 void DriveSubsystem::Periodic() {
@@ -64,14 +78,10 @@ void DriveSubsystem::Drive(
            frc::TimedRobot::kDefaultPeriod));
 
     SetModuleStates(states);
-
 }
 
 void DriveSubsystem::Stop() {
-    m_frontLeftModule.StopMotors();
-    m_frontRightModule.StopMotors();
-    m_backLeftModule.StopMotors();
-    m_backRightModule.StopMotors();
+    Drive(0_mps, 0_mps, 0_rad_per_s, false);
 }
 
 void DriveSubsystem::SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states) {
@@ -104,3 +114,51 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);
 }
+
+frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
+  return CreateTrajectory(
+    m_poseEstimator.GetEstimatedPosition(),
+    targetPose
+  );
+}
+
+frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose) {
+  frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
+                               DrivetrainConstants::kMaxAcceleration};
+
+  config.SetKinematics(m_kinematics);
+
+  // A trajectory to follow.  All units in meters.
+  auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
+      currentPose, //current pose from pose estimatior
+      {},
+      targetPose,
+      config);
+
+  return traj;
+}
+
+  // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
+  frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory) {
+    return RunOnce([this, initialPose = trajectory.InitialPose(), trajectory] {
+        m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
+
+        /* publish trajectory */
+        std::vector<frc::Pose2d> poses;
+        std::vector<frc::Trajectory::State> states = trajectory.States();
+        for (frc::Trajectory::State& state : states) {
+            poses.push_back(state.pose);
+        }
+        m_trajectoryPublisher.Set(poses);        
+    })
+      .AndThen(
+        frc2::SwerveControllerCommand<4>(
+              trajectory, 
+              [this] { return GetPose(); },
+              m_kinematics,
+              m_holonomicController,
+              [this](std::array<frc::SwerveModuleState, 4> states) { SetModuleStates(states); }
+              ).ToPtr()
+      )
+      .FinallyDo([this] { this->Stop(); });
+  }

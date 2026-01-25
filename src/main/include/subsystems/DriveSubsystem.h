@@ -13,15 +13,18 @@
 #include <units/velocity.h>
 
 #include <frc/kinematics/SwerveDriveKinematics.h>
-// #include <frc/controller/HolonomicDriveController.h> // TODO: do something about this
+#include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
+#include <frc/trajectory/Trajectory.h>
+
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
+using namespace DrivetrainConstants;
 
 class DriveSubsystem : public frc2::SubsystemBase {
 public:
@@ -49,6 +52,10 @@ public:
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
 
+    frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
+    frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
+    frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
+
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
 
@@ -73,10 +80,10 @@ private:
     };
 
     frc::SwerveDriveKinematics<4> m_kinematics{
-        DrivetrainConstants::ModuleLocation::kFrontLeft,
-        DrivetrainConstants::ModuleLocation::kFrontRight,
-        DrivetrainConstants::ModuleLocation::kBackLeft,
-        DrivetrainConstants::ModuleLocation::kBackRight
+        ModuleLocation::kFrontLeft,
+        ModuleLocation::kFrontRight,
+        ModuleLocation::kBackLeft,
+        ModuleLocation::kBackRight
     };
     
     frc::SwerveDrivePoseEstimator<4> m_poseEstimator{
@@ -86,8 +93,29 @@ private:
         frc::Pose2d{}
     };
 
+    frc::HolonomicDriveController m_holonomicController{
+        frc::PIDController{
+            Autonomous::XYController::kP,
+            Autonomous::XYController::kI,
+            Autonomous::XYController::kD
+        },
+        frc::PIDController{
+            Autonomous::XYController::kP,
+            Autonomous::XYController::kI,
+            Autonomous::XYController::kD
+        },
+        frc::ProfiledPIDController<units::radian>{
+            Autonomous::ThetaController::kP,
+            Autonomous::ThetaController::kI,
+            Autonomous::ThetaController::kD,
+            frc::TrapezoidProfile<units::radian>::Constraints{
+                kMaxAngularSpeed, kMaxAngularAcceleration
+            }
+        }
+    };
+
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
-
+    nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 };

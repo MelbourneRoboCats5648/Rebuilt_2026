@@ -66,12 +66,6 @@ void DriveModule::SetSpeedMotorConfig(){
     m_speedMotor.GetConfigurator().Apply(speedMotorConfig);
 }
 
-void DriveModule::StopMotors()
-{
-    m_directionMotor.Set(0);
-    m_speedMotor.Set(0);
-}
-
 void DriveModule::SetState(frc::SwerveModuleState state){
     // encoder range -0.5 + 0.5 
     units::angle::radian_t encoderCurrentAngleRadians = 
