@@ -79,11 +79,13 @@ namespace DrivetrainConstants {
             inline constexpr double kP = 1.0;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
+inline constexpr meter_t kTolerance = 0.05_m;
         };
         namespace ThetaController {
             inline constexpr double kP = 2.0;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
+inline constexpr radian_t kTolerance = 1_deg;
         };
     };
 };

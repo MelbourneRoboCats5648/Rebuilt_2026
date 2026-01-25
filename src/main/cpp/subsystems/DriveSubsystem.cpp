@@ -25,6 +25,13 @@ DriveSubsystem::DriveSubsystem() {
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+
+    m_holonomicController.SetTolerance(
+        frc::Pose2d(
+            Autonomous::XYController::kTolerance, Autonomous::XYController::kTolerance, // translation
+            Autonomous::ThetaController::kTolerance // rotation
+        )
+    );
 }
 
 void DriveSubsystem::Periodic() {
