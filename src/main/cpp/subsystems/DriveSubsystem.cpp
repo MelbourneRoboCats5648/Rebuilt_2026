@@ -151,16 +151,24 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
         }
         m_trajectoryPublisher.Set(poses);        
     })
-      .AndThen(
+    .AndThen(
         frc2::SwerveControllerCommand<4>(
-              trajectory, 
-              [this] { return GetPose(); },
-              m_kinematics,
-              m_holonomicController,
-              [this](std::array<frc::SwerveModuleState, 4> states) { SetModuleStates(states); }
-              ).ToPtr()
-      )
-      .FinallyDo([this] { this->Stop(); });
+            trajectory, 
+            [this] { return GetPose(); },
+            m_kinematics,
+            m_holonomicController,
+            [this](std::array<frc::SwerveModuleState, 4> states) { SetModuleStates(states); }
+        ).ToPtr()
+    ).AndThen( // keep running controller until we actually reach goal
+        Run([this, lastState = trajectory.States().back()] {
+            auto desiredSpeed = m_holonomicController.Calculate(GetPose(), lastState, lastState.pose.Rotation());
+            auto desiredStates = m_kinematics.ToSwerveModuleStates(desiredSpeed);
+            SetModuleStates(desiredStates);
+        }).Until([this] {
+            return m_holonomicController.AtReference();
+        })
+    )
+    .FinallyDo([this] { this->Stop(); });
 }
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> headingLambda) {
