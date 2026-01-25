@@ -101,5 +101,5 @@ private:
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
-
+    nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 };

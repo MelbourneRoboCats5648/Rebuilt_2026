@@ -15,7 +15,9 @@ DriveSubsystem::DriveSubsystem() {
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/CommandedStates").Publish();
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
-        
+    m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
+    
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
@@ -131,9 +133,17 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
   // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
   frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory) {
-    return RunOnce([this, initialPose = trajectory.InitialPose()] {
-               m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
-               })
+    return RunOnce([this, initialPose = trajectory.InitialPose(), trajectory] {
+        m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
+
+        /* publish trajectory */
+        std::vector<frc::Pose2d> poses;
+        std::vector<frc::Trajectory::State> states = trajectory.States();
+        for (frc::Trajectory::State& state : states) {
+            poses.push_back(state.pose);
+        }
+        m_trajectoryPublisher.Set(poses);        
+    })
       .AndThen(
         frc2::SwerveControllerCommand<4>(
               trajectory, 
