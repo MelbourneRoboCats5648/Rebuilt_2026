@@ -49,5 +49,5 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return autos::AutoTesting2(&m_drive);
+    return autos::AutoTestNeutralCollect(&m_drive);
 }
