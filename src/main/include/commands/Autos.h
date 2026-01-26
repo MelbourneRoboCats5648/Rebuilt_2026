@@ -19,5 +19,8 @@ frc2::CommandPtr AutoTesting(DriveSubsystem* drive);
 
 frc2::CommandPtr AutoTesting2(DriveSubsystem* drive);
 
+frc2::CommandPtr AutoDepot(DriveSubsystem* drive);
 
 }  // namespace autos
+
+

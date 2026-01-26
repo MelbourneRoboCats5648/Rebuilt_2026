@@ -31,3 +31,27 @@ frc2::CommandPtr autos::AutoTesting2(DriveSubsystem* drive) {
         drive->FollowTrajectoryCommand(traj)
     );
 }
+
+frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {
+    frc::Pose2d startPose{3.5439321994781494_m, 4.022441864013672_m, 0_rad};
+    frc::Pose2d targetPose{2.4197206497192383_m, 4.022441864013672_m, 0_rad};
+
+    frc::Trajectory traj = drive->CreateTrajectory(startPose, targetPose);
+
+    return frc2::cmd::Sequence(
+
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{3.5439321994781494_m, 4.022441864013672_m, 0_rad}, frc::Pose2d{2.4197206497192383_m, 4.022441864013672_m, 0_rad})),
+        //shoot
+        drive->AlignHeadingCommand(2.3377917235925576_rad),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{0.45742592215538025_m, 4.9360432624816895_m, 1.5707963267948966_rad})),
+        //intake
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{1.387824296951294_m, 6.8814215660095215_m,-0.9505471899873089_rad})),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{2.4197206497192383_m, 4.039477825164795_m,0_rad}))
+        //shoot
+
+    );
+
+
+};
+    
+ 
