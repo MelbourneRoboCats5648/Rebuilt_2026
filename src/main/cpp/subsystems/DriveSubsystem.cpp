@@ -118,7 +118,7 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
   return CreateTrajectory(
     m_poseEstimator.GetEstimatedPosition(),
-    targetPose
+    std::move(targetPose)
   );
 }
 
@@ -130,9 +130,9 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
   // A trajectory to follow.  All units in meters.
   auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
-      currentPose, //current pose from pose estimatior
+      std::move(currentPose), //current pose from pose estimatior
       {},
-      targetPose,
+      std::move(targetPose),
       config);
 
   return traj;
