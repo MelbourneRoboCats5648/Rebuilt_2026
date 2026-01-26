@@ -85,7 +85,8 @@ namespace DrivetrainConstants {
             inline constexpr double kP = 3.0;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
-            inline constexpr radian_t kTolerance = 1_deg;
+            inline constexpr radian_t kPositionTolerance = 1_deg;
+            inline constexpr radians_per_second_t kVelocityTolerance = 1_deg_per_s;
         };
     };
 };
