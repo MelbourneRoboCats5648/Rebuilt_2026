@@ -31,3 +31,13 @@ frc2::CommandPtr autos::AutoTesting2(DriveSubsystem* drive) {
         drive->FollowTrajectoryCommand(traj)
     );
 }
+
+
+frc2::CommandPtr autos::AutoClimb(DriveSubsystem* drive){
+    return frc2::cmd::Sequence(
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.988293647766113_m, 3.625459671020508_m, -3.141592653589793_rad}, frc::Pose2d{14.201175689697266_m, 3.612825393676758_m, -3.141592653589793_rad})),
+        //shoot
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{15.047666549682617_m, 3.612825393676758_m, -3.141592653589793_rad}))
+        //climb
+    );
+}

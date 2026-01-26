@@ -19,5 +19,7 @@ frc2::CommandPtr AutoTesting(DriveSubsystem* drive);
 
 frc2::CommandPtr AutoTesting2(DriveSubsystem* drive);
 
+frc2::CommandPtr AutoClimb(DriveSubsystem* drive);
+
 
 }  // namespace autos
