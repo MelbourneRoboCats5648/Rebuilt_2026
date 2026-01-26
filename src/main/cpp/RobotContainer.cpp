@@ -7,6 +7,8 @@
 #include <frc2/command/button/Trigger.h>
 #include <frc2/command/RunCommand.h>
 
+#include "commands/Autos.h"
+
 RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
 
@@ -47,9 +49,5 @@ void RobotContainer::ConfigureBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    frc::Pose2d startPose{0_m, 0_m, 90_deg};
-    frc::Pose2d targetPose{2_m, 0_m, 0_deg};
-    frc::Trajectory traj = m_drive.CreateTrajectory(startPose, targetPose);
-
-    return m_drive.AlignHeadingCommand(90_deg).AndThen(m_drive.FollowTrajectoryCommand(traj));
+    return autos::AutoTesting2(&m_drive);
 }
