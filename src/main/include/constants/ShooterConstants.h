@@ -7,5 +7,6 @@ namespace ShooterConstants {
         inline constexpr double kD = 0;
     }
 
+    inline constexpr double kgearRatio = 1;
 };
 

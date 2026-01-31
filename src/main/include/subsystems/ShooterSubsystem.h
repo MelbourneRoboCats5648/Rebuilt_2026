@@ -5,15 +5,17 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 
 using namespace ctre::phoenix6::configs;
+using namespace ctre::phoenix6::hardware;
 
 class ShooterSubsystem : public frc2::SubsystemBase {
 
 public:
-    ShooterSubsystem(int motorID);
+    ShooterSubsystem(int motorID, int followerID);
 
 
 private:
 
-    ctre::phoenix6::hardware::TalonFX m_motor;
+    TalonFX m_motor;
+    TalonFX m_follower;
     TalonFXConfiguration createMotorConfig();
 };
