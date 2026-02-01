@@ -13,6 +13,7 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
+#include <frc/smartdashboard/SendableChooser.h>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -25,7 +26,7 @@ class RobotContainer {
 public:
     RobotContainer();
 
-    frc2::CommandPtr GetAutonomousCommand();
+    frc2::Command* GetAutonomousCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -43,4 +44,8 @@ private:
     frc::SlewRateLimiter<units::meters_per_second> m_xLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
+
+
+    //the chooser for the auto routines
+    frc::SendableChooser<frc2::Command*> m_chooser;
 };

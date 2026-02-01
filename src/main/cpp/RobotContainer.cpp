@@ -6,6 +6,8 @@
 
 #include <frc2/command/button/Trigger.h>
 #include <frc2/command/RunCommand.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 #include "commands/Autos.h"
 
@@ -14,6 +16,18 @@ RobotContainer::RobotContainer() {
 
     // Configure the button bindings
     ConfigureBindings();
+
+
+    //the auto routines
+    frc2::CommandPtr m_autoClimb = autos::AutoClimb(&m_drive);
+    frc2::CommandPtr m_autoTesting = autos::AutoTesting(&m_drive);
+
+    //adding commands to the auto chooser
+    m_chooser.SetDefaultOption("Climb Auto", m_autoClimb.get());
+    m_chooser.AddOption("Testing Auto", m_autoTesting.get());
+
+    //put the chooser on the dashboard
+    frc::SmartDashboard::PutData(&m_chooser);
 }
 
 double RobotContainer::PreprocessJoystickInput(double input) {
@@ -48,6 +62,7 @@ void RobotContainer::ConfigureBindings() {
     ));
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return autos::AutoClimb(&m_drive);
+frc2::Command* RobotContainer::GetAutonomousCommand() {
+    return m_chooser.GetSelected();
 }
+
