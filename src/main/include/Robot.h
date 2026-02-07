@@ -35,8 +35,7 @@ class Robot : public frc::TimedRobot {
 
   RobotContainer m_container;
 
-  
-  std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory = 
+  std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory = 
     choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("myTrajectory");
 
 
