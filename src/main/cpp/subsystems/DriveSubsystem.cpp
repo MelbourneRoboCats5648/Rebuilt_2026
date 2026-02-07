@@ -171,6 +171,24 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     .FinallyDo([this] { this->Stop(); });
 }
 
+frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
+    return RunOnce([this]{
+        radian_t desiredHeading = 0.0_rad;
+
+        m_choreoController.getHeadingController().Reset();
+        m_choreoController.getHeadingController().SetSetpoint(desiredHeading.value());
+    }).AndThen(
+        Run([this] {
+            radians_per_second_t angularRate{m_choreoController.getHeadingController()
+                                            .Calculate(radian_t{GetHeading()}.value())};
+            Drive(0_mps, 0_mps, angularRate, false);
+        }).Until([this] {
+            return false;
+        }))
+    .FinallyDo([this]{ }); 
+}
+
+
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> headingLambda) {
     return RunOnce([this, headingLambda] {
         radian_t heading = headingLambda();
