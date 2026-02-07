@@ -10,8 +10,8 @@ using namespace units::acceleration;
 
 namespace FieldConstants {
 
-    meter_t HubHeight(1.888);
-    meters_per_second_squared_t gravity(9.8);
+    inline constexpr meter_t HubHeight(1.888);
+    inline constexpr meters_per_second_squared_t gravity(9.8);
 
     
     

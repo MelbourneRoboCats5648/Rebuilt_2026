@@ -24,9 +24,6 @@ meters_per_second_t ShooterSubsystem::CalculateShooterSpeed(meter_t distance, de
                 (2 * pow<2>(cosine) * (ShooterConstants::distance * tangent - adjustedHeight))
             );
 
-            auto tmp = atan(2.0);
-
         return speed;
 }
-
 

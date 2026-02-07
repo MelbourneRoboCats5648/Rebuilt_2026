@@ -2,6 +2,7 @@
 
 #include "units/length.h"
 #include "units/angle.h"
+#include "FieldConstants.h"
 
 
 using namespace units::length;
@@ -12,6 +13,7 @@ namespace ShooterConstants {
     inline constexpr meter_t distance (2.0);
     inline constexpr degree_t angle (60);
     inline constexpr meter_t startHeight(0.3);
+    inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
 
 };
 
