@@ -10,6 +10,9 @@
 #include <frc2/command/CommandPtr.h>
 
 #include "RobotContainer.h"
+#include "choreo/Choreo.h"
+
+
 
 class Robot : public frc::TimedRobot {
  public:
@@ -31,4 +34,10 @@ class Robot : public frc::TimedRobot {
   frc2::Command* m_autonomousCommand;
 
   RobotContainer m_container;
+
+  
+  std::optional<choreo::Trajectory<choreo::SwerveSample>> trajectory = 
+    choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("myTrajectory");
+
+
 };

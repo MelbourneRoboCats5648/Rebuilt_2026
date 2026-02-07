@@ -60,6 +60,8 @@ public:
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
     frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
 
+    frc2::CommandPtr FollowTrajectory(const choreo::SwerveSample&sample, frc::Pose2d);
+
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
