@@ -183,9 +183,12 @@ frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<chor
                                             .Calculate(radian_t{GetHeading()}.value())};
             Drive(0_mps, 0_mps, angularRate, false);
         }).Until([this] {
-            return false;
+            return m_choreoController.getHeadingController().AtSetpoint();
         }))
-    .FinallyDo([this]{ }); 
+    .FinallyDo([this]{
+        Stop();
+        m_choreoController.getHeadingController().Reset();
+     }); 
 }
 
 
