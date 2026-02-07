@@ -1,12 +1,13 @@
 #pragma once
-#include <frc2/command/SubsystemBase.h>
 #include <choreo/trajectory/Trajectory.h>
-#include <frc/controller/HolonomicDriveController.h>
+#include <frc/controller/PIDController.h>
 
-class ChoreoController : public frc2::SubsystemBase {
+class ChoreoController {
 public:
 ChoreoController();
-void FollowTrajectory(const choreo::SwerveSample& sample);
+void FollowTrajectory(const choreo::SwerveSample& sample, frc::Pose2d);
+
+
 
 private:
 

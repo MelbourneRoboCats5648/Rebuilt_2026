@@ -16,6 +16,8 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
+#include <drive/ChoreoController.h>
+
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
 #include <frc/geometry/Rotation2d.h>
@@ -120,6 +122,8 @@ private:
         },
         m_thetaController
     };
+
+    ChoreoController m_choreoController;
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
