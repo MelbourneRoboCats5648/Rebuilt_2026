@@ -173,21 +173,42 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
     return RunOnce([this]{
-        radian_t desiredHeading = 0.0_rad;
+        radian_t desiredHeading = 0.1_rad;
+        meter_t desiredX = 0.02_m;
+        meter_t desiredY = 0.01_m;
 
         m_choreoController.getHeadingController().Reset();
         m_choreoController.getHeadingController().SetSetpoint(desiredHeading.value());
+
+        m_choreoController.getXController().Reset();
+        m_choreoController.getXController().SetSetpoint(desiredX.value());
+
+        m_choreoController.getYController().Reset();
+        m_choreoController.getYController().SetSetpoint(desiredY.value());
+
+
     }).AndThen(
         Run([this] {
-            radians_per_second_t angularRate{m_choreoController.getHeadingController()
-                                            .Calculate(radian_t{GetHeading()}.value())};
-            Drive(0_mps, 0_mps, angularRate, false);
+            auto angularRate = m_choreoController.getHeadingController().Calculate(radian_t{GetHeading()}.value());
+
+            auto currentPose = GetPose();
+            auto xSpeed = m_choreoController.getXController().Calculate(meter_t{currentPose.X()}.value());
+            auto ySpeed = m_choreoController.getYController().Calculate(meter_t{currentPose.Y()}.value());
+
+            Drive(meters_per_second_t{xSpeed}, meters_per_second_t{ySpeed}, radians_per_second_t{angularRate}, false);
+
+       
         }).Until([this] {
             return m_choreoController.getHeadingController().AtSetpoint();
+            return m_choreoController.getXController().AtSetpoint();
+            return m_choreoController.getYController().AtSetpoint();
         }))
     .FinallyDo([this]{
         Stop();
         m_choreoController.getHeadingController().Reset();
+        
+        m_choreoController.getXController().Reset();
+        m_choreoController.getYController().Reset();
      }); 
 }
 

@@ -22,6 +22,14 @@ frc::ChassisSpeeds speeds{
 
 }
 
+frc::PIDController& ChoreoController::getXController(){
+    return m_xController;
+}
+
+frc::PIDController& ChoreoController::getYController(){
+    return m_yController;
+}
+
 frc::PIDController& ChoreoController::getHeadingController(){
     return m_headingController;
 }

@@ -7,6 +7,8 @@ public:
     ChoreoController();
     void FollowTrajectory(const choreo::SwerveSample& sample, frc::Pose2d);
 
+    frc::PIDController& getXController();
+    frc::PIDController& getYController();
     frc::PIDController& getHeadingController();
 
 private:
