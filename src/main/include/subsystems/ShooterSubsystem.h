@@ -15,7 +15,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     public:
         ShooterSubsystem();
         meters_per_second_t CalculateShooterSpeed(meter_t distance, degree_t angle);
-
+        radian_t GetShootingAngle(meter_t distance, meters_per_second_t velocity);
+        
     private:
 
 
