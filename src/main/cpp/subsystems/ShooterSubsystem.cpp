@@ -10,8 +10,11 @@ ShooterSubsystem::ShooterSubsystem(){
 }
 
 
-// derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
-// done by rearranging the formula to find the speed for a given distance and angle 
+// both have been derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
+// done by rearranging the formula to find the speed/angle for a given distance and speed/angle (respectively)
+
+
+// speed equation 
 
 meters_per_second_t ShooterSubsystem::CalculateShooterSpeed(meter_t distance, degree_t angle) {
         auto cosine = cos(ShooterConstants::angle);
@@ -29,28 +32,34 @@ meters_per_second_t ShooterSubsystem::CalculateShooterSpeed(meter_t distance, de
 }
 
 
-radian_t ShooterSubsystem::GetShootingAngle(units::meter_t distance, units::meters_per_second_t velocity){
 
+// angle equation
 
-//atan(ShooterConstants::XDist - sqrt(pow<2>(ShooterConstants::XDist)));          i dont understand what this is here for 
+radian_t ShooterSubsystem::GetShootingAngle(
+    units::meter_t distance, 
+    units::meters_per_second_t velocity){
 
-auto xDistSquared = ShooterConstants::XDist * ShooterConstants::XDist; // had to do it the crude way, litreally a*a = a^2. pow isnt working because units arent cancelling down
-auto velocitySquared = ShooterConstants::ShooterVelocity * ShooterConstants::ShooterVelocity; 
+auto xDistSquared = 
+    pow<2>(ShooterConstants::XDist); 
 
-meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
- 
-radian_t angle = units::math::atan
-(
-((ShooterConstants::XDist + units::math::sqrt(xDistSquared * (- 2* xDistSquared * FieldConstants::gravity * 
-(ShooterConstants::YDist - ShooterConstants::startHeight))/ velocitySquared))
+auto velocitySquared = 
+    ShooterConstants::ShooterVelocity * 
+    ShooterConstants::ShooterVelocity; 
 
-/
+auto velocitySquaredSquared =
+    velocitySquared * velocitySquared;
 
-(FieldConstants::gravity * xDistSquared / velocitySquared))
+//the actual function starts here 
 
-);
+    radian_t angle = units::math::atan(
+        (velocitySquared + units::math::sqrt(
+        velocitySquaredSquared - 
+        FieldConstants::gravity *
+        (FieldConstants::gravity * xDistSquared + 
+            2 * (ShooterConstants::YDist - ShooterConstants::startHeight) * velocitySquared))
+            )
+            /
+        (FieldConstants::gravity * ShooterConstants::XDist));
 
-return angle; 
- 
+        return angle;
 }
- 
