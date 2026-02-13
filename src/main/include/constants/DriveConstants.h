@@ -22,7 +22,7 @@ using namespace units::acceleration;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        inline constexpr double kP = 6.0; // equivalent to 0.9 V/(t/s)
+        inline constexpr double kP = 4.0; // 6.0 is equivalent to 0.9 V/(t/s)
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         inline constexpr radians_per_second_t kMaxVel = (2 * M_PI) * 2_rad_per_s;
@@ -35,7 +35,7 @@ namespace DriveModuleConstants {
 
     namespace SpeedMotor {
         inline constexpr double kGearRatio = 6.75;
-        inline constexpr double kP = 2.5;    // value of 2.8 introduces instability on the 2025 robot base
+        inline constexpr double kP = 2.0;    // value of 2.8 introduces instability on the 2025 robot base
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         inline constexpr double kS = 0.1438; // found by linear regression (LR)
@@ -51,10 +51,10 @@ namespace DriveModuleConstants {
     };
 
     namespace DirectionEncoder {
-        inline constexpr turn_t kFrontLeftOffset = -0.306640625_tr;
-        inline constexpr turn_t kFrontRightOffset = -0.1748046875_tr;
-        inline constexpr turn_t kBackLeftOffset = 0.01953125_tr;
-        inline constexpr turn_t kBackRightOffset = 0.07421875_tr;
+        inline constexpr turn_t kFrontLeftOffset = -0.188232421875_tr;
+        inline constexpr turn_t kFrontRightOffset = 0.053466796875_tr;
+        inline constexpr turn_t kBackLeftOffset = -0.153076171875_tr;
+        inline constexpr turn_t kBackRightOffset = 0.011474609375_tr;
     };
 };
 
