@@ -21,10 +21,12 @@ RobotContainer::RobotContainer() {
     //the auto routines
     frc2::CommandPtr m_autoClimb = autos::AutoClimb(&m_drive);
     frc2::CommandPtr m_autoTesting = autos::AutoTesting(&m_drive);
+    frc2::CommandPtr m_choreoAuto = autos::ChoreoAuto(&m_drive);
 
     //adding commands to the auto chooser
-    m_chooser.SetDefaultOption("Climb Auto", m_autoClimb.get());
+    m_chooser.SetDefaultOption("Choreo Auto", m_choreoAuto.get());
     m_chooser.AddOption("Testing Auto", m_autoTesting.get());
+    m_chooser.AddOption("Climb Auto", m_autoClimb.get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData(&m_chooser);
