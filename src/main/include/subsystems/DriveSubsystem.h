@@ -50,7 +50,7 @@ public:
     void ResetPose(frc::Pose2d pose);
 
 private:
-    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
