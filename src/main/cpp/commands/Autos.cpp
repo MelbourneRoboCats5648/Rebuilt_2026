@@ -44,5 +44,8 @@ frc2::CommandPtr autos::AutoClimb(DriveSubsystem* drive){
 
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive) {
+    
+    choreo::Trajectory<choreo::SwerveSample> temporaryTrajectory;
 
+    drive->FollowTrajectoryCommand(temporaryTrajectory);
 }
