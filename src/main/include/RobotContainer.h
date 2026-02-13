@@ -45,6 +45,10 @@ private:
     frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
 
+    // auto options
+    frc2::CommandPtr m_autoClimb;
+    frc2::CommandPtr m_autoTesting;
+    frc2::CommandPtr m_choreoAuto;
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;

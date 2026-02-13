@@ -11,17 +11,15 @@
 
 #include "commands/Autos.h"
 
-RobotContainer::RobotContainer() {
+RobotContainer::RobotContainer()
+:   m_autoClimb{autos::AutoClimb(&m_drive)},
+    m_autoTesting{autos::AutoTesting(&m_drive)},
+    m_choreoAuto{autos::ChoreoAuto(&m_drive)}
+{
     // Initialize all of your commands and subsystems here
 
     // Configure the button bindings
     ConfigureBindings();
-
-
-    //the auto routines
-    frc2::CommandPtr m_autoClimb = autos::AutoClimb(&m_drive);
-    frc2::CommandPtr m_autoTesting = autos::AutoTesting(&m_drive);
-    frc2::CommandPtr m_choreoAuto = autos::ChoreoAuto(&m_drive);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("Choreo Auto", m_choreoAuto.get());
