@@ -16,7 +16,7 @@ RobotContainer::RobotContainer()
     m_autoTesting{autos::AutoTesting(&m_drive)},
     m_choreoAuto{autos::ChoreoAuto(&m_drive)},
     m_autoDepot{autos::AutoDepot(&m_drive)},
-    m_autoTestNeutralCollect{autos::AutoTestNeutralCollect(&m_drive)}
+    m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)}
 {
     // Initialize all of your commands and subsystems here
 
@@ -28,7 +28,7 @@ RobotContainer::RobotContainer()
     m_chooser.AddOption("Testing Auto", m_autoTesting.get());
     m_chooser.AddOption("Climb Auto", m_autoClimb.get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.get());
-    m_chooser.AddOption("Auto, Test, Neutral Collect", m_autoTestNeutralCollect.get());
+    m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData(&m_chooser);

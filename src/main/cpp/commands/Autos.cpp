@@ -69,7 +69,7 @@ frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {
     );
 }
 
-frc2::CommandPtr autos::AutoTestNeutralCollect(DriveSubsystem* drive) {
+frc2::CommandPtr autos::AutoNeutralCollect(DriveSubsystem* drive) {
 
     return frc2::cmd::Sequence(
         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.958328247070312_m, 3.980616807937622_m, 3.141592653589793_rad}, frc::Pose2d{14.186327934265137_m, 4.008525848388672_m, 3.141592653589793_rad})),
