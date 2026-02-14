@@ -32,7 +32,6 @@ frc2::CommandPtr autos::AutoTesting2(DriveSubsystem* drive) {
     );
 }
 
-
 frc2::CommandPtr autos::AutoClimb(DriveSubsystem* drive){
     return frc2::cmd::Sequence(
         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.988293647766113_m, 3.625459671020508_m, -3.141592653589793_rad}, frc::Pose2d{14.201175689697266_m, 3.612825393676758_m, -3.141592653589793_rad})),
@@ -42,10 +41,29 @@ frc2::CommandPtr autos::AutoClimb(DriveSubsystem* drive){
     );
 }
 
-
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive) {
     
     choreo::Trajectory<choreo::SwerveSample> temporaryTrajectory;
 
     drive->FollowTrajectoryCommand(temporaryTrajectory);
 }
+
+frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {
+    frc::Pose2d startPose{3.5439321994781494_m, 4.022441864013672_m, 0_rad};
+    frc::Pose2d targetPose{2.4197206497192383_m, 4.022441864013672_m, 0_rad};
+
+    frc::Trajectory traj = drive->CreateTrajectory(startPose, targetPose);
+
+    return frc2::cmd::Sequence(
+
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{3.54_m, 4.02_m, 0_rad}, frc::Pose2d{2.42_m, 4.02_m, 0_rad})),
+        //shoot
+        drive->AlignHeadingCommand(2.34_rad),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{0.46_m, 4.94_m, 1.57_rad})),
+        //intake
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{1.39_m, 6.88_m, -0.95_rad})),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{2.43_m, 4.04_m,0_rad}))
+        //shoot
+
+    );
+};

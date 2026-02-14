@@ -49,6 +49,7 @@ private:
     frc2::CommandPtr m_autoClimb;
     frc2::CommandPtr m_autoTesting;
     frc2::CommandPtr m_choreoAuto;
+    frc2::CommandPtr m_autoDepot;
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;

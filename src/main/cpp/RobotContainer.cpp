@@ -14,7 +14,8 @@
 RobotContainer::RobotContainer()
 :   m_autoClimb{autos::AutoClimb(&m_drive)},
     m_autoTesting{autos::AutoTesting(&m_drive)},
-    m_choreoAuto{autos::ChoreoAuto(&m_drive)}
+    m_choreoAuto{autos::ChoreoAuto(&m_drive)},
+    m_autoDepot{autos::AutoDepot(&m_drive)}
 {
     // Initialize all of your commands and subsystems here
 
@@ -25,6 +26,7 @@ RobotContainer::RobotContainer()
     m_chooser.SetDefaultOption("Choreo Auto", m_choreoAuto.get());
     m_chooser.AddOption("Testing Auto", m_autoTesting.get());
     m_chooser.AddOption("Climb Auto", m_autoClimb.get());
+    m_chooser.AddOption("Depot Auto", m_autoDepot.get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData(&m_chooser);
@@ -65,4 +67,3 @@ void RobotContainer::ConfigureBindings() {
 frc2::Command* RobotContainer::GetAutonomousCommand() {
     return m_chooser.GetSelected();
 }
-
