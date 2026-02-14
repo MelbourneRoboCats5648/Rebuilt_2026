@@ -2,9 +2,14 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID)
-: m_motor(motorCanID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_followerMotor(followerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless)
+ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID, 
+  PIDConstants pidConst, 
+  frc::TrapezoidProfile<units::meter>::Constraints pidProfile)
+: 
+  m_motor(motorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_followerMotor(followerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_controller(pidConst.kP, pidConst.kI, pidConst.kD, pidProfile, ClimbConstants::kDt)
+
 {
     rev::spark::SparkMaxConfig motorConfig;
 
@@ -32,13 +37,16 @@ ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID)
     followerConfig
       .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
       .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
-      .Follow(m_motor, true);  //
+      .Follow(m_motor, true);  // invert = true
 
     m_followerMotor.Configure(
       followerConfig,
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
+
+    m_controller.SetTolerance(ClimbConstants::kElevatorPositionTolerance, ClimbConstants::kElevatorVelocityTolerance);
+
 
 };
 
