@@ -2,8 +2,9 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-ClimbSubsystem::ClimbSubsystem(int canID, int followerID)
-: m_motor(canID, rev::spark::SparkMax::MotorType::kBrushless)
+ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID)
+: m_motor(motorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_followerMotor(followerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless)
 {
     rev::spark::SparkMaxConfig motorConfig;
 
@@ -25,15 +26,15 @@ ClimbSubsystem::ClimbSubsystem(int canID, int followerID)
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
-    rev::spark::SparkMax followerMotor(followerID, rev::spark::SparkMax::MotorType::kBrushless);
+
     rev::spark::SparkMaxConfig followerConfig;
 
     followerConfig
       .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
       .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
-      .Follow(m_motor, true); 
+      .Follow(m_motor, true);  //
 
-    followerMotor.Configure(
+    m_followerMotor.Configure(
       followerConfig,
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters

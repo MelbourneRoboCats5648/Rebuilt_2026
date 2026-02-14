@@ -17,8 +17,6 @@ namespace ClimbConstants {
 
     double kGearRatio = (67);
 
-    
-
 }
 
 

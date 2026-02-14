@@ -6,7 +6,7 @@
 
 class ClimbSubsystem : public frc2::SubsystemBase{
     public:
-    ClimbSubsystem(int canID, int followerID = -1);
+    ClimbSubsystem(int motorCanID, int followerMotorCanID);
 
     frc2::CommandPtr ClimbUpCommand();
     frc2::CommandPtr MoveDownCommand();
@@ -18,5 +18,6 @@ class ClimbSubsystem : public frc2::SubsystemBase{
 
 private:
     rev::spark::SparkMax m_motor;
+    rev::spark::SparkMax m_followerMotor;
 
 };
