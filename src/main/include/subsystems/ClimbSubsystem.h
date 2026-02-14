@@ -5,11 +5,10 @@
 #include <rev/SparkMax.h>
 
 #include <frc/controller/ProfiledPIDController.h>
-#include <frc/trajectory/TrapezoidProfile.h>
 
 class ClimbSubsystem : public frc2::SubsystemBase{
     public:
-    ClimbSubsystem(int motorCanID, int followerMotorCanID, 
+    ClimbSubsystem(int kMotorCanID, int kFollowerMotorCanID, 
         PIDConstants pidConst, 
         frc::TrapezoidProfile<units::meter>::Constraints pidProfile);
 
@@ -26,5 +25,4 @@ private:
     rev::spark::SparkMax m_followerMotor;
 
     frc::ProfiledPIDController<units::meter> m_controller;
-
 };
