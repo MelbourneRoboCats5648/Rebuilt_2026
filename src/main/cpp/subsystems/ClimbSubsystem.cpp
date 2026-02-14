@@ -2,19 +2,14 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-ClimbSubsystem::ClimbSubsystem(int canID)
+ClimbSubsystem::ClimbSubsystem(int canID, int followerID)
 : m_motor(canID, rev::spark::SparkMax::MotorType::kBrushless)
 {
     rev::spark::SparkMaxConfig motorConfig;
 
     motorConfig
-      .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
-      .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
-
-//this doesn't build when not commented out 
-    //motorConfig.softLimit
-    //.ForwardSoftLimit(maxLimit.value()).ForwardSoftLimitEnabled(true)
-    //.ReverseSoftLimit(minLimit.value()).ReverseSoftLimitEnabled(true);
+    .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
+    .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
 
     motorConfig.softLimit
     .ForwardSoftLimit(ClimbConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
@@ -29,4 +24,22 @@ ClimbSubsystem::ClimbSubsystem(int canID)
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
-}
+
+    rev::spark::SparkMax followerMotor(followerID, rev::spark::SparkMax::MotorType::kBrushless);
+    rev::spark::SparkMaxConfig followerConfig;
+
+    followerConfig
+      .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
+      .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
+      .Follow(m_motor, true); 
+
+    followerMotor.Configure(
+      followerConfig,
+      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
+      rev::spark::SparkMax::PersistMode::kPersistParameters
+    );
+
+};
+
+
+

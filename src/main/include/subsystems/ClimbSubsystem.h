@@ -6,7 +6,7 @@
 
 class ClimbSubsystem : public frc2::SubsystemBase{
     public:
-    ClimbSubsystem(int canID);
+    ClimbSubsystem(int canID, int followerID = -1);
 
     frc2::CommandPtr ClimbUpCommand();
     frc2::CommandPtr MoveDownCommand();
