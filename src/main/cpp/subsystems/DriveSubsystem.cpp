@@ -171,6 +171,55 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     .FinallyDo([this] { this->Stop(); });
 }
 
+frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
+    return RunOnce([this]{
+        m_choreoController.getHeadingController().Reset();
+        m_choreoController.getXController().Reset();
+        m_choreoController.getYController().Reset();
+    }).AndThen(
+        Run([this, traj = trajectory] {
+
+            frc::Pose2d desiredPose;
+            if (traj.GetInitialPose().has_value())
+            {
+                desiredPose = traj.GetInitialPose().value();
+            }
+            else
+            {}
+
+            radian_t desiredHeading = 0.1_rad;  // fixme - need to get the heading angle from desired pose
+            meter_t desiredX = desiredPose.X();
+            meter_t desiredY = desiredPose.Y();
+
+            auto currentPose = GetPose();
+            meter_t currentX = currentPose.X();
+            meter_t currentY = currentPose.Y();
+
+            auto angularRate = m_choreoController.getHeadingController()
+                                .Calculate(radian_t{GetHeading()}.value(), desiredHeading.value());
+
+            auto xSpeed = m_choreoController.getXController()
+                                .Calculate(currentX.value(), desiredX.value());
+            auto ySpeed = m_choreoController.getYController()
+                                .Calculate(currentY.value(), desiredY.value());
+
+            const bool isFieldCentric = true;
+            Drive(meters_per_second_t{xSpeed}, meters_per_second_t{ySpeed}, radians_per_second_t{angularRate}, isFieldCentric);
+
+        }).Until([this] {
+            // fixme - will need find the correct end condition
+            const bool isTrajectoryFinished = false;
+            return isTrajectoryFinished;
+        }))
+    .FinallyDo([this]{
+        Stop();
+
+        m_choreoController.getHeadingController().Reset();
+        m_choreoController.getXController().Reset();
+        m_choreoController.getYController().Reset();
+     }); 
+}
+
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
     return RunOnce([this]{
         radian_t desiredHeading = 0.1_rad;
