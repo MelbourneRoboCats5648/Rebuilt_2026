@@ -1,8 +1,6 @@
 #pragma once
 
 #include <constants/ClimbConstants.h>
-#include <rev/config/SparkMaxConfig.h>
-
 #include <frc2/command/SubsystemBase.h>
 #include <rev/SparkMax.h>
 

@@ -15,6 +15,8 @@ namespace ClimbConstants {
 
     constexpr int kCurrentLimit = (50);
 
+    double kGearRatio = (67);
+
     
 
 }
