@@ -32,6 +32,7 @@ frc2::CommandPtr autos::AutoTesting2(DriveSubsystem* drive) {
     );
 }
 
+
 frc2::CommandPtr autos::AutoClimb(DriveSubsystem* drive){
     return frc2::cmd::Sequence(
         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.988293647766113_m, 3.625459671020508_m, -3.141592653589793_rad}, frc::Pose2d{14.201175689697266_m, 3.612825393676758_m, -3.141592653589793_rad})),
@@ -66,4 +67,19 @@ frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {
         //shoot
 
     );
-};
+}
+
+frc2::CommandPtr autos::AutoTestNeutralCollect(DriveSubsystem* drive) {
+
+    return frc2::cmd::Sequence(
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.958328247070312_m, 3.980616807937622_m, 3.141592653589793_rad}, frc::Pose2d{14.186327934265137_m, 4.008525848388672_m, 3.141592653589793_rad})),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{14.25610065460205_m, 0.6873465180397034_m, 3.1149323264619024_rad})),
+        //shoot->ShootToHubCommand()
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{9.888330459594727_m, 1.3432096242904663_m, 1.5707963267948966_rad})),
+        drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{8.939422607421875_m, 2.850299596786499_m, 1.5707963267948966_rad})),
+        //intake->ExtendIntake()
+        //intake->IntakeBalls()
+        drive->AlignHeadingCommand(180_deg)
+        //shoot->ShootToAllianceCommand()
+    );
+}

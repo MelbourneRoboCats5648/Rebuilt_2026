@@ -23,6 +23,8 @@ frc2::CommandPtr AutoClimb(DriveSubsystem* drive);
 
 frc2::CommandPtr AutoDepot(DriveSubsystem* drive);
 
+frc2::CommandPtr AutoTestNeutralCollect(DriveSubsystem* drive);
+
 frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive);
 
 }  // namespace autos
