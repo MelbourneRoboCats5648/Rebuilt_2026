@@ -199,9 +199,9 @@ frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<chor
 
        
         }).Until([this] {
-            return m_choreoController.getHeadingController().AtSetpoint();
-            return m_choreoController.getXController().AtSetpoint();
-            return m_choreoController.getYController().AtSetpoint();
+            return m_choreoController.getHeadingController().AtSetpoint()
+                && m_choreoController.getXController().AtSetpoint()
+                && m_choreoController.getYController().AtSetpoint();
         }))
     .FinallyDo([this]{
         Stop();
