@@ -60,7 +60,7 @@ void RobotContainer::ConfigureBindings() {
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
         },
         { &m_drive }
     ));

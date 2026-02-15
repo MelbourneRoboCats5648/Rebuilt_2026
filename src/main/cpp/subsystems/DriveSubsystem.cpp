@@ -18,12 +18,10 @@ DriveSubsystem::DriveSubsystem() {
         .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
     
     /* Configure Pigeon2 */
-    Pigeon2Configuration toApply{};
+    //Pigeon2Configuration toApply{};
 
-    m_gyro.GetConfigurator().Apply(toApply);
-    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
-
-    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+    //m_gyro.GetConfigurator().Apply(toApply);  
+    //ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(
@@ -33,6 +31,10 @@ DriveSubsystem::DriveSubsystem() {
     );
     m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
     // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
+
+    //m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+    m_gyro.Calibrate();
+    m_gyro.Reset();
 }
 
 void DriveSubsystem::Periodic() {
@@ -58,11 +60,12 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-    m_gyro.Reset();
+   m_gyro.Reset();
 }
 
 degree_t DriveSubsystem::GetHeading() {
-    return m_gyro.GetRotation2d().Degrees();
+    //return m_gyro.GetRotation2d().Degrees();
+    return -m_gyro.GetAngle(); // need to negate value of ADIS gyro so that CCW rotation is positive
 }
 
 /* kinematics/"set speed" */
