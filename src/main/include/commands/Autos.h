@@ -25,7 +25,7 @@ frc2::CommandPtr AutoDepot(DriveSubsystem* drive);
 
 frc2::CommandPtr AutoNeutralCollect(DriveSubsystem* drive);
 
-frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive);
+frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
 
 }  // namespace autos
 

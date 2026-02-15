@@ -8,13 +8,14 @@
 #include <frc2/command/RunCommand.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <choreo/trajectory/Trajectory.h>
 
 #include "commands/Autos.h"
 
-RobotContainer::RobotContainer()
+RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj)
 :   m_autoClimb{autos::AutoClimb(&m_drive)},
     m_autoTesting{autos::AutoTesting(&m_drive)},
-    m_choreoAuto{autos::ChoreoAuto(&m_drive)},
+    m_choreoAuto{autos::ChoreoAuto(&m_drive, choreoTraj)},
     m_autoDepot{autos::AutoDepot(&m_drive)},
     m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)}
 {

@@ -12,10 +12,6 @@
 #include "RobotContainer.h"
 #include "choreo/Choreo.h"
 
-
-
-#include "choreo/Choreo.h"
-
 class Robot : public frc::TimedRobot {
  public:
   Robot();
@@ -35,9 +31,11 @@ class Robot : public frc::TimedRobot {
   // doesn't have undefined behavior and potentially crash.
   frc2::Command* m_autonomousCommand;
 
-  RobotContainer m_container;
+  
 
 // Loads a swerve trajectory, alternatively use DifferentialSample if the robot is tank drive  
 std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory = 
-    choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("myTrajectory");
+    choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath");
+
+    RobotContainer m_container{m_trajectory.value()};
 };

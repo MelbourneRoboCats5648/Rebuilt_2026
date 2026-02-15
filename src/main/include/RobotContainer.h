@@ -24,7 +24,7 @@
  */
 class RobotContainer {
 public:
-    RobotContainer();
+    RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
 
     frc2::Command* GetAutonomousCommand();
 

@@ -174,7 +174,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     .FinallyDo([this] { this->Stop(); });
 }
 
-frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
+frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
     return RunOnce([this]{
         m_choreoController.getHeadingController().Reset();
         m_choreoController.getXController().Reset();
