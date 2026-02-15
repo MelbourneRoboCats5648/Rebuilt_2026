@@ -12,12 +12,14 @@ DriveSubsystem::DriveSubsystem() {
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
         
     /* Configure Pigeon2 */
-    Pigeon2Configuration toApply{};
+    //Pigeon2Configuration toApply{};
 
     //m_gyro.GetConfigurator().Apply(toApply);
     //ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
     //m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+    m_gyro.Calibrate();
+    m_gyro.Reset();
 }
 
 void DriveSubsystem::Periodic() {
@@ -44,12 +46,12 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-   // m_gyro.Reset();
+   m_gyro.Reset();
 }
 
 degree_t DriveSubsystem::GetHeading() {
     //return m_gyro.GetRotation2d().Degrees();
-    return 0.0_deg;
+    return -m_gyro.GetAngle(); // need to negate value of ADIS gyro so that CCW rotation is positive
 }
 
 /* kinematics/"set speed" */

@@ -4,6 +4,7 @@
 #include <frc2/command/SubsystemBase.h>
 
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <frc/ADIS16470_IMU.h>
 
 #include <drive/DriveModule.h>
 
@@ -51,6 +52,7 @@ public:
 
 private:
     //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    frc::ADIS16470_IMU m_gyro;
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
