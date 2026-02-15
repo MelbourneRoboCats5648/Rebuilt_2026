@@ -187,9 +187,11 @@ frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<c
             else
             {}
 
-            radian_t desiredHeading = 0.1_rad;  // fixme - need to get the heading angle from desired pose
+            
             meter_t desiredX = desiredPose.X();
             meter_t desiredY = desiredPose.Y();
+            frc::Rotation2d desiredRotation = desiredPose.Rotation();
+            radian_t desiredHeading = desiredRotation.Radians();
 
             auto currentPose = GetPose();
             meter_t currentX = currentPose.X();
