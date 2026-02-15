@@ -187,7 +187,6 @@ frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<c
             else
             {}
 
-            
             meter_t desiredX = desiredPose.X();
             meter_t desiredY = desiredPose.Y();
             frc::Rotation2d desiredRotation = desiredPose.Rotation();
@@ -209,9 +208,13 @@ frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<c
             Drive(meters_per_second_t{xSpeed}, meters_per_second_t{ySpeed}, radians_per_second_t{angularRate}, isFieldCentric);
 
         }).Until([this] {
+            return m_choreoController.getHeadingController().AtSetpoint()
+            && m_choreoController.getXController().AtSetpoint()
+            && m_choreoController.getYController().AtSetpoint();
+
             // fixme - will need find the correct end condition
-            const bool isTrajectoryFinished = false;
-            return isTrajectoryFinished;
+            //const bool isTrajectoryFinished = false;
+            //return isTrajectoryFinished;
         }))
     .FinallyDo([this]{
         Stop();
