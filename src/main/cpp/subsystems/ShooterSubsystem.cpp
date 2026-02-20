@@ -16,6 +16,9 @@ ShooterSubsystem::ShooterSubsystem(int motorID, int followerID)
     m_follower.GetConfigurator().Apply(motorConfig);
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
+
+    SetDefaultCommand(ShootCommand(0_V));
+
 };
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
