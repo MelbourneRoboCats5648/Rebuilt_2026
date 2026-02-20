@@ -13,6 +13,7 @@ class ClimbSubsystem : public frc2::SubsystemBase{
         frc::TrapezoidProfile<units::meter>::Constraints pidProfile);
 
     frc2::CommandPtr ClimbUpCommand();
+    frc2::CommandPtr MoveUpCommand();
     frc2::CommandPtr MoveDownCommand();
     frc2::CommandPtr DefaultPosition();
 
