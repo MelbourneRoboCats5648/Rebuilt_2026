@@ -18,8 +18,6 @@ using namespace units::current;
 namespace ClimbConstants {
     
     //motors
-    inline constexpr int kMotorCanID = (21);
-    inline constexpr int kFollowerMotorCanID = (22);
 
     inline constexpr meter_t kInitHeight = (67_m); 
     inline constexpr meter_t kDefaultHeight = (67_m);

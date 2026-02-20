@@ -40,8 +40,8 @@ private:
 
 
 
-    ClimbSubsystem m_climb{ClimbConstants::kMotorCanID, 
-    ClimbConstants::kFollowerMotorCanID, 
+    ClimbSubsystem m_climb{HardwareConstants::kMotorCanID, 
+    HardwareConstants::kFollowerMotorCanID, 
     ClimbConstants::kClimbPID, 
     ClimbConstants::trapezoidProfileClimb};
 

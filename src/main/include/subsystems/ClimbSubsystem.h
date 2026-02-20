@@ -3,6 +3,8 @@
 #include <constants/ClimbConstants.h>
 #include <frc2/command/SubsystemBase.h>
 #include <rev/SparkMax.h>
+#include <frc2/command/CommandPtr.h>
+
 
 #include <frc/controller/ProfiledPIDController.h>
 
@@ -13,9 +15,7 @@ class ClimbSubsystem : public frc2::SubsystemBase{
         frc::TrapezoidProfile<units::meter>::Constraints pidProfile);
 
     frc2::CommandPtr ClimbUpCommand();
-    frc2::CommandPtr MoveUpCommand();
-    frc2::CommandPtr MoveDownCommand();
-    frc2::CommandPtr DefaultPosition();
+    frc2::CommandPtr ClimbDownCommand();
 
     void ResetEncoder();
     void ResetMotor();
