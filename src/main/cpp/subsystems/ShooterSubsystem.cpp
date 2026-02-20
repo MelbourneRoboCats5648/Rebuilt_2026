@@ -28,6 +28,11 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
     
 };
 
+frc2::CommandPtr ShooterSubsystem::ShootCommand(units::volt_t volts) {
+    return Run([this, volts]{
+                m_motor.SetVoltage(volts);
+            });
+};
 
 // derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
 // done by rearranging the formula to find the speed for a given distance and angle 

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/CommandPtr.h>
+
 #include "units/velocity.h"
 #include "units/angle.h"
 #include "units/length.h"
@@ -20,6 +22,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     public:
         ShooterSubsystem(int motorID, int followerID);
         meters_per_second_t CalculateShooterSpeed(meter_t distance, degree_t angle);
+
+        frc2::CommandPtr ShootCommand(units::volt_t volts);
 
     private:
 
