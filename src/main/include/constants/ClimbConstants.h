@@ -19,6 +19,8 @@ namespace ClimbConstants {
     
     //motors
 
+    //fixme - change and add parameters later. placeholder values atm. 
+
     inline constexpr meter_t kInitHeight = (67_m); 
     inline constexpr meter_t kDefaultHeight = (67_m);
 

@@ -34,7 +34,7 @@ ClimbSubsystem::ClimbSubsystem()
 
     followerConfig
       .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
-      .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
+      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
       .Follow(m_motor, true);  // invert = true
 
     m_followerMotor.Configure(
