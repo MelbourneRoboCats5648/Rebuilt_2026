@@ -40,10 +40,13 @@ void RobotContainer::ConfigureBindings() {
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
     ));
+
+    m_driverController.RightTrigger().OnTrue(m_drive.ToggleFieldRelativeCommand());
+
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

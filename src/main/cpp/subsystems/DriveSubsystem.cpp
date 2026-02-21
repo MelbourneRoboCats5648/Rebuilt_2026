@@ -54,6 +54,11 @@ degree_t DriveSubsystem::GetHeading() {
     return -m_gyro.GetAngle(); // need to negate value of ADIS gyro so that CCW rotation is positive
 }
 
+void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
+{
+    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative);
+}
+
 /* kinematics/"set speed" */
 void DriveSubsystem::Drive(
     meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
@@ -106,4 +111,9 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);
+}
+
+frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
+{
+    return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
 }

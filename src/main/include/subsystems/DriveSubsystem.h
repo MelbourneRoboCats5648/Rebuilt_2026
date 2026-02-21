@@ -38,8 +38,11 @@ public:
 
     /* kinematics/"set speed" */
     void Drive(
+        meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed
+    );
+    void Drive(
         meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-        bool fieldRelative
+        bool isFieldRelative
     );
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
@@ -49,6 +52,8 @@ public:
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
+
+    frc2::CommandPtr ToggleFieldRelativeCommand();
 
 private:
     //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
@@ -92,4 +97,5 @@ private:
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
 
+    bool m_isFieldRelative = false;
 };
