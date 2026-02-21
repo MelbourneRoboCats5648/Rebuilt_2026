@@ -9,6 +9,7 @@
 
 #include <ctre/phoenix6/TalonFX.hpp>
 
+#include <constants/HardwareConstants.h>
 
 using namespace units::velocity;
 using namespace units::angle;
@@ -20,10 +21,11 @@ using namespace ctre::phoenix6::hardware;
 class ShooterSubsystem : public frc2::SubsystemBase {
 
     public:
-        ShooterSubsystem(int motorID, int followerID);
+        ShooterSubsystem();
         meters_per_second_t CalculateShooterSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr ShootCommand(units::volt_t volts);
+        void Shoot(units::volt_t volts);
 
     private:
 

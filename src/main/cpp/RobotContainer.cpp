@@ -8,6 +8,8 @@
 #include <frc2/command/RunCommand.h>
 
 #include "commands/Autos.h"
+#include "units/math.h"
+#include "units/voltage.h"
 
 RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
@@ -35,17 +37,36 @@ void RobotContainer::ConfigureBindings() {
             );
             meters_per_second_t ySpeed = m_yLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetLeftX())
-                * DrivetrainConstants::kMaxSpeed
+                 * DrivetrainConstants::kMaxSpeed
             );
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetRightX())
+
+                PreprocessJoystickInput(-m_driverController.GetRightX()) 
                 * DrivetrainConstants::kMaxAngularSpeed
+                
             );
+
+            rotSpeed = 0_rad_per_s; //fixme - setting rotation to zero to test shooter
 
             m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
         },
         { &m_drive }
     ));
+
+    m_shooter.SetDefaultCommand(m_shooter.ShootCommand(0_V));
+
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this]{
+                units::volt_t volts;
+                volts = PreprocessJoystickInput(-m_driverController.GetRightY()) 
+                            * ShooterConstants::kMaxVoltage;
+
+                volts = units::math::abs(volts);
+
+                m_shooter.Shoot(volts);
+            }
+        ));
+
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

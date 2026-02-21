@@ -7,9 +7,9 @@
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
 
-ShooterSubsystem::ShooterSubsystem(int motorID, int followerID)
-: m_motor(motorID, "rio"),
-  m_follower(followerID, "rio")
+ShooterSubsystem::ShooterSubsystem()
+: m_motor(HardwareConstants::kShooterMotorID, "rio"),
+  m_follower(HardwareConstants::kShooterFollowerMotorID, "rio")
 {
     TalonFXConfiguration motorConfig = createMotorConfig();
     m_motor.GetConfigurator().Apply(motorConfig);
@@ -31,9 +31,13 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
     
 };
 
+void ShooterSubsystem::Shoot(units::volt_t volts){
+    m_motor.SetVoltage(volts);
+}
+
 frc2::CommandPtr ShooterSubsystem::ShootCommand(units::volt_t volts) {
     return Run([this, volts]{
-                m_motor.SetVoltage(volts);
+                Shoot(volts);
             });
 };
 
