@@ -22,6 +22,6 @@ namespace HardwareConstants {
     inline constexpr int kShooterMotorID = 15;
     inline constexpr int kShooterFollowerMotorID = 16;
 
-    inline constexpr int kMotorCanID = (21);
-    inline constexpr int kFollowerMotorCanID = (22);
+    inline constexpr int kClimbMotorID = 21;
+    inline constexpr int kClimbFollowerMotorID = 22;
 };

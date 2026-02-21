@@ -4,8 +4,8 @@
 
 ClimbSubsystem::ClimbSubsystem()
 : 
-  m_motor(HardwareConstants::kMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_followerMotor(HardwareConstants::kFollowerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_motor(HardwareConstants::kClimbMotorID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_followerMotor(HardwareConstants::kClimbFollowerMotorID, rev::spark::SparkMax::MotorType::kBrushless),
   m_controller(ClimbConstants::kClimbPID.kP, ClimbConstants::kClimbPID.kI, ClimbConstants::kClimbPID.kD, ClimbConstants::trapezoidProfileClimb, ClimbConstants::kDt)
 
 {
