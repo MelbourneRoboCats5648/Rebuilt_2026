@@ -67,6 +67,8 @@ void RobotContainer::ConfigureBindings() {
             }
         ));
 
+    m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+    m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
