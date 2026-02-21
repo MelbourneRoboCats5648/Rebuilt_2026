@@ -18,4 +18,7 @@ namespace HardwareConstants {
     inline constexpr int kBackRightSpeedID = 7;
     inline constexpr int kBackRightDirectionID = 8;
     inline constexpr int kBackRightEncoderID = 13;
+
+    inline constexpr int kMotorCanID = (21);
+    inline constexpr int kFollowerMotorCanID = (22);
 };
