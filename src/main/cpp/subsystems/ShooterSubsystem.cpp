@@ -17,7 +17,7 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
-    SetDefaultCommand(ShootCommand(0_V));
+    //SetDefaultCommand(ShootCommand(0_V)); // fixme - check if this can be uncommented
 
 };
 
@@ -27,6 +27,7 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
     motorConfig.Slot0.kI = ShooterConstants::motor::kI;
     motorConfig.Slot0.kD = ShooterConstants::motor::kD;
 
+    motorConfig.MotorOutput.Inverted = true;
     return motorConfig;
     
 };

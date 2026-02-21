@@ -37,6 +37,7 @@ public:
     /* gyroscope */
     void ResetGyro();
     degree_t GetHeading();
+    
 
     /* kinematics/"set speed" */
     void Drive(
@@ -60,7 +61,7 @@ public:
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
 private:
-    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"}; // fixme - uncomment this
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,

@@ -22,7 +22,7 @@ namespace ShooterConstants {
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
     inline constexpr double kgearRatio = 1;
 
-    inline constexpr units::volt_t kMaxVoltage(4);
+    inline constexpr units::volt_t kMaxVoltage(12);
 
 };
 

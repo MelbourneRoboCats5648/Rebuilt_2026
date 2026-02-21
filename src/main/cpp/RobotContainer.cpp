@@ -52,9 +52,7 @@ void RobotContainer::ConfigureBindings() {
         },
         { &m_drive }
     ));
-
-    m_shooter.SetDefaultCommand(m_shooter.ShootCommand(0_V));
-
+    
     m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this]{
                 units::volt_t volts;
@@ -64,11 +62,13 @@ void RobotContainer::ConfigureBindings() {
                 volts = units::math::abs(volts);
 
                 m_shooter.Shoot(volts);
-            }
+            },
+            { &m_shooter }
         ));
+    
 
-    m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
-    m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
+    //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+    //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
