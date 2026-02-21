@@ -40,8 +40,8 @@ namespace ClimbConstants {
 
     inline constexpr units::second_t kDt = 20_ms;
 
-    inline constexpr units::meter_t kElevatorPositionTolerance = 0.03_m;
-    inline constexpr units::meters_per_second_t kElevatorVelocityTolerance = 0.1_mps;
+    inline constexpr units::meter_t kClimbPositionTolerance = 0.03_m;
+    inline constexpr units::meters_per_second_t kClimbVelocityTolerance = 0.1_mps;
 
 }
 

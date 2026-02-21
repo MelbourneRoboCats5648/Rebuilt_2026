@@ -37,13 +37,7 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive{};
-
-
-
-    ClimbSubsystem m_climb{HardwareConstants::kMotorCanID, 
-    HardwareConstants::kFollowerMotorCanID, 
-    ClimbConstants::kClimbPID, 
-    ClimbConstants::trapezoidProfileClimb};
+    ClimbSubsystem m_climb{};
 
     void ConfigureBindings();
 

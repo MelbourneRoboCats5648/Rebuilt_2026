@@ -2,13 +2,11 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID, 
-  PIDConstants pidConst, 
-  frc::TrapezoidProfile<units::meter>::Constraints pidProfile)
+ClimbSubsystem::ClimbSubsystem()
 : 
-  m_motor(motorCanID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_followerMotor(followerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_controller(pidConst.kP, pidConst.kI, pidConst.kD, pidProfile, ClimbConstants::kDt)
+  m_motor(HardwareConstants::kMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_followerMotor(HardwareConstants::kFollowerMotorCanID, rev::spark::SparkMax::MotorType::kBrushless),
+  m_controller(ClimbConstants::kClimbPID.kP, ClimbConstants::kClimbPID.kI, ClimbConstants::kClimbPID.kD, ClimbConstants::trapezoidProfileClimb, ClimbConstants::kDt)
 
 {
     rev::spark::SparkMaxConfig motorConfig;
@@ -45,7 +43,7 @@ ClimbSubsystem::ClimbSubsystem(int motorCanID, int followerMotorCanID,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
-    m_controller.SetTolerance(ClimbConstants::kElevatorPositionTolerance, ClimbConstants::kElevatorVelocityTolerance);
+    m_controller.SetTolerance(ClimbConstants::kClimbPositionTolerance, ClimbConstants::kClimbVelocityTolerance);
 
 
 };
