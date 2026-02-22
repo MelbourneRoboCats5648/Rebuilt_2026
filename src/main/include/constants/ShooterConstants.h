@@ -23,7 +23,7 @@ namespace ShooterConstants {
     inline constexpr degree_t angle(60);
     inline constexpr meter_t startHeight(0.3);
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
-    inline constexpr double kgearRatio = 3;
+    inline constexpr double kgearRatio = 2;
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);

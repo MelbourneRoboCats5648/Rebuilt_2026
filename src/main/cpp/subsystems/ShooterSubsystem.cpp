@@ -57,7 +57,7 @@ void ShooterSubsystem::Periodic() {
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
-        m_followerMotorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
+        m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
