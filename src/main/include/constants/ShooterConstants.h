@@ -26,6 +26,5 @@ namespace ShooterConstants {
     inline constexpr double kgearRatio = 1;
 
     inline constexpr units::volt_t kMaxVoltage(12);
-
+    inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
 };
-

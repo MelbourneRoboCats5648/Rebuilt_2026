@@ -37,12 +37,17 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
     motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
     motorConfig.MotorOutput.Inverted = true;
     motorConfig.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-    
+
     return motorConfig;
 };
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
     m_motor.SetVoltage(volts);
+}
+
+void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
+    ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity);
+    m_motor.SetControl(velocityVoltage);
 }
 
 frc2::CommandPtr ShooterSubsystem::ShootCommand(units::volt_t volts) {

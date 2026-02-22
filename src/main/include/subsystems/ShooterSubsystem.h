@@ -6,6 +6,7 @@
 #include "units/velocity.h"
 #include "units/angle.h"
 #include "units/length.h"
+#include "units/angular_velocity.h"
 
 #include <ctre/phoenix6/TalonFX.hpp>
 
@@ -26,6 +27,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         frc2::CommandPtr ShootCommand(units::volt_t volts);
         void Shoot(units::volt_t volts);
+        void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
 
     private:
 
