@@ -18,8 +18,13 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
-    //SetDefaultCommand(ShootCommand(0_V)); // fixme - check if this can be uncommented
+    SetDefaultCommand(ShootCommand(0_V)); // fixme - check if this can be uncommented
 
+    m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/RotorVel").Publish();
+    m_wheelVelPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/WheelVel").Publish();
+    
 };
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -40,6 +45,13 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
 
     return motorConfig;
 };
+
+void ShooterSubsystem::Periodic() {
+        /* publish current state */
+        m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
+        m_wheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
+    
+}
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
     m_motor.SetVoltage(volts);

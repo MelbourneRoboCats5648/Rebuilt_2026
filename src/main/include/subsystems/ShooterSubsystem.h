@@ -12,6 +12,12 @@
 
 #include <constants/HardwareConstants.h>
 
+#include <networktables/StructArrayTopic.h>
+#include <networktables/StructTopic.h>
+
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
+
 using namespace units::velocity;
 using namespace units::angle;
 using namespace units::length;
@@ -29,10 +35,16 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         void Shoot(units::volt_t volts);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
 
+        void Periodic() override;
+
+
     private:
 
 
     TalonFX m_motor;
     TalonFX m_follower;
     TalonFXConfiguration createMotorConfig();
+
+    nt::DoublePublisher m_rotorVelPub;
+    nt::DoublePublisher m_wheelVelPub;  
 };
