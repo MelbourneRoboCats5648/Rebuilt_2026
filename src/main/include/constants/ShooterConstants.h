@@ -11,10 +11,10 @@ using namespace units::angle;
 
 namespace ShooterConstants {
     namespace motor {
-        inline constexpr double kP = 0;
+        inline constexpr double kP = 0.3;
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
-        inline constexpr double kV = 0;
+        inline constexpr double kV = 0.1;
         inline constexpr double kS = 0;
         inline constexpr double kA = 0;
     }
@@ -23,7 +23,7 @@ namespace ShooterConstants {
     inline constexpr degree_t angle(60);
     inline constexpr meter_t startHeight(0.3);
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
-    inline constexpr double kgearRatio = 1;
+    inline constexpr double kgearRatio = 3;
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
