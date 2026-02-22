@@ -20,11 +20,10 @@ DriveSubsystem::DriveSubsystem() {
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
-    // fixme - need to uncomment this once gyro is installed
-    //m_gyro.GetConfigurator().Apply(toApply);
-    //ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
+    m_gyro.GetConfigurator().Apply(toApply);
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
-    //m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(
@@ -59,12 +58,11 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-    //m_gyro.Reset();  // fixme uncomment this
+    m_gyro.Reset();
 }
 
 degree_t DriveSubsystem::GetHeading() {
-    //return m_gyro.GetRotation2d().Degrees();
-    return 0_deg; // fixme uncomment above
+    return m_gyro.GetRotation2d().Degrees();
 }
 
 /* kinematics/"set speed" */

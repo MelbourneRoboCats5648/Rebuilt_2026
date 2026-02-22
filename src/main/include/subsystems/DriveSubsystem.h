@@ -61,7 +61,7 @@ public:
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
 private:
-    //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"}; // fixme - uncomment this
+    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
