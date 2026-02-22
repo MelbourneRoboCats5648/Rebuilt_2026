@@ -14,6 +14,9 @@ namespace ShooterConstants {
         inline constexpr double kP = 0;
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
+        inline constexpr double kV = 0;
+        inline constexpr double kS = 0;
+        inline constexpr double kA = 0;
     }
 
     inline constexpr meter_t distance(2.0);

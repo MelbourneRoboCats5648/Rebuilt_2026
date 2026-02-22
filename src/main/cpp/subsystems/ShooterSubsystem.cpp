@@ -6,6 +6,7 @@
 
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
+using namespace ctre::phoenix6::signals;
 
 ShooterSubsystem::ShooterSubsystem()
 : m_motor(HardwareConstants::kShooterMotorID, "rio"),
@@ -23,13 +24,21 @@ ShooterSubsystem::ShooterSubsystem()
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
     TalonFXConfiguration motorConfig;
+    motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+    motorConfig.Feedback.SensorToMechanismRatio = ShooterConstants::kgearRatio;
     motorConfig.Slot0.kP = ShooterConstants::motor::kP;
     motorConfig.Slot0.kI = ShooterConstants::motor::kI;
     motorConfig.Slot0.kD = ShooterConstants::motor::kD;
-
+    motorConfig.Slot0.kV = ShooterConstants::motor::kV;
+    motorConfig.Slot0.kS = ShooterConstants::motor::kS;
+    motorConfig.Slot0.kA = ShooterConstants::motor::kA;
+    motorConfig.CurrentLimits.SupplyCurrentLimit = 50_A; // fixme - these values will have to be changed
+    motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 60_A;
+    motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
     motorConfig.MotorOutput.Inverted = true;
-    return motorConfig;
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue::Coast;
     
+    return motorConfig;
 };
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
