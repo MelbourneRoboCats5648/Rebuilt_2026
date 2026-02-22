@@ -41,7 +41,7 @@ void DriveModule::SetDirectionMotorConfig(){
     directionMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = DirectionMotor::kLowerCurrentLimit;
     directionMotorConfig.CurrentLimits.SupplyCurrentLowerTime = DirectionMotor::kLowerLimitTime;
     directionMotorConfig.MotorOutput.Inverted = true;  // +V should rotate the motor counter-clockwis
-    directionMotorConfig.MotorOutput.NeutralMode = NeutralModeValue::Brake; // fixme - check if this should be Brake or Coast
+    directionMotorConfig.MotorOutput.NeutralMode = NeutralModeValue::Brake;
     m_directionMotor.GetConfigurator().Apply(directionMotorConfig);
 }
 

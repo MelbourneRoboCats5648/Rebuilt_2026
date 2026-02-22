@@ -18,13 +18,18 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
-    SetDefaultCommand(ShootCommand(0_V)); // fixme - check if this can be uncommented
+    SetDefaultCommand(ShootCommand(0_tps));
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/RotorVel").Publish();
-    m_wheelVelPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/WheelVel").Publish();
-    
+    m_motorWheelVelPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/MotorWheelVel").Publish();
+    m_followerMotorWheelVelPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/FollowerMotorWheelVel").Publish();
+    m_motorCurrentPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/MotorCurrent").Publish();
+    m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
 };
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -49,8 +54,10 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
 void ShooterSubsystem::Periodic() {
         /* publish current state */
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
-        m_wheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
-    
+        m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
+        m_followerMotorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
+        m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
+        m_followerMotorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
@@ -62,9 +69,9 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_motor.SetControl(velocityVoltage);
 }
 
-frc2::CommandPtr ShooterSubsystem::ShootCommand(units::volt_t volts) {
-    return Run([this, volts]{
-                Shoot(volts);
+frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
+    return Run([this, angularVelocity]{
+                ShootAngularVelocity(angularVelocity);
             });
 };
 

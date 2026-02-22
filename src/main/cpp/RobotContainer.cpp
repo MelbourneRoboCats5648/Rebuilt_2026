@@ -46,13 +46,12 @@ void RobotContainer::ConfigureBindings() {
                 
             );
 
-            rotSpeed = 0_rad_per_s; //fixme - setting rotation to zero to test shooter
-
+            //rotSpeed = 0_rad_per_s;
             m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
         },
         { &m_drive }
     ));
-    
+
     m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this]{
                 units::volt_t volts;
