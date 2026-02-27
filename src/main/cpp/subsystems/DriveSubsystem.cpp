@@ -23,7 +23,7 @@ DriveSubsystem::DriveSubsystem() {
     m_gyro.GetConfigurator().Apply(toApply);
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
-    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
+    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(

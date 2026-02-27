@@ -51,19 +51,19 @@ namespace DriveModuleConstants {
     };
 
     namespace DirectionEncoder {
-        inline constexpr turn_t kFrontLeftOffset = -0.306640625_tr;
-        inline constexpr turn_t kFrontRightOffset = -0.1748046875_tr;
-        inline constexpr turn_t kBackLeftOffset = 0.01953125_tr;
-        inline constexpr turn_t kBackRightOffset = 0.07421875_tr;
+        inline constexpr turn_t kFrontLeftOffset = -0.4189453125_tr;
+        inline constexpr turn_t kFrontRightOffset = -0.161865234375_tr;
+        inline constexpr turn_t kBackLeftOffset = 0.4599609375_tr;
+        inline constexpr turn_t kBackRightOffset = -0.2197265625_tr;
     };
 };
 
 namespace DrivetrainConstants {
     namespace ModuleLocation {
-        inline constexpr frc::Translation2d kFrontLeft{+0.26_m, +0.26_m};
-        inline constexpr frc::Translation2d kFrontRight{+0.26_m, -0.26_m};
-        inline constexpr frc::Translation2d kBackLeft{-0.26_m, +0.26_m};
-        inline constexpr frc::Translation2d kBackRight{-0.26_m, -0.26_m};
+        inline constexpr frc::Translation2d kFrontLeft{+0.2569_m, +0.2569_m};
+        inline constexpr frc::Translation2d kFrontRight{+0.2569_m, -0.2569_m};
+        inline constexpr frc::Translation2d kBackLeft{-0.2569_m, +0.2569_m};
+        inline constexpr frc::Translation2d kBackRight{-0.2569_m, -0.2569_m};
     };
 
     inline constexpr meters_per_second_t kMaxSpeed = 2.0_mps; // fixme - will need to increase this for comp

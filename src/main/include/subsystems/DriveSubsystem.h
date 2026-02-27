@@ -37,6 +37,7 @@ public:
     /* gyroscope */
     void ResetGyro();
     degree_t GetHeading();
+    
 
     /* kinematics/"set speed" */
     void Drive(

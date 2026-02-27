@@ -8,6 +8,8 @@
 #include <frc2/command/RunCommand.h>
 
 #include "commands/Autos.h"
+#include "units/math.h"
+#include "units/voltage.h"
 
 RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
@@ -35,20 +37,47 @@ void RobotContainer::ConfigureBindings() {
             );
             meters_per_second_t ySpeed = m_yLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetLeftX())
-                * DrivetrainConstants::kMaxSpeed
+                 * DrivetrainConstants::kMaxSpeed
             );
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetRightX())
+
+                PreprocessJoystickInput(-m_driverController.GetRightX()) 
                 * DrivetrainConstants::kMaxAngularSpeed
+                
             );
 
+            //rotSpeed = 0_rad_per_s;
             m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
         },
         { &m_drive }
     ));
 
-    m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
-    m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this]{
+                units::volt_t volts;
+                volts = PreprocessJoystickInput(-m_driverController.GetRightY()) 
+                            * ShooterConstants::kMaxVoltage;
+
+                volts = units::math::abs(volts);
+
+                m_shooter.Shoot(volts);
+            },
+            { &m_shooter }
+        ));
+    
+
+    /*m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::turns_per_second_t angularVelocity;
+            angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+                            * ShooterConstants::kMaxAngularVelocity;
+            m_shooter.ShootAngularVelocity(angularVelocity);
+        },
+        { &m_shooter }
+    ));*/
+
+    //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+    //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

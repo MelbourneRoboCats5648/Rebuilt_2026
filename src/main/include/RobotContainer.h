@@ -9,9 +9,11 @@
 
 #include "constants/OperatorConstants.h"
 #include "constants/DriveConstants.h"
+#include <constants/ShooterConstants.h>
 #include "constants/ClimbConstants.h"
 
 #include "subsystems/DriveSubsystem.h"
+#include <subsystems/ShooterSubsystem.h>
 #include "subsystems/ClimbSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
@@ -37,7 +39,8 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive{};
-    ClimbSubsystem m_climb{};
+    ShooterSubsystem m_shooter{};
+    //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
 
     void ConfigureBindings();
 
