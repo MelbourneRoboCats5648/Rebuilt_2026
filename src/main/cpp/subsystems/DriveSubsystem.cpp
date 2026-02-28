@@ -23,6 +23,7 @@ DriveSubsystem::DriveSubsystem() {
     m_gyro.GetConfigurator().Apply(toApply);
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
+    ResetGyro();
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
     m_holonomicController.SetTolerance(
@@ -58,11 +59,15 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-    m_gyro.Reset();
-}
+    m_gyro.Reset();}
 
 degree_t DriveSubsystem::GetHeading() {
     return m_gyro.GetRotation2d().Degrees();
+}
+
+void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
+{
+    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative);
 }
 
 /* kinematics/"set speed" */
@@ -191,4 +196,9 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
     return AlignHeadingCommand([heading] { return heading; });
+}
+
+frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
+{
+    return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
 }

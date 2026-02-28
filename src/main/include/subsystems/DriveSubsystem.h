@@ -22,6 +22,7 @@
 
 #include <frc/trajectory/Trajectory.h>
 
+
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
 using namespace DrivetrainConstants;
@@ -41,12 +42,18 @@ public:
 
     /* kinematics/"set speed" */
     void Drive(
+    meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed
+    );
+
+    void Drive(
         meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-        bool fieldRelative
+        bool isfieldRelative
     );
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
     frc::SwerveDriveKinematics<4>& GetKinematics();
+
+    frc2::CommandPtr ToggleFieldRelativeCommand();
 
     /* odometry/pose estimation */
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
@@ -62,6 +69,7 @@ public:
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
@@ -124,4 +132,7 @@ private:
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
+
+    bool m_isFieldRelative = false;
+
 };
