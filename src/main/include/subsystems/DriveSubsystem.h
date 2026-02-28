@@ -21,6 +21,8 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
+#include <frc/ADIS16470_IMU.h>
+
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
@@ -62,6 +64,8 @@ public:
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    frc::ADIS16470_IMU m_gyro;
+
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
