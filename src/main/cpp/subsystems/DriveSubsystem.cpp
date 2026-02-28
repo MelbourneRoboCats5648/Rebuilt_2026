@@ -63,13 +63,18 @@ void DriveSubsystem::SimulationPeriodic() {
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
     m_gyro.Reset();}
-    
+
 //hshaeahjae six seven six seven six seven
 
 degree_t DriveSubsystem::GetHeading() {
     //return m_gyro.GetRotation2d().Degrees();
     return -m_gyro.GetAngle(); // need to negate value of ADIS gyro so that CCW rotation is positive
 
+}
+
+void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
+{
+    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative);
 }
 
 /* kinematics/"set speed" */
@@ -198,4 +203,9 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
     return AlignHeadingCommand([heading] { return heading; });
+}
+
+frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
+{
+    return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
 }

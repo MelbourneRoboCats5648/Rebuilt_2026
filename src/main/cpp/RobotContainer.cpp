@@ -47,9 +47,11 @@ void RobotContainer::ConfigureBindings() {
             );
 
             //rotSpeed = 0_rad_per_s;
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
+
+
     ));
 
     m_shooter.SetDefaultCommand(frc2::RunCommand(
@@ -65,6 +67,7 @@ void RobotContainer::ConfigureBindings() {
             { &m_shooter }
         ));
     
+    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     /*m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this] {
