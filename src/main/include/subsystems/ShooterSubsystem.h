@@ -17,6 +17,7 @@
 
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
+#include <frc/geometry/Translation2d.h>
 
 using namespace units::velocity;
 using namespace units::angle;
@@ -40,6 +41,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     private:
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
+        meter_t CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2);
+
         TalonFXConfiguration createMotorConfig();
 
         TalonFX m_motor;

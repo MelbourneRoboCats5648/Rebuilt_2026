@@ -99,3 +99,7 @@ meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degre
 
         return speed;
 };
+
+meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2) {
+    return p1.Distance(p2);
+};
