@@ -17,6 +17,7 @@
 
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
+#include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 
 using namespace units::velocity;
@@ -35,6 +36,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr ShootCommand(units::turns_per_second_t angularVelocity);
         void Shoot(units::volt_t volts);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
+
+        units::meter_t DistanceToHub(frc::Pose2d robotPose);
 
         void Periodic() override;
 
