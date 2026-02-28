@@ -23,9 +23,8 @@ DriveSubsystem::DriveSubsystem() {
     m_gyro.GetConfigurator().Apply(toApply);
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
 
+    ResetGyro();
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
-    m_gyro.Reset();
-
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(
@@ -61,8 +60,6 @@ void DriveSubsystem::SimulationPeriodic() {
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
     m_gyro.Reset();}
-
-//hshaeahjae six seven six seven six seven
 
 degree_t DriveSubsystem::GetHeading() {
     return m_gyro.GetRotation2d().Degrees();
