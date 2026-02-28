@@ -52,6 +52,7 @@ void RobotContainer::ConfigureBindings() {
         { &m_drive }
     ));
 
+    /*
     m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this]{
                 units::volt_t volts;
@@ -64,9 +65,10 @@ void RobotContainer::ConfigureBindings() {
             },
             { &m_shooter }
         ));
+    */
     
 
-    /*m_shooter.SetDefaultCommand(frc2::RunCommand(
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this] {
             units::turns_per_second_t angularVelocity;
             angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
@@ -74,7 +76,19 @@ void RobotContainer::ConfigureBindings() {
             m_shooter.ShootAngularVelocity(angularVelocity);
         },
         { &m_shooter }
-    ));*/
+    ));
+
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::meter_t distanceToHub = 1_m;
+            units::degree_t shooterAngle = 30_deg;
+            units::meters_per_second_t ballSpeed = m_shooter.CalculateShooterSpeed(distanceToHub, shooterAngle);
+
+            units::turns_per_second_t angularVelocity = 10_tps;
+            m_shooter.ShootAngularVelocity(angularVelocity);
+        },
+        { &m_shooter }
+    ));
 
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
