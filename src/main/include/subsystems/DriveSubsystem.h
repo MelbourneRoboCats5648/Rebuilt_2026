@@ -63,7 +63,7 @@ public:
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
 private:
-    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
     frc::ADIS16470_IMU m_gyro;
 
 

@@ -47,7 +47,7 @@ void RobotContainer::ConfigureBindings() {
             );
 
             //rotSpeed = 0_rad_per_s;
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed, false);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
         },
         { &m_drive }
     ));
