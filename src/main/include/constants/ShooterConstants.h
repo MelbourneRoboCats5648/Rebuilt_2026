@@ -19,8 +19,6 @@ namespace ShooterConstants {
         inline constexpr double kA = 0;
     }
 
-    inline constexpr meter_t distance(2.0);
-    inline constexpr degree_t angle(60);
     inline constexpr meter_t startHeight(0.3);
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
     inline constexpr double kgearRatio = 2;

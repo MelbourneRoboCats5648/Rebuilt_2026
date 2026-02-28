@@ -91,15 +91,15 @@ units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t dista
 // done by rearranging the formula to find the speed for a given distance and angle 
 
 meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degree_t angle) {
-        auto cosine = cos(ShooterConstants::angle);
-        auto tangent = tan(ShooterConstants::angle);
+        auto cosine = cos(angle);
+        auto tangent = tan(angle);
 
         meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
 
         meters_per_second_t speed = 
             sqrt(
-                (FieldConstants::gravity * pow<2>(ShooterConstants::distance)) /
-                (2 * pow<2>(cosine) * (ShooterConstants::distance * tangent - adjustedHeight))
+                (FieldConstants::gravity * pow<2>(distance)) /
+                (2 * pow<2>(cosine) * (distance * tangent - adjustedHeight))
             );
 
         return speed;
