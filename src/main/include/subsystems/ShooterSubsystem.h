@@ -19,7 +19,7 @@
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
 
-#include <subsystems/Feeder.h>
+#include <helpers/Feeder.h>
 
 using namespace units::velocity;
 using namespace units::angle;

@@ -5,7 +5,7 @@
 
 #include <ctre/phoenix6/Pigeon2.hpp>
 
-#include <drive/DriveModule.h>
+#include <helpers/DriveModule.h>
 
 #include <constants/HardwareConstants.h>
 #include <constants/DriveConstants.h>
