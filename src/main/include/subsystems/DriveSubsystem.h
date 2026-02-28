@@ -21,7 +21,6 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
-#include <frc/ADIS16470_IMU.h>
 
 
 using namespace ctre::phoenix6::hardware;
@@ -69,8 +68,7 @@ public:
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
 private:
-    //Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
-    frc::ADIS16470_IMU m_gyro;
+    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
 
 
     DriveModule m_frontLeftModule{
