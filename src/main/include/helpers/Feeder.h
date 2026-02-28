@@ -7,6 +7,8 @@ class Feeder {
              Feeder();
         void ResetEncoder();
         void ResetMotor();
+        frc2::CommandPtr FeedCommand(units::turns_per_second_t feedVelocity);
+        void Feed(units::volt_t volts);
 
 
     private:

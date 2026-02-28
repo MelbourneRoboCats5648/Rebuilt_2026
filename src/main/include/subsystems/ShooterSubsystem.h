@@ -40,6 +40,10 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         void Periodic() override;
 
+        void Feed(units::volt_t volts);
+        void FeederAngularVelocity(units::turns_per_second_t angularVelocity);
+        frc2::CommandPtr FeedCommand(units::turns_per_second_t angularVelocity);
+
 
     private:
 

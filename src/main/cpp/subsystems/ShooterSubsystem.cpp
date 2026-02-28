@@ -111,3 +111,8 @@ Feeder::Feeder()
     );
 
 }
+
+void Feeder::Feed(units::volt_t volts){
+    m_motor.SetVoltage(volts);
+}
+
