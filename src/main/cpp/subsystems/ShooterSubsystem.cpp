@@ -71,6 +71,10 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_motor.SetControl(velocityVoltage);
 }
 
+void ShooterSubsystem::FeederAngularVelocity(units::turns_per_second_t angularVelocity){
+
+}
+
 frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
     return Run([this, angularVelocity]{
                 ShootAngularVelocity(angularVelocity);
@@ -96,7 +100,7 @@ meters_per_second_t ShooterSubsystem::CalculateShooterSpeed(meter_t distance, de
 };
 
 Feeder::Feeder()
-: m_motor(HardwareConstants::kFeederMotorID, rev::spark::SparkMax::MotorType::kBrushless)
+    : m_motor(HardwareConstants::kFeederMotorID, rev::spark::SparkMax::MotorType::kBrushless)
 {
     rev::spark::SparkMaxConfig motorConfig;
 
@@ -109,7 +113,6 @@ Feeder::Feeder()
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
-
 }
 
 void Feeder::Feed(units::volt_t volts){
