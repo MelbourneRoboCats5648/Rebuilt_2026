@@ -4,6 +4,8 @@
 #include "units/angle.h"
 #include <units/voltage.h>
 #include "FieldConstants.h"
+#include <units/current.h>
+
 
 
 using namespace units::length;
@@ -27,4 +29,5 @@ namespace ShooterConstants {
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
+    inline constexpr int kCurrentLimit(50);
 };

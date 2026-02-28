@@ -9,6 +9,7 @@
 #include "units/angular_velocity.h"
 
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <rev/SparkMax.h>
 
 #include <constants/HardwareConstants.h>
 
@@ -17,6 +18,8 @@
 
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
+
+#include <subsystems/Feeder.h>
 
 using namespace units::velocity;
 using namespace units::angle;

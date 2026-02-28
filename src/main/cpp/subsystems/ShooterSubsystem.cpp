@@ -2,6 +2,8 @@
 #include "constants/ShooterConstants.h"
 #include "constants/FieldConstants.h"
 
+#include <rev/config/SparkMaxConfig.h>
+
 #include <units/math.h>
 
 using namespace units::math;
@@ -92,3 +94,20 @@ meters_per_second_t ShooterSubsystem::CalculateShooterSpeed(meter_t distance, de
 
         return speed;
 };
+
+Feeder::Feeder()
+: m_motor(HardwareConstants::kFeederMotorID, rev::spark::SparkMax::MotorType::kBrushless)
+{
+    rev::spark::SparkMaxConfig motorConfig;
+
+    motorConfig
+    .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+    
+    m_motor.Configure(
+      motorConfig,
+      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
+      rev::spark::SparkMax::PersistMode::kPersistParameters
+    );
+
+}
