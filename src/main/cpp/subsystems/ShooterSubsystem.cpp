@@ -78,9 +78,8 @@ frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angula
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t ballSpeed = CalculateBallSpeed(distance, angle);
 
-    units::turns_per_second_t flyWheelSpeed =
-        units::turns_per_second_t{ballSpeed.value()/(2 * std::numbers::pi * ShooterConstants::kFlyWheelRadius.value())};
-    return flyWheelSpeed;
+    double metresPerTurn = 2 * std::numbers::pi * ShooterConstants::kFlyWheelRadius.value();
+    return units::turns_per_second_t{ballSpeed.value()/metresPerTurn};
 };
 
 // derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
