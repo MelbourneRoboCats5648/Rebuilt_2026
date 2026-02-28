@@ -43,6 +43,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
     private:
 
+    Feeder m_feeder;
 
     TalonFX m_motor;
     TalonFX m_follower;
