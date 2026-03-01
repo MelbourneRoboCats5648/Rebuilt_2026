@@ -18,7 +18,9 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
-    SetDefaultCommand(ShootCommand(0_tps));
+    // SetDefaultCommand(ShootCommand(0_tps));
+    SetDefaultCommand(ShootCommand(m_targetVelocity));
+
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/RotorVel").Publish();
@@ -30,6 +32,8 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/MotorCurrent").Publish();
     m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
+    m_targetVelSub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/TargetVelocity").Publish();
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -69,9 +73,24 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_motor.SetControl(velocityVoltage);
 }
 
+
+void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
+    m_targetVelocity = velocity;
+}
+
+units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
+    return m_targetVelocity;
+}
+
+// frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
+//     return Run([this, angularVelocity]{
+//                 ShootAngularVelocity(angularVelocity);
+//             });
+// }
+
 frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
     return Run([this, angularVelocity]{
-                ShootAngularVelocity(angularVelocity);
+                SetTargetVelocity(angularVelocity);
             });
 }
 
