@@ -38,9 +38,9 @@ ShooterSubsystem::ShooterSubsystem()
     m_angleEncoder.SetPosition(0);
 
 
-    //angleMotorConfig.softLimit
-    //.ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    //.ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
+    angleMotorConfig.softLimit
+    .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    .ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
     angleMotorConfig.encoder
     .PositionConversionFactor(ShooterConstants::kAngleGearRatio)
