@@ -29,14 +29,14 @@ namespace ShooterConstants {
 
     inline constexpr int kCurrentLimit(50);
 
-    inline constexpr double kAngleGearRatio = 5;
+    inline constexpr double kAngleGearRatio = 1.0/5.0;
     inline constexpr units::turn_t kMinAngleSoftLimit = 0_tr;
     inline constexpr units::turn_t kMaxAngleSoftLimit = 0.8_tr;
 
     inline constexpr units::turn_t kMaxTurns = 0.9_tr;
 
     namespace angle {
-        inline constexpr double kP = 0.2;
+        inline constexpr double kP = 0.5;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
     }

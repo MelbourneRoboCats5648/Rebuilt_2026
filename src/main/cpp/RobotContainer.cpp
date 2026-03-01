@@ -97,7 +97,7 @@ void RobotContainer::ConfigureBindings() {
             units::turn_t angle;
             angle = PreprocessJoystickInput(-m_driverController.GetRightY())
                             * ShooterConstants::kMaxTurns;
-            angle = units::math::abs(angle);
+            //angle = units::math::abs(angle);
             m_shooter.GoToAngle(angle);
         },
         { &m_shooter }

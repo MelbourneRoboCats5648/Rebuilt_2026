@@ -25,7 +25,8 @@ ShooterSubsystem::ShooterSubsystem()
 
     angleMotorConfig
     .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
+    .Inverted(true);
     
     angleMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
@@ -36,9 +37,10 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_angleEncoder.SetPosition(0);
 
-    angleMotorConfig.softLimit
-    .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    .ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    //angleMotorConfig.softLimit
+    //.ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    //.ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
     angleMotorConfig.encoder
     .PositionConversionFactor(ShooterConstants::kAngleGearRatio)
@@ -64,6 +66,10 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
     m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleOfShooter").Publish();
+    m_angleMotorVoltagePub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
+    m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -93,6 +99,8 @@ void ShooterSubsystem::Periodic() {
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
         m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
         m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
+        m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
+        m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){

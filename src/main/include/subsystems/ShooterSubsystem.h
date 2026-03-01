@@ -65,4 +65,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_followerMotorCurrentPub;
 
         nt::DoublePublisher m_shooterAnglePub;
+        nt::DoublePublisher m_angleMotorVoltagePub;
+        nt::DoublePublisher m_angleMotorCurrentPub;
 };
