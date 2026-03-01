@@ -25,5 +25,5 @@ namespace ShooterConstants {
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
-    inline constexpr meter_t kFlyWheelRadius(2); //fixme
+    inline constexpr inch_t kFlyWheelRadius(2_in);
 };
