@@ -9,8 +9,8 @@ using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
 
 ShooterSubsystem::ShooterSubsystem()
-: m_motor(HardwareConstants::kShooterMotorID, "rio"),
-  m_follower(HardwareConstants::kShooterFollowerMotorID, "rio")
+: m_motor(HardwareConstants::kShooterFlywheelID, "rio"),
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio")
 {
     TalonFXConfiguration motorConfig = createMotorConfig();
     m_motor.GetConfigurator().Apply(motorConfig);
