@@ -33,4 +33,10 @@ namespace ShooterConstants {
     inline constexpr millimeter_t kMinAngleSoftLimit = 10_mm;
     inline constexpr millimeter_t kMaxAngleSoftLimit = 50_mm;
 
+    namespace angle {
+        inline constexpr double kP = 0.2;
+        inline constexpr double kI = 0.0;
+        inline constexpr double kD = 0.0;
+    }
+
 };

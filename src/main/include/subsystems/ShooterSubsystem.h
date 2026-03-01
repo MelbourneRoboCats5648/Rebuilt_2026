@@ -20,6 +20,7 @@
 #include <networktables/DoubleTopic.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
+#include <frc/controller/ProfiledPIDController.h>
 
 using namespace units::velocity;
 using namespace units::angle;
@@ -52,7 +53,9 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         TalonFX m_motor;
         TalonFX m_follower;
 
-        rev::spark::SparkMax m_angleMotor;
+        rev::spark::SparkMax m_angleMotor{HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless};
+        rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
+        rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
         
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;

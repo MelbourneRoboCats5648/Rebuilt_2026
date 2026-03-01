@@ -12,9 +12,8 @@ using namespace ctre::phoenix6::signals;
 
 ShooterSubsystem::ShooterSubsystem()
 : m_motor(HardwareConstants::kShooterFlywheelID, "rio"),
-  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio"),
-  m_angleMotor(HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless)
-{
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio")
+  {
     TalonFXConfiguration flyWheelMotorConfig = createMotorConfig();
     m_motor.GetConfigurator().Apply(flyWheelMotorConfig);
     m_follower.GetConfigurator().Apply(flyWheelMotorConfig);
@@ -28,11 +27,14 @@ ShooterSubsystem::ShooterSubsystem()
     .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
     .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
     
-    m_angleMotor.Configure(
-      angleMotorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
-    );
+    angleMotorConfig.closedLoop
+      .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
+      .P(ShooterConstants::angle::kP)
+      .I(ShooterConstants::angle::kI)
+      .D(ShooterConstants::angle::kD)
+      .OutputRange(-1, 1);
+
+    m_angleEncoder.SetPosition(0);
 
     angleMotorConfig.softLimit
     .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
@@ -43,6 +45,12 @@ ShooterSubsystem::ShooterSubsystem()
     .VelocityConversionFactor(ShooterConstants::kAngleGearRatio);
 
     SetDefaultCommand(ShootCommand(0_tps));
+
+    m_angleMotor.Configure(
+      angleMotorConfig,
+      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
+      rev::spark::SparkMax::PersistMode::kPersistParameters
+    );
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/RotorVel").Publish();
