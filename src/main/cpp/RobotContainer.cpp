@@ -83,8 +83,8 @@ void RobotContainer::ConfigureBindings() {
 
     m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this] {
-            units::meter_t distanceToHub = 1_m;
             units::degree_t shooterAngle = 30_deg;
+            units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
             units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, shooterAngle);
 
             m_shooter.ShootAngularVelocity(flyWheelSpeed);
