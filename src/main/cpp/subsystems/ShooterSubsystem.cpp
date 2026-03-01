@@ -62,6 +62,8 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/MotorCurrent").Publish();
     m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
+    m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleOfShooter").Publish();
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -90,6 +92,7 @@ void ShooterSubsystem::Periodic() {
         m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
         m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
+        m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
