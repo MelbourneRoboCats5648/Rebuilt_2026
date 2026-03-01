@@ -9,6 +9,7 @@
 #include "units/angular_velocity.h"
 
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <rev/SparkMax.h>
 
 #include <constants/HardwareConstants.h>
 
@@ -50,6 +51,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         TalonFX m_motor;
         TalonFX m_follower;
+
+        rev::spark::SparkMax m_angleMotor;
         
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;

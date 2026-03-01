@@ -26,4 +26,11 @@ namespace ShooterConstants {
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
     inline constexpr inch_t kFlyWheelRadius(2_in);
+
+    inline constexpr int kCurrentLimit(50);
+
+    inline constexpr double kAngleGearRatio = 5;
+    inline constexpr millimeter_t kMinAngleSoftLimit = 10_mm;
+    inline constexpr millimeter_t kMaxAngleSoftLimit = 50_mm;
+
 };

@@ -2,6 +2,8 @@
 #include "constants/ShooterConstants.h"
 #include "constants/FieldConstants.h"
 
+#include <rev/config/SparkMaxConfig.h>
+
 #include <units/math.h>
 
 using namespace units::math;
@@ -10,13 +12,35 @@ using namespace ctre::phoenix6::signals;
 
 ShooterSubsystem::ShooterSubsystem()
 : m_motor(HardwareConstants::kShooterFlywheelID, "rio"),
-  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio")
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio"),
+  m_angleMotor(HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless)
 {
-    TalonFXConfiguration motorConfig = createMotorConfig();
-    m_motor.GetConfigurator().Apply(motorConfig);
-    m_follower.GetConfigurator().Apply(motorConfig);
+    TalonFXConfiguration flyWheelMotorConfig = createMotorConfig();
+    m_motor.GetConfigurator().Apply(flyWheelMotorConfig);
+    m_follower.GetConfigurator().Apply(flyWheelMotorConfig);
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
+
+    //shooter angle motor
+    rev::spark::SparkMaxConfig angleMotorConfig;
+
+    angleMotorConfig
+    .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+    
+    m_angleMotor.Configure(
+      angleMotorConfig,
+      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
+      rev::spark::SparkMax::PersistMode::kPersistParameters
+    );
+
+    angleMotorConfig.softLimit
+    .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    .ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    angleMotorConfig.encoder
+    .PositionConversionFactor(ShooterConstants::kAngleGearRatio)
+    .VelocityConversionFactor(ShooterConstants::kAngleGearRatio);
 
     SetDefaultCommand(ShootCommand(0_tps));
 
@@ -55,7 +79,7 @@ void ShooterSubsystem::Periodic() {
         /* publish current state */
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
-        m_followerMotorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
+        m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
         m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
 }
