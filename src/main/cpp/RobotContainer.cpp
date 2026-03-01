@@ -67,7 +67,7 @@ void RobotContainer::ConfigureBindings() {
             },
             { &m_shooter }
         ));
-    */
+    
     
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
@@ -91,6 +91,7 @@ void RobotContainer::ConfigureBindings() {
         },
         { &m_shooter }
     ));
+    */
 
     m_shooter.SetDefaultCommand(frc2::RunCommand(
         [this] {
@@ -99,6 +100,13 @@ void RobotContainer::ConfigureBindings() {
                             * ShooterConstants::kMaxTurns;
             //angle = units::math::abs(angle);
             m_shooter.GoToAngle(angle);
+
+
+            units::degree_t angleDeg = angle.value() * (units::degree_t{12}) + units::degree_t{60};
+            units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
+            distanceToHub = 2_m;
+            units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angleDeg);
+            m_shooter.ShootAngularVelocity(flyWheelSpeed);
         },
         { &m_shooter }
     ));
