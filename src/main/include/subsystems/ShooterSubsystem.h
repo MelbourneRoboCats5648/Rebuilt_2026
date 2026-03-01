@@ -37,6 +37,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         frc2::CommandPtr ShootCommand(units::turns_per_second_t angularVelocity);
         void Shoot(units::volt_t volts);
+        void GoToAngle(units::turn_t angle);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
 
         units::meter_t DistanceToHub(frc::Pose2d robotPose);

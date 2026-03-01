@@ -96,6 +96,10 @@ void ShooterSubsystem::Shoot(units::volt_t volts){
     m_motor.SetVoltage(volts);
 }
 
+void ShooterSubsystem::GoToAngle(units::turn_t angle) {
+    m_angleController.SetReference(angle.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
+}
+
 void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity);
     m_motor.SetControl(velocityVoltage);
@@ -110,7 +114,6 @@ frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angula
 units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
     return CalculateDistanceBetweenPoints(robotPose.Translation(), FieldConstants::kHubPosition);
 }
-
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t ballSpeed = CalculateBallSpeed(distance, angle);

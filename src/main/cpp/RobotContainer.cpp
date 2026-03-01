@@ -92,6 +92,17 @@ void RobotContainer::ConfigureBindings() {
         { &m_shooter }
     ));
 
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::turn_t angle;
+            angle = PreprocessJoystickInput(-m_driverController.GetRightY())
+                            * ShooterConstants::kMaxTurns;
+            angle = units::math::abs(angle);
+            m_shooter.GoToAngle(angle);
+        },
+        { &m_shooter }
+    ));
+
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }

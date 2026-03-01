@@ -30,8 +30,10 @@ namespace ShooterConstants {
     inline constexpr int kCurrentLimit(50);
 
     inline constexpr double kAngleGearRatio = 5;
-    inline constexpr millimeter_t kMinAngleSoftLimit = 10_mm;
-    inline constexpr millimeter_t kMaxAngleSoftLimit = 50_mm;
+    inline constexpr units::turn_t kMinAngleSoftLimit = 0_tr;
+    inline constexpr units::turn_t kMaxAngleSoftLimit = 0.8_tr;
+
+    inline constexpr units::turn_t kMaxTurns = 0.9_tr;
 
     namespace angle {
         inline constexpr double kP = 0.2;
