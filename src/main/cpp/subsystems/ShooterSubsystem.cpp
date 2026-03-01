@@ -57,6 +57,7 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
 
 void ShooterSubsystem::Periodic() {
         /* publish current state */
+        m_targetVelocity = units::turns_per_second_t{m_targetVelSub.Get()};
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
