@@ -4,17 +4,19 @@
 
 #pragma once
 
-/**
- * The Constants header provides a convenient place for teams to hold robot-wide
- * numerical or boolean constants.  This should not be used for any other
- * purpose.
- *
- * It is generally a good idea to place constants into subsystem- or
- * command-specific namespaces within this header, which can then be used where
- * they are needed.
- */
+// PID Profile and Controller stuff
+#include <units/acceleration.h>
+#include <units/angular_acceleration.h>
+
 
 namespace OperatorConstants {
     inline constexpr int kDriverControllerPort = 0;
-    inline constexpr double kDeadband = 0.1;
+    inline constexpr int kMechControllerPort = 1;
+    inline constexpr double kDeadband = 0.1; //Driver??
+    inline constexpr double kMechDeadband = 0.1;
+
+    inline constexpr units::meters_per_second_squared_t kSlewRateTranslation = 6_mps_sq; //increase to reduce lag
+    inline constexpr units::radians_per_second_squared_t kSlewRateRotation = 6_rad_per_s_sq;
+
+
 };

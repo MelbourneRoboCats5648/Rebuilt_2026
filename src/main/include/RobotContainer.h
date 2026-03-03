@@ -9,8 +9,12 @@
 
 #include "constants/OperatorConstants.h"
 #include "constants/DriveConstants.h"
+#include "constants/EAConstants.h"
 
 #include "subsystems/DriveSubsystem.h"
+#include "subsystems/ElevatorSubsystem.h"
+#include "subsystems/ArmSubsystem.h"
+#include "subsystems/ElevatorAndArmSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
 
@@ -25,20 +29,28 @@ class RobotContainer {
 public:
     RobotContainer();
 
+    frc2::CommandPtr GetInitCommand();
     frc2::CommandPtr GetAutonomousCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed
-    frc2::CommandXboxController m_driverController{
-        OperatorConstants::kDriverControllerPort
-    };
+    frc2::CommandXboxController m_driverController{OperatorConstants::kDriverControllerPort};
+    frc2::CommandXboxController m_mechController{OperatorConstants::kMechControllerPort};  
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive{};
+    ElevatorSubsystem m_elevatorSubsystem;
+    ArmSubsystem m_armSubsystem;
+    //this subsystem relies on the two subsystems above
+    ElevatorAndArmSubsystem m_elevatorAndArmSubsystem;
 
     void ConfigureBindings();
 
     double PreprocessJoystickInput(double input);
+    double ScaleJoystickInput(double input);
+
+    double GetMechLeftY();
+    double GetMechRightY();
 
     frc::SlewRateLimiter<units::meters_per_second> m_xLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
