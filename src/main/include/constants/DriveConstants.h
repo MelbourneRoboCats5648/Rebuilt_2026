@@ -67,7 +67,7 @@ namespace DrivetrainConstants {
     };
 
     inline constexpr meters_per_second_t kMaxSpeed = 2.0_mps; // fixme - will need to increase this for comp
-    inline constexpr meters_per_second_squared_t kMaxAcceleration = 3.0_mps_sq;
+    inline constexpr meters_per_second_squared_t kMaxAcceleration = 2.0_mps_sq;
 
     inline constexpr radians_per_second_t kMaxAngularSpeed = (2 * M_PI) * 1_rad_per_s;
     inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = (2 * M_PI) * 2_rad_per_s_sq;
