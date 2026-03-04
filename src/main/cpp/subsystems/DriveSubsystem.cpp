@@ -18,10 +18,13 @@ DriveSubsystem::DriveSubsystem() {
         .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
     
     /* Configure Pigeon2 */
-    //Pigeon2Configuration toApply{};
+    Pigeon2Configuration toApply{};
 
-    //m_gyro.GetConfigurator().Apply(toApply);  
-    //ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
+    m_gyro.GetConfigurator().Apply(toApply);
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ()); 
+
+    ResetGyro();
+    m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(
@@ -31,10 +34,6 @@ DriveSubsystem::DriveSubsystem() {
     );
     m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
     // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
-
-    //m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms); 
-    m_gyro.Calibrate();
-    m_gyro.Reset();
 }
 
 void DriveSubsystem::Periodic() {
@@ -64,8 +63,12 @@ void DriveSubsystem::ResetGyro() {
 }
 
 degree_t DriveSubsystem::GetHeading() {
-    //return m_gyro.GetRotation2d().Degrees();
-    return -m_gyro.GetAngle(); // need to negate value of ADIS gyro so that CCW rotation is positive
+    return m_gyro.GetRotation2d().Degrees();
+}
+
+void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
+{
+    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative);
 }
 
 /* kinematics/"set speed" */
@@ -290,4 +293,9 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
     return AlignHeadingCommand([heading] { return heading; });
+}
+
+frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
+{
+    return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
 }

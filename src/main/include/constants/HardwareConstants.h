@@ -3,6 +3,7 @@
 namespace HardwareConstants {
     inline constexpr int kGyroID = 14;
 
+    // Swerve Motors
     inline constexpr int kFrontLeftSpeedID = 3;
     inline constexpr int kFrontLeftDirectionID = 4;
     inline constexpr int kFrontLeftEncoderID = 11;
@@ -18,4 +19,20 @@ namespace HardwareConstants {
     inline constexpr int kBackRightSpeedID = 7;
     inline constexpr int kBackRightDirectionID = 8;
     inline constexpr int kBackRightEncoderID = 13;
+
+    // Shooter Motors
+    inline constexpr int kShooterFlywheelID = 15;
+    inline constexpr int kShooterFlywheelFollowerID = 16;
+
+    inline constexpr int kShooterFeederID = 17;
+    inline constexpr int kShooterHoodID = 18;
+
+    // Intake Motors
+    inline constexpr int kIntakeId = 19;
+    inline constexpr int kIntakeFollowerID = 20;
+
+    // Climb Motors
+    inline constexpr int kClimbMotorID = 21;
+    inline constexpr int kClimbFollowerMotorID = 22;
+
 };
