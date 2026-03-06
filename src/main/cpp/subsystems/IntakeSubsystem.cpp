@@ -1,4 +1,5 @@
 #include <subsystems/IntakeSubsystem.h>
+
 #include <constants/HardwareConstants.h>
 
 #include <rev/config/SparkMaxConfig.h>
@@ -70,6 +71,14 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
+    ExtendRetractMotorConfig.softLimit
+    .ForwardSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    .ReverseSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    ExtendRetractMotorConfig.encoder
+    .PositionConversionFactor(IntakeConstants::kIntakeGearRatio)
+    .VelocityConversionFactor(IntakeConstants::kIntakeGearRatio);
+
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
@@ -83,4 +92,8 @@ turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t for
     turns_per_second_t requiredIntakeWheelSpeed = turns_per_second_t{adjustedIntakeSurfaceSpeed.value() / distancePerTurn.value()};
 
     return requiredIntakeWheelSpeed;
+}
+
+void IntakeSubsystem::GoToPosition(units::meter_t position){
+    m_extendRetractController.SetReference(position.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
 }

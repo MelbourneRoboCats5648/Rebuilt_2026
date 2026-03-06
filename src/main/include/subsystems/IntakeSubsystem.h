@@ -12,6 +12,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
     IntakeSubsystem();
+    void GoToPosition(units::meter_t position);
 
 private:
     turns_per_second_t CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed);

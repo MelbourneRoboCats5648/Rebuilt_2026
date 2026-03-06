@@ -17,17 +17,21 @@ namespace IntakeConstants {
     inline constexpr meter_t kIntakeWheelDiameter = 0.1_m;  // fixme - check this value
 
     namespace intake { //fixme - tune PID constants
-        inline constexpr double kP = 0.0;
+        inline constexpr double kP = 0.3;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
     }
 
     namespace extendRetract { //fixme - tune PID constants
-        inline constexpr double kP = 0.0;
+        inline constexpr double kP = 0.3;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
     }
 
 
     inline constexpr int kCurrentLimit(50);
+    inline constexpr meter_t kExtendSoftLimit = (67_m); //fixme - may not be necessary 
+    inline constexpr meter_t kRetractSoftLimit = (67_m); //fixme - may not be necessary 
+
+    inline constexpr int kIntakeGearRatio(5);
 };
