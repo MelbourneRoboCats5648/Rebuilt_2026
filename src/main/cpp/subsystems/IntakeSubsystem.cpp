@@ -4,7 +4,7 @@
 #include <rev/config/SparkMaxConfig.h>
 
 IntakeSubsystem::IntakeSubsystem() :
-m_ExtendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
+m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
 m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless)
 
@@ -30,8 +30,6 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
-    m_intakeEncoder.SetPosition(0);
-
 
 
     //extend retract motor config
@@ -48,20 +46,23 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       .D(IntakeConstants::extendRetract::kD)
       .OutputRange(-1, 1);
     
-    m_ExtendRetractMotor.Configure(
+    m_extendRetractMotor.Configure(
       ExtendRetractMotorConfig,
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
+    m_extendRetractEncoder.SetPosition(0);
 
-    //follower motor config
+
+
+    //follower motor config 
     rev::spark::SparkMaxConfig FollowerExtendRetractMotorConfig; 
 
     FollowerExtendRetractMotorConfig
     .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
     .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
-    .Follow(m_ExtendRetractMotor, true);  // invert = true
+    .Follow(m_extendRetractMotor, true);  // invert = true
 
     m_followerExtendRetractMotor.Configure(
       FollowerExtendRetractMotorConfig,

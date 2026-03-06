@@ -22,5 +22,12 @@ namespace IntakeConstants {
         inline constexpr double kD = 0.0;
     }
 
+    namespace extendRetract { //fixme - tune PID constants
+        inline constexpr double kP = 0.0;
+        inline constexpr double kI = 0.0;
+        inline constexpr double kD = 0.0;
+    }
+
+
     inline constexpr int kCurrentLimit(50);
 };
