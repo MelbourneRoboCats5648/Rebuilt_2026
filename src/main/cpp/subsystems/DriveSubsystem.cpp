@@ -17,7 +17,7 @@ DriveSubsystem::DriveSubsystem(frc::Timer& timer)
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
-        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
+        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();
     
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
@@ -184,8 +184,11 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 }
 
 frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
-    return RunOnce([this]{
+    return RunOnce([this, traj = trajectory]{
         m_choreoController.Reset();
+        
+        /* publish trajectory */
+        m_trajectoryPublisher.Set(traj.GetPoses());
     }).AndThen(
         Run([this, traj = trajectory] {
 
