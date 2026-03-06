@@ -5,6 +5,7 @@
 #include "commands/Autos.h"
 
 #include <frc2/command/Commands.h>
+#include <choreo/Choreo.h>
 
 #include "commands/ExampleCommand.h"
 
@@ -46,7 +47,22 @@ frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<cho
     
     //choreo::Trajectory<choreo::SwerveSample> temporaryTrajectory;
 
-    drive->NewFollowTrajectoryCommand(choreoTraj);
+    return drive->NewFollowTrajectoryCommand(choreoTraj);
+}
+
+frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, std::string trajName) {
+    choreo::Trajectory<choreo::SwerveSample> traj = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(trajName).value();
+    return drive->NewFollowTrajectoryCommand(traj);
+}
+
+frc2::CommandPtr autos::ChoreoAutoPlan1(DriveSubsystem* drive) {
+    return frc2::cmd::Sequence(
+        ChoreoAuto(drive, "Plan1_InitToShoot"),
+        // shoot
+        ChoreoAuto(drive, "Plan1_ShootToCollect")
+        // collect
+        // so on...
+    );
 }
 
 frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {

@@ -20,7 +20,8 @@ RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoT
     m_autoTesting{autos::AutoTesting(&m_drive)},
     m_choreoAuto{autos::ChoreoAuto(&m_drive, choreoTraj)},
     m_autoDepot{autos::AutoDepot(&m_drive)},
-    m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)}
+    m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)},
+    m_choreoPlan1{autos::ChoreoAutoPlan1(&m_drive)}
 {
     // Initialize all of your commands and subsystems here
 
@@ -33,6 +34,7 @@ RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoT
     m_chooser.AddOption("Climb Auto", m_autoClimb.get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.get());
     m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.get());
+    m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData(&m_chooser);
