@@ -10,6 +10,8 @@ using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
 
+using namespace rev::spark;
+
 ShooterSubsystem::ShooterSubsystem()
 : m_motor(HardwareConstants::kShooterFlywheelID, "rio"),
   m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio")
@@ -37,6 +39,11 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_angleEncoder.SetPosition(0);
 
+    angleMotorConfig.limitSwitch
+    //.ForwardLimitSwitchEnabled(true)  // fixme - this looks to be depracated (can be removed), need to use forward limit switch behaviour
+    .ForwardLimitSwitchTriggerBehavior(LimitSwitchConfig::Behavior::kStopMovingMotorAndSetPosition)
+    .ForwardLimitSwitchType(LimitSwitchConfig::Type::kNormallyOpen)  // fixme - check if lim switch is connected as N/O or N/C
+    .ForwardLimitSwitchPosition(ShooterConstants::kMinAngleSoftLimit.value()); // fixme - check if this updates encoder position
 
     angleMotorConfig.softLimit
     .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
@@ -70,6 +77,8 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
     m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
+    m_angleMotorLimSwitchPub = nt::NetworkTableInstance::GetDefault()
+        .GetBooleanTopic("Angle/LimitSwitch").Publish();
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -101,6 +110,10 @@ void ShooterSubsystem::Periodic() {
         m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
         m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
         m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
+
+        // Get angle motor limit switch status
+        bool forwardLimitPressed = m_angleMotor.GetForwardLimitSwitch().Get();
+        m_angleMotorLimSwitchPub.Set(forwardLimitPressed);
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){

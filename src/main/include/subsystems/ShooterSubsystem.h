@@ -18,6 +18,8 @@
 
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
+#include <networktables/BooleanTopic.h>
+
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/controller/ProfiledPIDController.h>
@@ -67,4 +69,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_shooterAnglePub;
         nt::DoublePublisher m_angleMotorVoltagePub;
         nt::DoublePublisher m_angleMotorCurrentPub;
+
+        nt::BooleanPublisher m_angleMotorLimSwitchPub;
 };
