@@ -3,6 +3,7 @@
 #include <units/velocity.h>
 #include <units/length.h>
 #include <units/angular_velocity.h>
+#include <units/voltage.h>
 
 using namespace units::velocity;
 using namespace units::angular_velocity;
@@ -14,4 +15,12 @@ namespace IntakeConstants {
     inline constexpr meters_per_second_t kTargetIntakeSurfaceSpeed = 2.0_mps;  // desired linear surface speed of the intake wheel (fixme - check this value)
 
     inline constexpr meter_t kIntakeWheelDiameter = 0.1_m;  // fixme - check this value
+
+    namespace intake { //fixme - tune PID constants
+        inline constexpr double kP = 0.0;
+        inline constexpr double kI = 0.0;
+        inline constexpr double kD = 0.0;
+    }
+
+    inline constexpr int kCurrentLimit(50);
 };
