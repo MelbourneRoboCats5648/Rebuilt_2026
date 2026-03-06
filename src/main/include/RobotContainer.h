@@ -19,6 +19,8 @@
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SendableChooser.h>
 
+#include <frc/Timer.h>
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -28,7 +30,7 @@
  */
 class RobotContainer {
 public:
-    RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
+    RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj, frc::Timer& timer);
 
     frc2::Command* GetAutonomousCommand();
 
@@ -39,7 +41,7 @@ private:
     };
 
     // The robot's subsystems are defined here...
-    DriveSubsystem m_drive{};
+    DriveSubsystem m_drive;
     ShooterSubsystem m_shooter{};
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
 

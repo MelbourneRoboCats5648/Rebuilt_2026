@@ -7,7 +7,9 @@
 
 using namespace ctre::phoenix6::configs;
 
-DriveSubsystem::DriveSubsystem() {
+DriveSubsystem::DriveSubsystem(frc::Timer& timer) 
+: m_autoTimer(timer)
+{
     m_statePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/SwerveStates").Publish();
     m_commandPublisher = nt::NetworkTableInstance::GetDefault()
@@ -111,6 +113,10 @@ frc::SwerveDrivePoseEstimator<4>& DriveSubsystem::GetPoseEstimator() {
 
 frc::Pose2d DriveSubsystem::GetPose() {
     return m_poseEstimator.GetEstimatedPosition();
+}
+
+units::second_t DriveSubsystem::GetElapsedAutoTime(){
+    return m_autoTimer.Get();
 }
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose) 

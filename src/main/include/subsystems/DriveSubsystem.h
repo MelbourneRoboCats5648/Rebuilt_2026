@@ -23,7 +23,7 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
-
+#include <frc/Timer.h>
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
@@ -32,7 +32,7 @@ using namespace DrivetrainConstants;
 class DriveSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
-    DriveSubsystem();
+    DriveSubsystem(frc::Timer& timer);
 
     void Periodic() override;
     void SimulationPeriodic() override;
@@ -61,6 +61,8 @@ public:
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
+
+    units::second_t GetElapsedAutoTime();
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
@@ -132,6 +134,7 @@ private:
     };
 
     ChoreoController m_choreoController;
+    frc::Timer& m_autoTimer;
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
