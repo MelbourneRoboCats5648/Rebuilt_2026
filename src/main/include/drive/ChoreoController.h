@@ -5,13 +5,16 @@
 class ChoreoController {
 public:
     ChoreoController();
-    void FollowTrajectory(const choreo::SwerveSample& sample, frc::Pose2d);
+    frc::ChassisSpeeds FollowTrajectory(const choreo::SwerveSample& sample, frc::Pose2d pose);
+
+    void Reset();
 
     frc::PIDController& getXController();
     frc::PIDController& getYController();
     frc::PIDController& getHeadingController();
 
 private:
+    // fixme - need to update these PID values
     frc::PIDController m_xController{0.0, 0.0, 0.0};
     frc::PIDController m_yController{0.0, 0.0, 0.0};
     frc::PIDController m_headingController{0.0, 0.0, 0.0};

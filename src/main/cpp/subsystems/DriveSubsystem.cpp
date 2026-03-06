@@ -185,55 +185,23 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
 frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
     return RunOnce([this]{
-        m_choreoController.getHeadingController().Reset();
-        m_choreoController.getXController().Reset();
-        m_choreoController.getYController().Reset();
+        m_choreoController.Reset();
     }).AndThen(
         Run([this, traj = trajectory] {
 
-            frc::Pose2d desiredPose;
-            if (traj.GetInitialPose().has_value())
-            {
-                desiredPose = traj.GetInitialPose().value();
-            }
-            else
-            {}
-
-            meter_t desiredX = desiredPose.X();
-            meter_t desiredY = desiredPose.Y();
-            frc::Rotation2d desiredRotation = desiredPose.Rotation();
-            radian_t desiredHeading = desiredRotation.Radians();
-
-            auto currentPose = GetPose();
-            meter_t currentX = currentPose.X();
-            meter_t currentY = currentPose.Y();
-
-            auto angularRate = m_choreoController.getHeadingController()
-                                .Calculate(radian_t{GetHeading()}.value(), desiredHeading.value());
-
-            auto xSpeed = m_choreoController.getXController()
-                                .Calculate(currentX.value(), desiredX.value());
-            auto ySpeed = m_choreoController.getYController()
-                                .Calculate(currentY.value(), desiredY.value());
+            units::second_t elapsed = GetElapsedAutoTime();
+            choreo::SwerveSample sample = traj.SampleAt(elapsed).value(); // fixme (issue #45) - SampleAt() allows mirroring for red alliance 
+            frc::ChassisSpeeds speed = m_choreoController.FollowTrajectory(sample, GetPose());
 
             const bool isFieldCentric = true;
-            Drive(meters_per_second_t{xSpeed}, meters_per_second_t{ySpeed}, radians_per_second_t{angularRate}, isFieldCentric);
+            Drive(speed.vx, speed.vy, speed.omega, isFieldCentric); // fixme - could overload to allow direct input of chassis speed
 
-        }).Until([this] {
-            return m_choreoController.getHeadingController().AtSetpoint()
-            && m_choreoController.getXController().AtSetpoint()
-            && m_choreoController.getYController().AtSetpoint();
-
-            // fixme - will need find the correct end condition
-            //const bool isTrajectoryFinished = false;
-            //return isTrajectoryFinished;
+        }).Until([this, traj = trajectory] {
+            return GetElapsedAutoTime() > traj.GetTotalTime();
         }))
     .FinallyDo([this]{
         Stop();
-
-        m_choreoController.getHeadingController().Reset();
-        m_choreoController.getXController().Reset();
-        m_choreoController.getYController().Reset();
+        m_choreoController.Reset();
      }); 
 }
 
