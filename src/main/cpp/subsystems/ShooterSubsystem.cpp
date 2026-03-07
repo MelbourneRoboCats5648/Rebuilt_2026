@@ -4,6 +4,8 @@
 
 #include <units/math.h>
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
@@ -18,9 +20,8 @@ ShooterSubsystem::ShooterSubsystem()
 
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
-    // SetDefaultCommand(ShootCommand(0_tps));
-    SetDefaultCommand(ShootCommand(m_targetVelocity));
-
+    //SetDefaultCommand(ShootCommand(0_tps));
+    SetDefaultCommand(DefaultShootCommand());
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/RotorVel").Publish();
@@ -32,8 +33,9 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/MotorCurrent").Publish();
     m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
-    m_targetVelSub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/TargetVelocity").Publish();
+
+    // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
+    // frc::SmartDashboard::PutNumber("ShooterVelocity", 0.0); // initialise shooter target velocity with default of 0.0
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -57,7 +59,10 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
 
 void ShooterSubsystem::Periodic() {
         /* publish current state */
-        m_targetVelocity = units::turns_per_second_t{m_targetVelSub.Get()};
+
+        // uncomment below to allow target velocity to be set via smart dashboard
+        //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
+
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
@@ -74,7 +79,6 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_motor.SetControl(velocityVoltage);
 }
 
-
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
     m_targetVelocity = velocity;
 }
@@ -83,14 +87,15 @@ units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
 }
 
-// frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
-//     return Run([this, angularVelocity]{
-//                 ShootAngularVelocity(angularVelocity);
-//             });
-// }
+frc2::CommandPtr ShooterSubsystem::DefaultShootCommand() {
+    return Run([this]{
+                ShootAngularVelocity(m_targetVelocity);
+            });
+}
 
-frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
-    return Run([this, angularVelocity]{
+// This command will be used to set the velocity of the flywheel shooter along with the default shoot command
+frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_second_t angularVelocity) {
+    return RunOnce([this, angularVelocity]{
                 SetTargetVelocity(angularVelocity);
             });
 }
@@ -98,7 +103,6 @@ frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angula
 units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
     return CalculateDistanceBetweenPoints(robotPose.Translation(), FieldConstants::kHubPosition);
 }
-
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t ballSpeed = CalculateBallSpeed(distance, angle);
