@@ -13,7 +13,7 @@ ChoreoController::ChoreoController() {
 
 frc::ChassisSpeeds ChoreoController::FollowTrajectory(const choreo::SwerveSample &sample, frc::Pose2d pose) {
     units::meters_per_second_t xFeedback{
-        m_headingController.Calculate(pose.X().value(), sample.x.value())
+        m_xController.Calculate(pose.X().value(), sample.x.value())
     };
     units::meters_per_second_t yFeedback{
         m_yController.Calculate(pose.Y().value(), sample.y.value())
