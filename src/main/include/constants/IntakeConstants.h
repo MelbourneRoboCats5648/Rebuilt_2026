@@ -30,8 +30,11 @@ namespace IntakeConstants {
 
 
     inline constexpr int kCurrentLimit(50);
-    inline constexpr meter_t kExtendSoftLimit = (67_m); //fixme - may not be necessary 
-    inline constexpr meter_t kRetractSoftLimit = (67_m); //fixme - may not be necessary 
 
-    inline constexpr int kIntakeGearRatio(5);
+    // Assume initial encoder position is 0 when fully retracted
+    inline constexpr meter_t kExtendSoftLimit = (0.25_m); //fixme - tune this value (the slide has 300mm extension)
+    inline constexpr meter_t kRetractSoftLimit = (0.1_m); //fixme - tune this (testing retraction to 100mm in front of initial position)
+
+    inline constexpr double kExtendRetractGearRatio(1.0 / 20.0); // 20 to 1 reduction gear
+    inline constexpr double kExtendRetractSprocketDia(0.0254); // 25.4 mm pitch diameter
 };

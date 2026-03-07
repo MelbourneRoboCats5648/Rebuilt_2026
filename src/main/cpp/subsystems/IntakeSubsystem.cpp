@@ -10,13 +10,12 @@ m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, r
 m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless)
 
 {
-
     //intake motor config
     rev::spark::SparkMaxConfig intakeMotorConfig;
 
     intakeMotorConfig
-    .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+      .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
+      .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
     
     intakeMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
@@ -31,14 +30,12 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
 
-
-
     //extend retract motor config
     rev::spark::SparkMaxConfig ExtendRetractMotorConfig;
 
     ExtendRetractMotorConfig
-    .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
+      .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
+      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
 
     ExtendRetractMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
@@ -46,6 +43,16 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       .I(IntakeConstants::extendRetract::kI)
       .D(IntakeConstants::extendRetract::kD)
       .OutputRange(-1, 1);
+
+    ExtendRetractMotorConfig.softLimit
+      .ForwardSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ForwardSoftLimitEnabled(true)
+      .ReverseSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio;
+
+    ExtendRetractMotorConfig.encoder
+      .PositionConversionFactor(metresPerTurn)
+      .VelocityConversionFactor(metresPerTurn);
     
     m_extendRetractMotor.Configure(
       ExtendRetractMotorConfig,
@@ -56,13 +63,12 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
     m_extendRetractEncoder.SetPosition(0);
 
 
-
-    //follower motor config 
-    rev::spark::SparkMaxConfig FollowerExtendRetractMotorConfig; 
+    // follower extend/retract motor config 
+    rev::spark::SparkMaxConfig FollowerExtendRetractMotorConfig;
 
     FollowerExtendRetractMotorConfig
     .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
     .Follow(m_extendRetractMotor, true);  // invert = true
 
     m_followerExtendRetractMotor.Configure(
@@ -70,15 +76,6 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
-
-    ExtendRetractMotorConfig.softLimit
-    .ForwardSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    .ReverseSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ReverseSoftLimitEnabled(true);
-
-    ExtendRetractMotorConfig.encoder
-    .PositionConversionFactor(IntakeConstants::kIntakeGearRatio)
-    .VelocityConversionFactor(IntakeConstants::kIntakeGearRatio);
-
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
