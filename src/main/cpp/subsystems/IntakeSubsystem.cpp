@@ -1,6 +1,18 @@
 #include <subsystems/IntakeSubsystem.h>
+#include <constants/HardwareConstants.h>
 
-IntakeSubsystem::IntakeSubsystem() {}
+
+IntakeSubsystem::IntakeSubsystem() :
+m_ExtendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
+m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
+m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless)
+
+{
+
+
+
+
+}
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
 {
