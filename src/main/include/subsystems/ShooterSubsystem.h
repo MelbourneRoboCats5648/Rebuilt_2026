@@ -33,15 +33,20 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         ShooterSubsystem();
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
-        frc2::CommandPtr ShootCommand(units::turns_per_second_t angularVelocity);
+        frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
+
         void Shoot(units::volt_t volts);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
+
+        void SetTargetVelocity(units::turns_per_second_t velocity);
+        units::turns_per_second_t GetTargetVelocity() const;
 
         units::meter_t DistanceToHub(frc::Pose2d robotPose);
 
         void Periodic() override;
 
     private:
+        frc2::CommandPtr DefaultShootCommand();
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meter_t CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2);
@@ -50,7 +55,9 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         TalonFX m_motor;
         TalonFX m_follower;
-        
+
+        units::turns_per_second_t m_targetVelocity{0_tps};
+
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;
         nt::DoublePublisher m_followerMotorWheelVelPub;

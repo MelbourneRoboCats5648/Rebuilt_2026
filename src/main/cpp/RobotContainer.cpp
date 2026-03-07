@@ -40,19 +40,27 @@ void RobotContainer::ConfigureBindings() {
                  * DrivetrainConstants::kMaxSpeed
             );
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-
-                PreprocessJoystickInput(-m_driverController.GetRightX()) 
+                PreprocessJoystickInput(-m_driverController.GetRightX())
                 * DrivetrainConstants::kMaxAngularSpeed
-                
             );
 
-            //rotSpeed = 0_rad_per_s;
             m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
-
-
     ));
+
+    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+
+    // fixme - temporary default commands for shooter during testing. This will be removed for competition
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+            [this] {
+                units::turns_per_second_t angularVelocity;
+                angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+                                * ShooterConstants::kMaxAngularVelocity;
+                m_shooter.SetTargetVelocity(angularVelocity);
+                m_shooter.ShootAngularVelocity(m_shooter.GetTargetVelocity());
+            },
+            { &m_shooter }));
 
     /*
     m_shooter.SetDefaultCommand(frc2::RunCommand(
@@ -69,28 +77,26 @@ void RobotContainer::ConfigureBindings() {
         ));
     */
     
-    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::turns_per_second_t angularVelocity;
+    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * ShooterConstants::kMaxAngularVelocity;
+    //         m_shooter.ShootAngularVelocity(angularVelocity);
+    //     },
+    //     { &m_shooter }
+    // ));
 
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::turns_per_second_t angularVelocity;
-            angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
-                            * ShooterConstants::kMaxAngularVelocity;
-            m_shooter.ShootAngularVelocity(angularVelocity);
-        },
-        { &m_shooter }
-    ));
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::degree_t shooterAngle = 30_deg;
+    //         units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
+    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, shooterAngle);
 
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::degree_t shooterAngle = 30_deg;
-            units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
-            units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, shooterAngle);
-
-            m_shooter.ShootAngularVelocity(flyWheelSpeed);
-        },
-        { &m_shooter }
-    ));
+    //         m_shooter.ShootAngularVelocity(flyWheelSpeed);
+    //     },
+    //     { &m_shooter }
+    // ));
 
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
