@@ -44,23 +44,39 @@ void RobotContainer::ConfigureBindings() {
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+            //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
     ));
 
+    m_intake.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::meter_t position;
+            position = PreprocessJoystickInput(-m_driverController.GetRightY())
+                            * IntakeConstants::kExtendSoftLimit;
+            position = units::math::abs(position);
+
+            units::volt_t intakeVoltage;
+            intakeVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
+                            * IntakeConstants::kMaxVoltage;
+
+            m_intake.GoToPosition(position);
+            m_intake.SetIntakeVoltage(intakeVoltage);
+        },
+        { &m_intake }
+    ));
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
-    // fixme - temporary default commands for shooter during testing. This will be removed for competition
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-            [this] {
-                units::turns_per_second_t angularVelocity;
-                angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
-                                * ShooterConstants::kMaxAngularVelocity;
-                m_shooter.SetTargetVelocity(angularVelocity);
-                m_shooter.ShootAngularVelocity(m_shooter.GetTargetVelocity());
-            },
-            { &m_shooter }));
+    // // fixme - temporary default commands for shooter during testing. This will be removed for competition
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //         [this] {
+    //             units::turns_per_second_t angularVelocity;
+    //             angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                             * ShooterConstants::kMaxAngularVelocity;
+    //             m_shooter.SetTargetVelocity(angularVelocity);
+    //             m_shooter.ShootAngularVelocity(m_shooter.GetTargetVelocity());
+    //         },
+    //         { &m_shooter }));
 
     /*
     m_shooter.SetDefaultCommand(frc2::RunCommand(
@@ -77,6 +93,16 @@ void RobotContainer::ConfigureBindings() {
         ));
     */
     
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::turns_per_second_t angularVelocity;
+    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * ShooterConstants::kMaxAngularVelocity;
+    //         m_shooter.ShootAngularVelocity(angularVelocity);
+    //     },
+    //     { &m_shooter }
+    // ));
+
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
     //         units::turns_per_second_t angularVelocity;

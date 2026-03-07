@@ -4,19 +4,40 @@
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frc/controller/ProfiledPIDController.h>
 
 #include <constants/IntakeConstants.h>
+
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
 
 class IntakeSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
     IntakeSubsystem();
+    void GoToPosition(units::meter_t position);
+    void SetIntakeVoltage(units::volt_t voltage);
+
+    void Periodic() override;
 
 private:
     turns_per_second_t CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed);
 
-    rev::spark::SparkMax m_ExtendRetractMotor;
-    rev::spark::SparkMax m_followerExtendRetractMotor;
-    rev::spark::SparkMax m_intakeMotor;
+    void ConfigurePublishers();
 
+    rev::spark::SparkMax m_extendRetractMotor;
+    rev::spark::SparkClosedLoopController m_extendRetractController = m_extendRetractMotor.GetClosedLoopController();
+    rev::spark::SparkRelativeEncoder m_extendRetractEncoder = m_extendRetractMotor.GetEncoder();
+
+    rev::spark::SparkMax m_followerExtendRetractMotor;
+
+    rev::spark::SparkMax m_intakeMotor;
+    rev::spark::SparkClosedLoopController m_intakeController = m_intakeMotor.GetClosedLoopController();
+    rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
+
+
+    // publishers
+    nt::DoublePublisher m_extendRetractPositionPub;
+    nt::DoublePublisher m_extendRetractMotorCurrentPub;
+    nt::DoublePublisher m_followerExtendRetractMotorCurrentPub;
 };
