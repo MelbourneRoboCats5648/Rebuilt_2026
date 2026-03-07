@@ -1,12 +1,16 @@
 #pragma once
 
 #include <units/velocity.h>
+#include <units/acceleration.h>
 #include <units/length.h>
 #include <units/angular_velocity.h>
+#include <units/angular_acceleration.h>
 #include <units/voltage.h>
 
 using namespace units::velocity;
+using namespace units::acceleration;
 using namespace units::angular_velocity;
+using namespace units::angular_acceleration;
 using namespace units::length;
 using namespace units::voltage;
 
@@ -21,14 +25,30 @@ namespace IntakeConstants {
         inline constexpr double kP = 0.3;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
+        
+        inline constexpr units::volt_t kS = 0.0_V;
+        inline constexpr auto kV = 0.0_V / 1.0_tps;
+        inline constexpr auto kA = 0.0_V / 1.0_tr_per_s_sq;
+        
+        inline constexpr units::turns_per_second_t kTolerance = 0.1_tps; // TODO
     }
 
     namespace extendRetract { //fixme - tune PID constants
         inline constexpr double kP = 3.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
+        
+        inline constexpr units::volt_t kS = 0.0_V;
+        inline constexpr units::volt_t kG = 0.0_V;
+        inline constexpr auto kV = 0.0_V / 1.0_mps;
+        inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
+        
+        inline constexpr units::meters_per_second_t kMaxVelocity = 0.5_mps; // TODO
+        inline constexpr units::meters_per_second_squared_t kMaxAcceleration = 1.0_mps_sq; // TODO
+        
+        inline constexpr units::meter_t kPositionTolerance = 0.01_m;
+        inline constexpr units::meters_per_second_t kVelocityTolerance = 0.1_mps;
     }
-
 
     inline constexpr int kCurrentLimit(50);
 
