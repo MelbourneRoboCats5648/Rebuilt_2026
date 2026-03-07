@@ -113,5 +113,10 @@ turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t for
 }
 
 void IntakeSubsystem::GoToPosition(units::meter_t position){
-    m_extendRetractController.SetReference(position.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
+  m_extendRetractController.SetReference(position.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
+}
+
+void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage)
+{
+  m_intakeMotor.SetVoltage(voltage);
 }

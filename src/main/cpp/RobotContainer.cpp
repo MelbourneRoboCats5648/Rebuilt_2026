@@ -44,7 +44,7 @@ void RobotContainer::ConfigureBindings() {
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+            //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
     ));
@@ -56,7 +56,12 @@ void RobotContainer::ConfigureBindings() {
                             * IntakeConstants::kExtendSoftLimit;
             position = units::math::abs(position);
 
+            units::volt_t intakeVoltage;
+            intakeVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
+                            * IntakeConstants::kMaxVoltage;
+
             m_intake.GoToPosition(position);
+            m_intake.SetIntakeVoltage(intakeVoltage);
         },
         { &m_intake }
     ));

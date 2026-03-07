@@ -16,6 +16,8 @@ public:
     /* constructor */
     IntakeSubsystem();
     void GoToPosition(units::meter_t position);
+    void SetIntakeVoltage(units::volt_t voltage);
+
     void Periodic() override;
 
 private:
