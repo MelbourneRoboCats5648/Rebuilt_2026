@@ -23,7 +23,7 @@ namespace IntakeConstants {
     }
 
     namespace extendRetract { //fixme - tune PID constants
-        inline constexpr double kP = 1.0;
+        inline constexpr double kP = 3.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
     }
@@ -32,9 +32,9 @@ namespace IntakeConstants {
     inline constexpr int kCurrentLimit(50);
 
     // Assume initial encoder position is 0 when fully retracted
-    inline constexpr meter_t kExtendSoftLimit = (0.25_m); //fixme - tune this value (the slide has 300mm extension)
-    inline constexpr meter_t kRetractSoftLimit = (0.0_m); //fixme - tune this
+    inline constexpr meter_t kExtendSoftLimit = (0.3_m);
+    inline constexpr meter_t kRetractSoftLimit = (0.0_m);
 
     inline constexpr double kExtendRetractGearRatio(1.0 / 20.0); // 20 to 1 reduction gear
-    inline constexpr double kExtendRetractSprocketDia(0.0254); // 25.4 mm pitch diameter
+    inline constexpr double kExtendRetractSprocketDia(0.0254);   // 25.4 mm pitch diameter
 };

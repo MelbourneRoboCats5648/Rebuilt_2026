@@ -35,7 +35,7 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
 
     ExtendRetractMotorConfig
       .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
+      .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
       .Inverted(true);
 
     ExtendRetractMotorConfig.closedLoop
@@ -69,7 +69,7 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
 
     FollowerExtendRetractMotorConfig
     .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
+    .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
     .Follow(m_extendRetractMotor, true);  // invert = true
 
     m_followerExtendRetractMotor.Configure(
