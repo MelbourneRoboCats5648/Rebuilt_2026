@@ -10,6 +10,10 @@
 #include <subsystems/DriveSubsystem.h>
 
 namespace autos {
+
+int LoadTrajectories(); // to be called during RobotContainer init BEFORE using any of the below functions
+// NOTE: having this returning int allows us to hack its invocation into RobotContainer instantiation before initialising functions
+
 /**
  * Example static factory for an autonomous command.
  */
@@ -26,7 +30,8 @@ frc2::CommandPtr AutoDepot(DriveSubsystem* drive);
 frc2::CommandPtr AutoNeutralCollect(DriveSubsystem* drive);
 
 frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
-frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, std::string trajName);
+
+frc2::CommandPtr ChoreoAutoTest(DriveSubsystem* drive);
 
 frc2::CommandPtr ChoreoAutoPlan1(DriveSubsystem* drive);
 

@@ -39,8 +39,9 @@ public:
 
     /* gyroscope */
     void ResetGyro();
-    degree_t GetHeading();
-    
+    degree_t GetGyroHeading();
+
+    degree_t GetHeading(); // get heading from pose estimator    
 
     /* kinematics/"set speed" */
     void Drive(

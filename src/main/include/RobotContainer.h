@@ -53,12 +53,15 @@ private:
     frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
 
+    int m_autoLoadTrajectories; // ignore this - this is a hack! (fixme?)
+
     // auto options
     frc2::CommandPtr m_autoClimb;
     frc2::CommandPtr m_autoTesting;
     frc2::CommandPtr m_choreoAuto;
     frc2::CommandPtr m_autoDepot;
     frc2::CommandPtr m_autoNeutralCollect;
+    frc2::CommandPtr m_choreoTest;
     frc2::CommandPtr m_choreoPlan1;
 
     //the chooser for the auto routines

@@ -9,6 +9,25 @@
 
 #include "commands/ExampleCommand.h"
 
+// pre-loaded trajectories - static so that they are local to this file ONLY
+static choreo::Trajectory<choreo::SwerveSample> TestPath;
+static choreo::Trajectory<choreo::SwerveSample> Test_Path1;
+static choreo::Trajectory<choreo::SwerveSample> Test_Path2;
+static choreo::Trajectory<choreo::SwerveSample> Plan1_InitToShoot;
+static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
+static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
+
+int autos::LoadTrajectories() {    
+    TestPath = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath").value();
+    Test_Path1 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path1").value();
+    Test_Path2 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path2").value();
+    Plan1_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_InitToShoot").value();
+    Plan1_ShootToCollect = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_ShootToCollect").value();
+    Plan1_CollectToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_CollectToShoot").value();
+
+    return 0;
+}
+
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
   return frc2::cmd::Sequence(subsystem->ExampleMethodCommand(),
                              ExampleCommand(subsystem).ToPtr());
@@ -50,16 +69,19 @@ frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<cho
     return drive->NewFollowTrajectoryCommand(choreoTraj);
 }
 
-frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, std::string trajName) {
-    choreo::Trajectory<choreo::SwerveSample> traj = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(trajName).value();
-    return drive->NewFollowTrajectoryCommand(traj);
+frc2::CommandPtr autos::ChoreoAutoTest(DriveSubsystem* drive) {
+    return frc2::cmd::Sequence(
+        ChoreoAuto(drive, Test_Path1),
+        frc2::cmd::Wait(5_s),
+        ChoreoAuto(drive, Test_Path2)
+    );
 }
 
 frc2::CommandPtr autos::ChoreoAutoPlan1(DriveSubsystem* drive) {
     return frc2::cmd::Sequence(
-        ChoreoAuto(drive, "Plan1_InitToShoot"),
+        ChoreoAuto(drive, Plan1_InitToShoot),
         // shoot
-        ChoreoAuto(drive, "Plan1_ShootToCollect")
+        ChoreoAuto(drive, Plan1_ShootToCollect)
         // collect
         // so on...
     );

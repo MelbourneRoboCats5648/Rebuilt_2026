@@ -40,7 +40,7 @@ DriveSubsystem::DriveSubsystem()
 }
 
 void DriveSubsystem::Periodic() {
-    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
+    m_poseEstimator.Update(frc::Rotation2d{GetGyroHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
 
@@ -65,8 +65,13 @@ void DriveSubsystem::ResetGyro() {
    m_gyro.Reset();
 }
 
-degree_t DriveSubsystem::GetHeading() {
+degree_t DriveSubsystem::GetGyroHeading() {
     return m_gyro.GetRotation2d().Degrees();
+}
+
+degree_t DriveSubsystem::GetHeading() {
+    // return m_gyro.GetRotation2d().Degrees();
+    return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
@@ -118,7 +123,7 @@ frc::Pose2d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose) 
 {
-    m_poseEstimator.ResetPosition(frc::Rotation2d{GetHeading()},
+    m_poseEstimator.ResetPosition(frc::Rotation2d{GetGyroHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);

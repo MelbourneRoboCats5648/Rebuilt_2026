@@ -15,11 +15,13 @@
 #include "units/voltage.h"
 
 RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj)
-:   m_autoClimb{autos::AutoClimb(&m_drive)},
+:   m_autoLoadTrajectories(autos::LoadTrajectories()), // will be called before the functions below
+    m_autoClimb{autos::AutoClimb(&m_drive)},
     m_autoTesting{autos::AutoTesting(&m_drive)},
     m_choreoAuto{autos::ChoreoAuto(&m_drive, choreoTraj)},
     m_autoDepot{autos::AutoDepot(&m_drive)},
     m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)},
+    m_choreoTest{autos::ChoreoAutoTest(&m_drive)},
     m_choreoPlan1{autos::ChoreoAutoPlan1(&m_drive)}
 {
     // Initialize all of your commands and subsystems here
@@ -33,6 +35,7 @@ RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoT
     m_chooser.AddOption("Climb Auto", m_autoClimb.get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.get());
     m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.get());
+    m_chooser.AddOption("Choreo Test", m_choreoTest.get());
     m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.get());
 
     //put the chooser on the dashboard
