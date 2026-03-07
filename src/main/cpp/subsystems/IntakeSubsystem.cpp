@@ -35,7 +35,8 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
 
     ExtendRetractMotorConfig
       .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
-      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
+      .Inverted(true);
 
     ExtendRetractMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
@@ -45,8 +46,8 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       .OutputRange(-1, 1);
 
     ExtendRetractMotorConfig.softLimit
-      .ForwardSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ForwardSoftLimitEnabled(true)
-      .ReverseSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ReverseSoftLimitEnabled(true);
+      .ForwardSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
+      .ReverseSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
     const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio;
 
@@ -76,6 +77,26 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       rev::spark::SparkMax::ResetMode::kResetSafeParameters,
       rev::spark::SparkMax::PersistMode::kPersistParameters
     );
+
+    ConfigurePublishers();
+}
+
+void IntakeSubsystem::ConfigurePublishers()
+{
+    m_extendRetractPositionPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetractPosition").Publish();
+    m_extendRetractMotorCurrentPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetractMotorCurrent").Publish();
+    m_followerExtendRetractMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/FollowerExtendRetractMotorCurrent").Publish();
+}
+
+void IntakeSubsystem::Periodic()
+{
+    /* publish current state */
+    m_extendRetractPositionPub.Set(m_extendRetractEncoder.GetPosition());
+    m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
+    m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)

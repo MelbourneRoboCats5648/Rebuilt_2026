@@ -30,7 +30,7 @@ namespace HardwareConstants {
     // Intake Motors
     inline constexpr int kExtendRetractMotorID = 19; 
     inline constexpr int kFollowerExtendRetractMotorID = 20; 
-    inline constexpr int kIntakeMotorID = 33; //fixme - can id 
+    inline constexpr int kIntakeMotorID = 23;
 
     // Climb Motors
     inline constexpr int kClimbMotorID = 21;
