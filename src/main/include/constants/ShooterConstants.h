@@ -11,7 +11,7 @@ using namespace units::angle;
 
 namespace ShooterConstants {
     namespace motor {
-        inline constexpr double kP = 1.0;
+        inline constexpr double kP = 0.0; // fixme - we'll need kP (1.0 previously)
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
         inline constexpr double kV = 0.4;
@@ -24,6 +24,6 @@ namespace ShooterConstants {
     inline constexpr double kgearRatio = 2;
 
     inline constexpr units::volt_t kMaxVoltage(12);
-    inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
+    inline constexpr units::turns_per_second_t kMaxAngularVelocity(50);
     inline constexpr inch_t kFlyWheelRadius(2_in);
 };

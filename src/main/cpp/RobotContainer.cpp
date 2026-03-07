@@ -40,18 +40,13 @@ void RobotContainer::ConfigureBindings() {
                  * DrivetrainConstants::kMaxSpeed
             );
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-
-                PreprocessJoystickInput(-m_driverController.GetRightX()) 
+                PreprocessJoystickInput(-m_driverController.GetRightX())
                 * DrivetrainConstants::kMaxAngularSpeed
-                
             );
 
-            //rotSpeed = 0_rad_per_s;
             m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
-
-
     ));
 
     m_intake.SetDefaultCommand(frc2::RunCommand(
@@ -65,6 +60,18 @@ void RobotContainer::ConfigureBindings() {
         },
         { &m_intake }
     ));
+    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+
+    // fixme - temporary default commands for shooter during testing. This will be removed for competition
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+            [this] {
+                units::turns_per_second_t angularVelocity;
+                angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+                                * ShooterConstants::kMaxAngularVelocity;
+                m_shooter.SetTargetVelocity(angularVelocity);
+                m_shooter.ShootAngularVelocity(m_shooter.GetTargetVelocity());
+            },
+            { &m_shooter }));
 
     /*
     m_shooter.SetDefaultCommand(frc2::RunCommand(
@@ -81,7 +88,15 @@ void RobotContainer::ConfigureBindings() {
         ));
     */
     
-    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::turns_per_second_t angularVelocity;
+    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * ShooterConstants::kMaxAngularVelocity;
+    //         m_shooter.ShootAngularVelocity(angularVelocity);
+    //     },
+    //     { &m_shooter }
+    // ));
 
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
