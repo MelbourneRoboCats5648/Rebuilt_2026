@@ -5,6 +5,8 @@
 #include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc2/command/SwerveControllerCommand.h>
 
+#include <commands/ChoreoTrajectoryCommand.h>
+
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem()
@@ -179,46 +181,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 }
 
 frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
-    frc::Timer timer;
-    return RunOnce([this, traj = trajectory, &timer]{
-        m_choreoController.Reset();
-        timer.Reset(); timer.Start();
-        
-        /* publish trajectory */
-        m_trajectoryPublisher.Set(traj.GetPoses());
-    }).AndThen(
-        Run([this, traj = trajectory, &timer] {
-
-            units::second_t elapsed = timer.Get();
-            choreo::SwerveSample sample = traj.SampleAt(elapsed).value(); // fixme (issue #45) - SampleAt() allows mirroring for red alliance 
-            frc::ChassisSpeeds speed = m_choreoController.FollowTrajectory(sample, GetPose());
-
-            const bool isFieldCentric = true;
-            Drive(speed.vx, speed.vy, speed.omega, isFieldCentric); // fixme - could overload to allow direct input of chassis speed
-
-        }).Until([this, traj = trajectory, &timer] {
-            units::second_t elapsed = timer.Get();
-
-            bool endTimeReached = elapsed > traj.GetTotalTime();
-            if (!endTimeReached) {
-                return false; // trajectory not ended yet
-            }
-
-            if (m_choreoController.AtSetpoint()) {
-                return true; // trajectory ended AND we've hit the final setpoint
-            }
-
-            if (elapsed > (traj.GetTotalTime() * (1.0 + Autonomous::kTrajTimeTolerance))) {
-                return true; // past time tolerance
-            }
-
-            return false; // trajectory ended, we're not past time tolerance yet, and we haven't reached setpoint
-        }))
-    .FinallyDo([this, &timer]{
-        Stop();
-        m_choreoController.Reset();
-        timer.Stop();
-     }); 
+    return ChoreoTrajectoryCommand(this, m_choreoController, trajectory).ToPtr();
 }
 
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> trajectory) {
