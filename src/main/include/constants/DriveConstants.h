@@ -76,17 +76,19 @@ namespace DrivetrainConstants {
 
     namespace Autonomous {
         namespace XYController {
-            inline constexpr double kP = 2.0;
+            inline constexpr double kP = 0.2;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
             inline constexpr meter_t kTolerance = 0.05_m;
         };
         namespace ThetaController {
-            inline constexpr double kP = 3.0;
+            inline constexpr double kP = 0.3;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
             inline constexpr radian_t kPositionTolerance = 1_deg;
             inline constexpr radians_per_second_t kVelocityTolerance = 1_deg_per_s;
         };
-    };
+
+        inline constexpr double kTrajTimeTolerance = 0.2; // additional ratio on top of total traj time
+    }; // NOTE: repurposed for 
 };

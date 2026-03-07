@@ -197,11 +197,27 @@ frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<c
             Drive(speed.vx, speed.vy, speed.omega, isFieldCentric); // fixme - could overload to allow direct input of chassis speed
 
         }).Until([this, traj = trajectory, &timer] {
-            return timer.Get() > traj.GetTotalTime();
+            units::second_t elapsed = timer.Get();
+
+            bool endTimeReached = elapsed > traj.GetTotalTime();
+            if (!endTimeReached) {
+                return false; // trajectory not ended yet
+            }
+
+            if (m_choreoController.AtSetpoint()) {
+                return true; // trajectory ended AND we've hit the final setpoint
+            }
+
+            if (elapsed > (traj.GetTotalTime() * (1.0 + Autonomous::kTrajTimeTolerance))) {
+                return true; // past time tolerance
+            }
+
+            return false; // trajectory ended, we're not past time tolerance yet, and we haven't reached setpoint
         }))
-    .FinallyDo([this]{
+    .FinallyDo([this, &timer]{
         Stop();
         m_choreoController.Reset();
+        timer.Stop();
      }); 
 }
 

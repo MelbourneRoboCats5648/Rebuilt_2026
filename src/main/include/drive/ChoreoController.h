@@ -2,6 +2,10 @@
 #include <choreo/trajectory/Trajectory.h>
 #include <frc/controller/PIDController.h>
 
+#include <constants/DriveConstants.h>
+
+using namespace DrivetrainConstants::Autonomous;
+
 class ChoreoController {
 public:
     ChoreoController();
@@ -13,9 +17,16 @@ public:
     frc::PIDController& getYController();
     frc::PIDController& getHeadingController();
 
+    bool AtSetpoint();
+
 private:
-    // fixme - need to update these PID values
-    frc::PIDController m_xController{0.0, 0.0, 0.0};
-    frc::PIDController m_yController{0.0, 0.0, 0.0};
-    frc::PIDController m_headingController{0.0, 0.0, 0.0};
+    frc::PIDController m_xController{
+        XYController::kP, XYController::kI, XYController::kD
+    }; // metre
+    frc::PIDController m_yController{
+        XYController::kP, XYController::kI, XYController::kD
+    }; // metre
+    frc::PIDController m_headingController{
+        ThetaController::kP, ThetaController::kI, ThetaController::kD
+    }; // radian
 };

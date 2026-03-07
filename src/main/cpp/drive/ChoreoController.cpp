@@ -4,6 +4,10 @@
 
 
 ChoreoController::ChoreoController() {
+    m_xController.SetTolerance(XYController::kTolerance.value());
+    m_yController.SetTolerance(XYController::kTolerance.value());
+    m_headingController.SetTolerance(ThetaController::kPositionTolerance.value(), ThetaController::kVelocityTolerance.value());
+
     m_headingController.EnableContinuousInput(-M_PI, M_PI);
 };
 
@@ -32,6 +36,10 @@ void ChoreoController::Reset()
     m_xController.Reset();
     m_yController.Reset();
     m_headingController.Reset();
+}
+
+bool ChoreoController::AtSetpoint() {
+    return m_xController.AtSetpoint() && m_yController.AtSetpoint() && m_headingController.AtSetpoint();
 }
 
 frc::PIDController& ChoreoController::getXController(){
