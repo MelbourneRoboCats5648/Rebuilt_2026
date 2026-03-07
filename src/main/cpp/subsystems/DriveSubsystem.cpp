@@ -7,8 +7,7 @@
 
 using namespace ctre::phoenix6::configs;
 
-DriveSubsystem::DriveSubsystem(frc::Timer& timer) 
-: m_autoTimer(timer)
+DriveSubsystem::DriveSubsystem()
 {
     m_statePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/SwerveStates").Publish();
@@ -115,10 +114,6 @@ frc::Pose2d DriveSubsystem::GetPose() {
     return m_poseEstimator.GetEstimatedPosition();
 }
 
-units::second_t DriveSubsystem::GetElapsedAutoTime(){
-    return m_autoTimer.Get();
-}
-
 void DriveSubsystem::ResetPose(frc::Pose2d pose) 
 {
     m_poseEstimator.ResetPosition(frc::Rotation2d{GetHeading()},
@@ -184,23 +179,25 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 }
 
 frc2::CommandPtr DriveSubsystem::NewFollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
-    return RunOnce([this, traj = trajectory]{
+    frc::Timer timer;
+    return RunOnce([this, traj = trajectory, &timer]{
         m_choreoController.Reset();
+        timer.Reset(); timer.Start();
         
         /* publish trajectory */
         m_trajectoryPublisher.Set(traj.GetPoses());
     }).AndThen(
-        Run([this, traj = trajectory] {
+        Run([this, traj = trajectory, &timer] {
 
-            units::second_t elapsed = GetElapsedAutoTime();
+            units::second_t elapsed = timer.Get();
             choreo::SwerveSample sample = traj.SampleAt(elapsed).value(); // fixme (issue #45) - SampleAt() allows mirroring for red alliance 
             frc::ChassisSpeeds speed = m_choreoController.FollowTrajectory(sample, GetPose());
 
             const bool isFieldCentric = true;
             Drive(speed.vx, speed.vy, speed.omega, isFieldCentric); // fixme - could overload to allow direct input of chassis speed
 
-        }).Until([this, traj = trajectory] {
-            return GetElapsedAutoTime() > traj.GetTotalTime();
+        }).Until([this, traj = trajectory, &timer] {
+            return timer.Get() > traj.GetTotalTime();
         }))
     .FinallyDo([this]{
         Stop();

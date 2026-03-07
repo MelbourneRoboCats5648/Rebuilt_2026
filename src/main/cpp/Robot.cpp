@@ -39,9 +39,6 @@ void Robot::AutonomousInit() {
   if (m_autonomousCommand != nullptr) {
     m_autonomousCommand->Schedule();
   }
-
-  m_autoTimer.Reset();
-  m_autoTimer.Start();
 }
 
 void Robot::AutonomousPeriodic() {}

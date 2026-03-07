@@ -33,11 +33,9 @@ class Robot : public frc::TimedRobot {
   // doesn't have undefined behavior and potentially crash.
   frc2::Command* m_autonomousCommand;
 
-  frc::Timer m_autoTimer;
-
 // Loads a swerve trajectory, alternatively use DifferentialSample if the robot is tank drive  
 std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory = 
     choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath");
 
-    RobotContainer m_container{m_trajectory.value(), m_autoTimer};
+    RobotContainer m_container{m_trajectory.value()};
 };
