@@ -44,27 +44,33 @@ void RobotContainer::ConfigureBindings() {
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
-            //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
         { &m_drive }
     ));
 
-    m_intake.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::meter_t position;
-            position = PreprocessJoystickInput(-m_driverController.GetRightY())
-                            * IntakeConstants::kExtendSoftLimit;
-            position = units::math::abs(position);
+    // m_intake.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::volt_t extendVoltage;
+    //         extendVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
+    //                         * IntakeConstants::kMaxVoltage;
+            
+    //         m_intake.SetExtendRetractVoltage(extendVoltage);
 
-            units::volt_t intakeVoltage;
-            intakeVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
-                            * IntakeConstants::kMaxVoltage;
+    //         units::volt_t intakeVoltage;
+    //         intakeVoltage = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * IntakeConstants::kMaxVoltage;
 
-            m_intake.GoToPosition(position);
-            m_intake.SetIntakeVoltage(intakeVoltage);
-        },
-        { &m_intake }
-    ));
+    //         m_intake.SetIntakeVoltage(intakeVoltage);
+    //     },
+    //     { &m_intake }
+    // ));
+
+    m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
+    m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
+    m_driverController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+    m_driverController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     // // fixme - temporary default commands for shooter during testing. This will be removed for competition

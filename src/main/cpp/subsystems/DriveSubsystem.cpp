@@ -202,3 +202,12 @@ frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
 {
     return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
 }
+
+frc::ChassisSpeeds DriveSubsystem::GetVelocity() {
+    return m_kinematics.ToChassisSpeeds(
+        m_frontLeftModule.GetState(),
+        m_frontRightModule.GetState(),
+        m_backLeftModule.GetState(),
+        m_backRightModule.GetState()
+    );
+}

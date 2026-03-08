@@ -4,11 +4,18 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-IntakeSubsystem::IntakeSubsystem() :
+IntakeSubsystem::IntakeSubsystem(DriveSubsystem& drive) :
 m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
-m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless)
-
+m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless),
+m_extendRetractFeedforward(IntakeConstants::extendRetract::kS, IntakeConstants::extendRetract::kG, IntakeConstants::extendRetract::kV, IntakeConstants::extendRetract::kA),
+m_extendRetractPID(
+    IntakeConstants::extendRetract::kP, IntakeConstants::extendRetract::kI, IntakeConstants::extendRetract::kD,
+    {IntakeConstants::extendRetract::kMaxVelocity, IntakeConstants::extendRetract::kMaxAcceleration}
+),
+m_intakeFeedforward(IntakeConstants::intake::kS, IntakeConstants::intake::kV, IntakeConstants::intake::kA),
+m_intakePID(IntakeConstants::intake::kP, IntakeConstants::intake::kI, IntakeConstants::intake::kD),
+m_drive(drive)
 {
     //intake motor config
     rev::spark::SparkMaxConfig intakeMotorConfig;
@@ -16,13 +23,6 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
     intakeMotorConfig
       .SmartCurrentLimit(IntakeConstants::kCurrentLimit)
       .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
-    
-    intakeMotorConfig.closedLoop
-      .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
-      .P(IntakeConstants::intake::kP)
-      .I(IntakeConstants::intake::kI)
-      .D(IntakeConstants::intake::kD)
-      .OutputRange(-1, 1);
 
     m_intakeMotor.Configure(
       intakeMotorConfig,
@@ -38,13 +38,6 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
       .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
       .Inverted(true);
 
-    ExtendRetractMotorConfig.closedLoop
-      .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
-      .P(IntakeConstants::extendRetract::kP)
-      .I(IntakeConstants::extendRetract::kI)
-      .D(IntakeConstants::extendRetract::kD)
-      .OutputRange(-1, 1);
-
     ExtendRetractMotorConfig.softLimit
       .ForwardSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
       .ReverseSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
@@ -53,7 +46,7 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
 
     ExtendRetractMotorConfig.encoder
       .PositionConversionFactor(metresPerTurn)
-      .VelocityConversionFactor(metresPerTurn);
+      .VelocityConversionFactor(metresPerTurn / 60); // by default Spark Max returns RPM; we want to convert to m/s here (hence we divide by 60 too)
     
     m_extendRetractMotor.Configure(
       ExtendRetractMotorConfig,
@@ -62,7 +55,6 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
     );
 
     m_extendRetractEncoder.SetPosition(0);
-
 
     // follower extend/retract motor config 
     rev::spark::SparkMaxConfig FollowerExtendRetractMotorConfig;
@@ -79,24 +71,41 @@ m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType
     );
 
     ConfigurePublishers();
+
+    m_extendRetractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
+    m_intakePID.SetTolerance(IntakeConstants::intake::kTolerance.value());
 }
 
 void IntakeSubsystem::ConfigurePublishers()
 {
     m_extendRetractPositionPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/ExtendRetractPosition").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/Position").Publish();
+    m_extendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/Velocity").Publish();
+    m_extendRetractTargetPositionPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/TargetPosition").Publish();
+    m_extendRetractTargetVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/TargetVelocity").Publish();
     m_extendRetractMotorCurrentPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/ExtendRetractMotorCurrent").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/Current").Publish();
     m_followerExtendRetractMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/FollowerExtendRetractMotorCurrent").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerCurrent").Publish();
+    m_extendRetractVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/Voltage").Publish();
+    m_intakeVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/Motor/Velocity").Publish();
+    m_intakeVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/Motor/Voltage").Publish();
 }
 
 void IntakeSubsystem::Periodic()
 {
     /* publish current state */
-    m_extendRetractPositionPub.Set(m_extendRetractEncoder.GetPosition());
+    m_extendRetractPositionPub.Set(GetPosition().value());
+    m_extendRetractVelocityPub.Set(GetExtendRetractVelocity().value());
     m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
     m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
+    m_intakeVelocityPub.Set(GetIntakeVelocity().value());
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
@@ -112,11 +121,95 @@ turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t for
     return requiredIntakeWheelSpeed;
 }
 
-void IntakeSubsystem::GoToPosition(units::meter_t position){
-  m_extendRetractController.SetReference(position.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
+units::meter_t IntakeSubsystem::GetPosition() {
+    return units::meter_t{m_extendRetractEncoder.GetPosition()};
 }
 
-void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage)
-{
-  m_intakeMotor.SetVoltage(voltage);
+units::meters_per_second_t IntakeSubsystem::GetExtendRetractVelocity() {
+    return units::meters_per_second_t{m_extendRetractEncoder.GetVelocity()};
+}
+
+void IntakeSubsystem::SetPosition(units::meter_t position) {
+    m_extendRetractPID.Reset(GetPosition(), GetExtendRetractVelocity());
+    m_extendRetractPID.SetGoal(position);
+}
+
+void IntakeSubsystem::ExtendRetractControl() {
+    units::volt_t output =
+        units::volt_t{m_extendRetractPID.Calculate(GetPosition())}
+        + m_extendRetractFeedforward.Calculate(m_extendRetractPID.GetSetpoint().velocity);
+    SetExtendRetractVoltage(output);
+
+    /* publish current motion profile */
+    m_extendRetractTargetPositionPub.Set(m_extendRetractPID.GetSetpoint().position.value());
+    m_extendRetractTargetVelocityPub.Set(m_extendRetractPID.GetSetpoint().velocity.value());
+}
+
+bool IntakeSubsystem::IsAtPosition() {
+    return m_extendRetractPID.AtGoal();
+}
+
+void IntakeSubsystem::StopExtendRetract() {
+    m_extendRetractMotor.SetVoltage(0.0_V); // should set the motor to coast
+    m_extendRetractVoltagePub.Set(0.0);
+}
+
+frc2::CommandPtr IntakeSubsystem::ExtendRetractCommand(units::meter_t position) {
+    return StartRun(
+        [this, position] { SetPosition(position); },
+        [this] { ExtendRetractControl(); }
+    ).Until([this] { return IsAtPosition(); })
+    .FinallyDo([this] { StopExtendRetract(); });
+}
+
+void IntakeSubsystem::SetIntakeVelocity(units::turns_per_second_t velocity) {
+    m_intakePID.Reset();
+    m_intakePID.SetSetpoint(velocity.value());
+}
+
+units::turns_per_second_t IntakeSubsystem::GetIntakeVelocity() {
+    return units::turns_per_second_t{m_intakeEncoder.GetVelocity() / 60.0}; // convert from RPM to tps
+}
+
+void IntakeSubsystem::IntakeControl() {
+    units::volt_t output =
+        units::volt_t{m_intakePID.Calculate(GetIntakeVelocity().value())}
+        + m_intakeFeedforward.Calculate(units::turns_per_second_t{m_intakePID.GetSetpoint()});
+    SetIntakeVoltage(output);
+}
+
+bool IntakeSubsystem::IsAtVelocity() {
+    return m_intakePID.AtSetpoint();
+}
+
+void IntakeSubsystem::StopIntake() {
+    m_intakeMotor.SetVoltage(0.0_V); // should set the motor to coast
+}
+
+frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t velocity) {
+    return StartRun(
+        [this, velocity] { SetIntakeVelocity(velocity); },
+        [this] { IntakeControl(); }
+    ).FinallyDo([this] { StopIntake(); });
+}
+
+frc2::CommandPtr IntakeSubsystem::IntakeCommand() {
+    return StartRun([this] { m_intakePID.Reset(); }, [this] {
+        /* compute desired intake velocity */
+        auto [forwardVel, sideVel, angularVel] = m_drive.GetVelocity();
+        units::turns_per_second_t intakeVel = CalculateIntakeSpeed(forwardVel);
+        m_intakePID.SetSetpoint(intakeVel.value()); // set setpoint without resetting controller
+
+        IntakeControl();
+    }).FinallyDo([this] { StopIntake(); });
+}
+
+void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
+    m_intakeMotor.SetVoltage(voltage);
+    m_intakeVoltagePub.Set(voltage.value());
+}
+
+void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
+    m_extendRetractMotor.SetVoltage(voltage);
+    m_extendRetractVoltagePub.Set(voltage.value());
 }
