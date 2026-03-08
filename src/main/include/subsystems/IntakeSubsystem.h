@@ -43,6 +43,8 @@ public:
     frc2::CommandPtr IntakeCommand(units::turns_per_second_t velocity);
     frc2::CommandPtr IntakeCommand(); // maintain desired speed, calculaed by CalculateIntakeSpeed
 
+    frc2::CommandPtr RetractToLimitCommand();
+
     void Periodic() override;
 
 private:

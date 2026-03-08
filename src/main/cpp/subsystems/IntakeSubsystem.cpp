@@ -4,6 +4,8 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
+#include <frc2/command/Commands.h>
+
 IntakeSubsystem::IntakeSubsystem(DriveSubsystem& drive) :
 m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
@@ -212,4 +214,25 @@ void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
 void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
     m_extendRetractMotor.SetVoltage(voltage);
     m_extendRetractVoltagePub.Set(voltage.value());
+}
+
+frc2::CommandPtr IntakeSubsystem::RetractToLimitCommand() {
+    return
+        RunOnce([this] {
+            // initially set encoder position to max extension
+            m_extendRetractEncoder.SetPosition(IntakeConstants::kExtendSoftLimit.value());
+            // then pull the intake in at a slow speed
+            m_extendRetractMotor.SetVoltage(m_extendRetractFeedforward.Calculate(-IntakeConstants::extendRetract::kCalibrationVelocity));
+        })
+        // then wait until...
+        .AndThen(frc2::cmd::Sequence(
+            // 1. we speed up past 10% of the target velocity
+            frc2::cmd::WaitUntil([this] { return GetExtendRetractVelocity() < 0.10 * -IntakeConstants::extendRetract::kCalibrationVelocity; }),
+            // 2. then we slow down past 10% again - indicating that we've reached the end
+            frc2::cmd::WaitUntil([this] { return GetExtendRetractVelocity() > 0.10 * -IntakeConstants::extendRetract::kCalibrationVelocity; })
+        ))
+        .FinallyDo([this] {
+            m_extendRetractMotor.StopMotor();
+            m_extendRetractEncoder.SetPosition(IntakeConstants::kRetractSoftLimit.value());
+        });
 }

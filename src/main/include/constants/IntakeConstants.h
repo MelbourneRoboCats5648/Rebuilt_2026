@@ -48,6 +48,8 @@ namespace IntakeConstants {
         
         inline constexpr units::meter_t kPositionTolerance = 0.01_m;
         inline constexpr units::meters_per_second_t kVelocityTolerance = 0.1_mps;
+
+        inline constexpr units::meters_per_second_t kCalibrationVelocity = 0.01_mps; // for retracting to zero pos
     }
 
     inline constexpr int kCurrentLimit(50);
