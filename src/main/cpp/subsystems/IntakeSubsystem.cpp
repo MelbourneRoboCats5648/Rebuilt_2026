@@ -84,6 +84,10 @@ void IntakeSubsystem::ConfigurePublishers()
         .GetDoubleTopic("Intake/ExtendRetract/Position").Publish();
     m_extendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Velocity").Publish();
+    m_extendRetractTargetPositionPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/TargetPosition").Publish();
+    m_extendRetractTargetVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/TargetVelocity").Publish();
     m_extendRetractMotorCurrentPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Current").Publish();
     m_followerExtendRetractMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
@@ -137,6 +141,10 @@ void IntakeSubsystem::ExtendRetractControl() {
         units::volt_t{m_extendRetractPID.Calculate(GetPosition())}
         + m_extendRetractFeedforward.Calculate(m_extendRetractPID.GetSetpoint().velocity);
     SetExtendRetractVoltage(output);
+
+    /* publish current motion profile */
+    m_extendRetractTargetPositionPub.Set(m_extendRetractPID.GetSetpoint().position.value());
+    m_extendRetractTargetVelocityPub.Set(m_extendRetractPID.GetSetpoint().velocity.value());
 }
 
 bool IntakeSubsystem::IsAtPosition() {
