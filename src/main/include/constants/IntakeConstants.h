@@ -30,7 +30,7 @@ namespace IntakeConstants {
         inline constexpr auto kV = 0.1104_V / 1.0_tps;
         inline constexpr auto kA = 0.0_V / 1.0_tr_per_s_sq;
         
-        inline constexpr units::turns_per_second_t kTolerance = 0.1_tps; // TODO
+        inline constexpr units::turns_per_second_t kTolerance = 0.1_tps;
     }
 
     namespace extendRetract { //fixme - tune PID constants
@@ -44,12 +44,12 @@ namespace IntakeConstants {
         inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
         
         inline constexpr units::meters_per_second_t kMaxExtendVelocity = 0.30_mps;
-        inline constexpr units::meters_per_second_squared_t kMaxExtendAcceleration = 0.8_mps_sq; // TODO
+        inline constexpr units::meters_per_second_squared_t kMaxExtendAcceleration = 0.8_mps_sq;
     
         inline constexpr units::meters_per_second_t kMaxRetractVelocity = 0.15_mps;
-        inline constexpr units::meters_per_second_squared_t kMaxRetractAcceleration = 0.4_mps_sq; // TODO
+        inline constexpr units::meters_per_second_squared_t kMaxRetractAcceleration = 0.4_mps_sq;
         
-        inline constexpr units::meter_t kPositionTolerance = 0.01_m;
+        inline constexpr units::meter_t kPositionTolerance = 0.01_m; // fixme(#55) - check position tolerance along with desired velocity
         inline constexpr units::meters_per_second_t kVelocityTolerance = 0.1_mps;
 
         inline constexpr units::meters_per_second_t kCalibrationVelocity = 0.01_mps; // for retracting to zero pos
