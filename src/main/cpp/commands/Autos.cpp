@@ -17,15 +17,13 @@ static choreo::Trajectory<choreo::SwerveSample> Plan1_InitToShoot;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
 
-int autos::LoadTrajectories() {    
+void autos::LoadTrajectories() {    
     TestPath = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath").value();
     Test_Path1 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path1").value();
     Test_Path2 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path2").value();
     Plan1_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_InitToShoot").value();
     Plan1_ShootToCollect = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_ShootToCollect").value();
     Plan1_CollectToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_CollectToShoot").value();
-
-    return 0;
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {

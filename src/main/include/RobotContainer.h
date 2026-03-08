@@ -53,15 +53,15 @@ private:
     frc::SlewRateLimiter<units::meters_per_second> m_yLimiter{DrivetrainConstants::kMaxAcceleration};
     frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
 
-    int m_autoLoadTrajectories; // ignore this - this is a hack! (fixme?)
-
     // auto options
-    frc2::CommandPtr m_autoClimb;
-    frc2::CommandPtr m_autoTesting;
-    frc2::CommandPtr m_autoDepot;
-    frc2::CommandPtr m_autoNeutralCollect;
-    frc2::CommandPtr m_choreoTest;
-    frc2::CommandPtr m_choreoPlan1;
+    std::optional<frc2::CommandPtr> m_autoClimb;
+    std::optional<frc2::CommandPtr> m_autoTesting;
+    std::optional<frc2::CommandPtr> m_autoDepot;
+    std::optional<frc2::CommandPtr> m_autoNeutralCollect;
+    std::optional<frc2::CommandPtr> m_choreoTest;
+    std::optional<frc2::CommandPtr> m_choreoPlan1;
+    // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
+    // the std::optional<> wrapper allows it to be assigned later in runtime
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;

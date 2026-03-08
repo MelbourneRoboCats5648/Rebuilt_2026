@@ -14,27 +14,28 @@
 #include "units/math.h"
 #include "units/voltage.h"
 
-RobotContainer::RobotContainer()
-:   m_autoLoadTrajectories(autos::LoadTrajectories()), // will be called before the functions below
-    m_autoClimb{autos::AutoClimb(&m_drive)},
-    m_autoTesting{autos::AutoTesting(&m_drive)},
-    m_autoDepot{autos::AutoDepot(&m_drive)},
-    m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)},
-    m_choreoTest{autos::ChoreoAutoTest(&m_drive)},
-    m_choreoPlan1{autos::ChoreoAutoPlan1(&m_drive)}
-{
+RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
 
     // Configure the button bindings
     ConfigureBindings();
 
+    // load autonomous trajectories and commands
+    autos::LoadTrajectories();
+    m_autoClimb = autos::AutoClimb(&m_drive);
+    m_autoTesting = autos::AutoTesting(&m_drive);
+    m_autoDepot = autos::AutoDepot(&m_drive);
+    m_autoNeutralCollect = autos::AutoNeutralCollect(&m_drive);
+    m_choreoTest = autos::ChoreoAutoTest(&m_drive);
+    m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
+
     //adding commands to the auto chooser
-    m_chooser.AddOption("Testing Auto", m_autoTesting.get());
-    m_chooser.AddOption("Climb Auto", m_autoClimb.get());
-    m_chooser.AddOption("Depot Auto", m_autoDepot.get());
-    m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.get());
-    m_chooser.AddOption("Choreo Test", m_choreoTest.get());
-    m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.get());
+    m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
+    m_chooser.AddOption("Climb Auto", m_autoClimb.value().get());
+    m_chooser.AddOption("Depot Auto", m_autoDepot.value().get());
+    m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.value().get());
+    m_chooser.AddOption("Choreo Test", m_choreoTest.value().get());
+    m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData(&m_chooser);
