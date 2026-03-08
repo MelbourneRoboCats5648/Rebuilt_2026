@@ -136,8 +136,7 @@ void IntakeSubsystem::ExtendRetractControl() {
     units::volt_t output =
         units::volt_t{m_extendRetractPID.Calculate(GetPosition())}
         + m_extendRetractFeedforward.Calculate(m_extendRetractPID.GetSetpoint().velocity);
-    m_extendRetractMotor.SetVoltage(output);
-    m_extendRetractVoltagePub.Set(output.value());
+    SetExtendRetractVoltage(output);
 }
 
 bool IntakeSubsystem::IsAtPosition() {
@@ -191,4 +190,9 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
 void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
     m_intakeMotor.SetVoltage(voltage);
     m_intakeVoltagePub.Set(voltage.value());
+}
+
+void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
+    m_extendRetractMotor.SetVoltage(voltage);
+    m_extendRetractVoltagePub.Set(voltage.value());
 }

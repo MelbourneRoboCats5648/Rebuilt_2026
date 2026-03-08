@@ -34,13 +34,13 @@ namespace IntakeConstants {
     }
 
     namespace extendRetract { //fixme - tune PID constants
-        inline constexpr double kP = 0.0;
+        inline constexpr double kP = 10.0;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         
-        inline constexpr units::volt_t kS = 0.0_V;
-        inline constexpr units::volt_t kG = 0.0_V;
-        inline constexpr auto kV = 0.0_V / 1.0_mps;
+        inline constexpr units::volt_t kS = 0.08967_V;
+        inline constexpr units::volt_t kG = -0.00663_V;
+        inline constexpr auto kV = 31.58_V / 1.0_mps; // avg of extend and retract slopes
         inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
         
         inline constexpr units::meters_per_second_t kMaxVelocity = 0.5_mps; // TODO

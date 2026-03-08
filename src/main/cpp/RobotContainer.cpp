@@ -29,38 +29,38 @@ double RobotContainer::PreprocessJoystickInput(double input) {
 void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
-    m_drive.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            meters_per_second_t xSpeed = m_xLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftY())
-                * DrivetrainConstants::kMaxSpeed
-            );
-            meters_per_second_t ySpeed = m_yLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftX())
-                 * DrivetrainConstants::kMaxSpeed
-            );
-            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetRightX())
-                * DrivetrainConstants::kMaxAngularSpeed
-            );
+    // m_drive.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         meters_per_second_t xSpeed = m_xLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetLeftY())
+    //             * DrivetrainConstants::kMaxSpeed
+    //         );
+    //         meters_per_second_t ySpeed = m_yLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetLeftX())
+    //              * DrivetrainConstants::kMaxSpeed
+    //         );
+    //         radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetRightX())
+    //             * DrivetrainConstants::kMaxAngularSpeed
+    //         );
 
-            //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
-        },
-        { &m_drive }
-    ));
+    //         //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+    //     },
+    //     { &m_drive }
+    // ));
 
     m_intake.SetDefaultCommand(frc2::RunCommand(
         [this] {
-            // units::meter_t position;
-            // position = PreprocessJoystickInput(-m_driverController.GetRightY())
-            //                 * IntakeConstants::kExtendSoftLimit;
-            // position = units::math::abs(position);
+            units::volt_t extendVoltage;
+            extendVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
+                            * IntakeConstants::kMaxVoltage;
+            
+            m_intake.SetExtendRetractVoltage(extendVoltage);
 
             units::volt_t intakeVoltage;
             intakeVoltage = PreprocessJoystickInput(-m_driverController.GetRightY())
                             * IntakeConstants::kMaxVoltage;
 
-            // m_intake.SetPosition(position); // no longer works as we now have motion profiling
             m_intake.SetIntakeVoltage(intakeVoltage);
         },
         { &m_intake }
