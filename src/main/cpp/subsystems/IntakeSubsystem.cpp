@@ -3,9 +3,6 @@
 #include <constants/HardwareConstants.h>
 
 #include <rev/config/SparkMaxConfig.h>
-#include <frc/RobotController.h>
-
-#include <algorithm>
 
 IntakeSubsystem::IntakeSubsystem(DriveSubsystem& drive) :
 m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
