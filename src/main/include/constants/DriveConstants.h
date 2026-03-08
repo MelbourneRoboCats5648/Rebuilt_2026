@@ -41,6 +41,7 @@ namespace DriveModuleConstants {
         inline constexpr double kS = 0.0959800231072556; // found by linear regression (LR)
         inline constexpr double kV = 0.776168369501521; // found by LR in units of Volts per (turns per second)
         inline constexpr double kA = 0.0;    // tried tuning this but appears to be unused
+        // fixme: tune on final robot
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
         inline constexpr ampere_t kLowerCurrentLimit = 60_A;
