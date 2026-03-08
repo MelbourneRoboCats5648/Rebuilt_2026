@@ -38,7 +38,7 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.value().get());
 
     //put the chooser on the dashboard
-    frc::SmartDashboard::PutData(&m_chooser);
+    frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
 }
 
 double RobotContainer::PreprocessJoystickInput(double input) {
