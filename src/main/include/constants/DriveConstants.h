@@ -91,5 +91,5 @@ namespace DrivetrainConstants {
         };
 
         inline constexpr double kTrajTimeTolerance = 0.1; // additional ratio on top of total traj time
-    }; // NOTE: repurposed for 
+    }; // NOTE: repurposed for Choreo controller
 };
