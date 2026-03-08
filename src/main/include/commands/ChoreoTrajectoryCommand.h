@@ -14,6 +14,8 @@
 #include <networktables/StructArrayTopic.h>
 #include <frc/geometry/Pose2d.h>
 
+#include <frc/Timer.h>
+
 class ChoreoTrajectoryCommand
     : public frc2::CommandHelper<frc2::Command, ChoreoTrajectoryCommand> {
 public:

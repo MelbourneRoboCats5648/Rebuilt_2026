@@ -12,8 +12,6 @@
 #include "RobotContainer.h"
 #include "choreo/Choreo.h"
 
-#include <frc/Timer.h>
-
 class Robot : public frc::TimedRobot {
  public:
   Robot();

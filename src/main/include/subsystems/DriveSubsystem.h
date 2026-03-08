@@ -23,7 +23,6 @@
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
-#include <frc/Timer.h>
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
