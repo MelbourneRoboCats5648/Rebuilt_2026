@@ -11,9 +11,13 @@ m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::Spark
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
 m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless),
 m_extendRetractFeedforward(IntakeConstants::extendRetract::kS, IntakeConstants::extendRetract::kG, IntakeConstants::extendRetract::kV, IntakeConstants::extendRetract::kA),
-m_extendRetractPID(
+m_extendPID(
     IntakeConstants::extendRetract::kP, IntakeConstants::extendRetract::kI, IntakeConstants::extendRetract::kD,
-    {IntakeConstants::extendRetract::kMaxVelocity, IntakeConstants::extendRetract::kMaxAcceleration}
+    {IntakeConstants::extendRetract::kMaxExtendVelocity, IntakeConstants::extendRetract::kMaxExtendAcceleration}
+),
+m_retractPID(
+    IntakeConstants::extendRetract::kP, IntakeConstants::extendRetract::kI, IntakeConstants::extendRetract::kD,
+    {IntakeConstants::extendRetract::kMaxRetractVelocity, IntakeConstants::extendRetract::kMaxRetractAcceleration}
 ),
 m_intakeFeedforward(IntakeConstants::intake::kS, IntakeConstants::intake::kV, IntakeConstants::intake::kA),
 m_intakePID(IntakeConstants::intake::kP, IntakeConstants::intake::kI, IntakeConstants::intake::kD),
@@ -74,7 +78,8 @@ m_drive(drive)
 
     ConfigurePublishers();
 
-    m_extendRetractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
+    m_extendPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
+    m_retractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
     m_intakePID.SetTolerance(IntakeConstants::intake::kTolerance.value());
 }
 
@@ -132,23 +137,42 @@ units::meters_per_second_t IntakeSubsystem::GetExtendRetractVelocity() {
 }
 
 void IntakeSubsystem::SetPosition(units::meter_t position) {
-    m_extendRetractPID.Reset(GetPosition(), GetExtendRetractVelocity());
-    m_extendRetractPID.SetGoal(position);
+    units::meter_t currentPosition = GetPosition();
+    m_isRetracting = position < currentPosition;
+
+    if (m_isRetracting) {
+        m_retractPID.Reset(currentPosition, GetExtendRetractVelocity());
+        m_retractPID.SetGoal(position);
+    } else {
+        m_extendPID.Reset(currentPosition, GetExtendRetractVelocity());
+        m_extendPID.SetGoal(position);
+    }
 }
 
 void IntakeSubsystem::ExtendRetractControl() {
-    units::volt_t output =
-        units::volt_t{m_extendRetractPID.Calculate(GetPosition())}
-        + m_extendRetractFeedforward.Calculate(m_extendRetractPID.GetSetpoint().velocity);
+    units::volt_t pidOutput;
+    units::meter_t setpointPosition;
+    units::meters_per_second_t setpointVelocity;
+    if (m_isRetracting) {
+        pidOutput = units::volt_t{m_retractPID.Calculate(GetPosition())};
+        setpointPosition = m_retractPID.GetSetpoint().position;
+        setpointVelocity = m_retractPID.GetSetpoint().velocity;
+    } else {
+        pidOutput = units::volt_t{m_extendPID.Calculate(GetPosition())};
+        setpointPosition = m_extendPID.GetSetpoint().position;
+        setpointVelocity = m_extendPID.GetSetpoint().velocity;
+    }
+
+    units::volt_t output = pidOutput + m_extendRetractFeedforward.Calculate(setpointVelocity);
     SetExtendRetractVoltage(output);
 
     /* publish current motion profile */
-    m_extendRetractTargetPositionPub.Set(m_extendRetractPID.GetSetpoint().position.value());
-    m_extendRetractTargetVelocityPub.Set(m_extendRetractPID.GetSetpoint().velocity.value());
+    m_extendRetractTargetPositionPub.Set(setpointPosition.value());
+    m_extendRetractTargetVelocityPub.Set(setpointVelocity.value());
 }
 
 bool IntakeSubsystem::IsAtPosition() {
-    return m_extendRetractPID.AtGoal();
+    return (m_isRetracting) ? m_retractPID.AtGoal() : m_extendPID.AtGoal();
 }
 
 void IntakeSubsystem::StopExtendRetract() {

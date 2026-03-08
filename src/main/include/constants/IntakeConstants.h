@@ -43,8 +43,11 @@ namespace IntakeConstants {
         inline constexpr auto kV = 31.58_V / 1.0_mps; // avg of extend and retract slopes
         inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
         
-        inline constexpr units::meters_per_second_t kMaxVelocity = 0.30_mps;
-        inline constexpr units::meters_per_second_squared_t kMaxAcceleration = 0.8_mps_sq; // TODO
+        inline constexpr units::meters_per_second_t kMaxExtendVelocity = 0.30_mps;
+        inline constexpr units::meters_per_second_squared_t kMaxExtendAcceleration = 0.8_mps_sq; // TODO
+    
+        inline constexpr units::meters_per_second_t kMaxRetractVelocity = 0.15_mps;
+        inline constexpr units::meters_per_second_squared_t kMaxRetractAcceleration = 0.4_mps_sq; // TODO
         
         inline constexpr units::meter_t kPositionTolerance = 0.01_m;
         inline constexpr units::meters_per_second_t kVelocityTolerance = 0.1_mps;
