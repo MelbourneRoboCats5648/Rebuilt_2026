@@ -185,8 +185,7 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
     return StartRun(
         [this, velocity] { SetIntakeVelocity(velocity); },
         [this] { IntakeControl(); }
-    ).Until([this] { return IsAtVelocity(); })
-    .FinallyDo([this] { StopIntake(); });
+    ).FinallyDo([this] { StopIntake(); });
 }
 
 void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
