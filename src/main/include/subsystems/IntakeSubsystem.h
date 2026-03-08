@@ -20,7 +20,7 @@
 class IntakeSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
-    IntakeSubsystem(DriveSubsystem* drive);
+    IntakeSubsystem(DriveSubsystem& drive);
 
     void SetPosition(units::meter_t position);
     units::meter_t GetPosition();
@@ -75,5 +75,5 @@ private:
     nt::DoublePublisher m_intakeVoltagePub;
     nt::DoublePublisher m_extendRetractVoltagePub;
 
-    DriveSubsystem* m_drive; // for retrieving forward speed only; not required in commands
+    DriveSubsystem& m_drive; // for retrieving forward speed only; not required in commands
 };

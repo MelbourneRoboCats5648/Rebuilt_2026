@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-IntakeSubsystem::IntakeSubsystem(DriveSubsystem* drive) :
+IntakeSubsystem::IntakeSubsystem(DriveSubsystem& drive) :
 m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
 m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless),
@@ -199,7 +199,7 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
 frc2::CommandPtr IntakeSubsystem::IntakeCommand() {
     return StartRun([this] { m_intakePID.Reset(); }, [this] {
         /* compute desired intake velocity */
-        auto [forwardVel, sideVel, angularVel] = m_drive->GetVelocity();
+        auto [forwardVel, sideVel, angularVel] = m_drive.GetVelocity();
         units::turns_per_second_t intakeVel = CalculateIntakeSpeed(forwardVel);
         m_intakePID.SetSetpoint(intakeVel.value()); // set setpoint without resetting controller
 
