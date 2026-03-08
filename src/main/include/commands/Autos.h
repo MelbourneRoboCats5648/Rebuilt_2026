@@ -13,6 +13,7 @@ namespace autos {
 
 int LoadTrajectories(); // to be called during RobotContainer init BEFORE using any of the below functions
 // NOTE: having this returning int allows us to hack its invocation into RobotContainer instantiation before initialising functions
+// fixme fixme FIXME!!!!
 
 /**
  * Example static factory for an autonomous command.
