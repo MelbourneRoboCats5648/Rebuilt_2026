@@ -14,11 +14,10 @@
 #include "units/math.h"
 #include "units/voltage.h"
 
-RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj)
+RobotContainer::RobotContainer()
 :   m_autoLoadTrajectories(autos::LoadTrajectories()), // will be called before the functions below
     m_autoClimb{autos::AutoClimb(&m_drive)},
     m_autoTesting{autos::AutoTesting(&m_drive)},
-    m_choreoAuto{autos::ChoreoAuto(&m_drive, choreoTraj)},
     m_autoDepot{autos::AutoDepot(&m_drive)},
     m_autoNeutralCollect{autos::AutoNeutralCollect(&m_drive)},
     m_choreoTest{autos::ChoreoAutoTest(&m_drive)},
@@ -30,7 +29,6 @@ RobotContainer::RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoT
     ConfigureBindings();
 
     //adding commands to the auto chooser
-    m_chooser.SetDefaultOption("Choreo Auto", m_choreoAuto.get());
     m_chooser.AddOption("Testing Auto", m_autoTesting.get());
     m_chooser.AddOption("Climb Auto", m_autoClimb.get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.get());

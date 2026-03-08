@@ -30,7 +30,7 @@
  */
 class RobotContainer {
 public:
-    RobotContainer(choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
+    RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
 
@@ -58,7 +58,6 @@ private:
     // auto options
     frc2::CommandPtr m_autoClimb;
     frc2::CommandPtr m_autoTesting;
-    frc2::CommandPtr m_choreoAuto;
     frc2::CommandPtr m_autoDepot;
     frc2::CommandPtr m_autoNeutralCollect;
     frc2::CommandPtr m_choreoTest;
