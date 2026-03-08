@@ -43,6 +43,8 @@ public:
     frc2::CommandPtr IntakeCommand(units::turns_per_second_t velocity);
     frc2::CommandPtr IntakeCommand(); // maintain desired speed, calculaed by CalculateIntakeSpeed
 
+    frc2::CommandPtr RetractToLimitCommand();
+
     void Periodic() override;
 
 private:
@@ -59,7 +61,9 @@ private:
     rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
 
     frc::ElevatorFeedforward m_extendRetractFeedforward;
-    frc::ProfiledPIDController<units::meter> m_extendRetractPID; // with velocity and acceleration constraints; probably needed
+    frc::ProfiledPIDController<units::meter> m_extendPID;
+    frc::ProfiledPIDController<units::meter> m_retractPID;
+    bool m_isRetracting = false;
 
     frc::SimpleMotorFeedforward<units::turns> m_intakeFeedforward;
     frc::PIDController m_intakePID; // NOTE: do we need profiling (i.e. acceleration constraints) for intake?

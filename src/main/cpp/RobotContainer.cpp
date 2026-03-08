@@ -71,6 +71,8 @@ void RobotContainer::ConfigureBindings() {
     m_driverController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_driverController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
+    m_driverController.POVUp().OnTrue(m_intake.RetractToLimitCommand());
+
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     // // fixme - temporary default commands for shooter during testing. This will be removed for competition
