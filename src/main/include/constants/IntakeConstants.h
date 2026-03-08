@@ -34,7 +34,7 @@ namespace IntakeConstants {
     }
 
     namespace extendRetract { //fixme - tune PID constants
-        inline constexpr double kP = 10.0;
+        inline constexpr double kP = 12.5;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         
@@ -43,8 +43,8 @@ namespace IntakeConstants {
         inline constexpr auto kV = 31.58_V / 1.0_mps; // avg of extend and retract slopes
         inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
         
-        inline constexpr units::meters_per_second_t kMaxVelocity = 0.5_mps; // TODO
-        inline constexpr units::meters_per_second_squared_t kMaxAcceleration = 1.0_mps_sq; // TODO
+        inline constexpr units::meters_per_second_t kMaxVelocity = 0.30_mps;
+        inline constexpr units::meters_per_second_squared_t kMaxAcceleration = 0.8_mps_sq; // TODO
         
         inline constexpr units::meter_t kPositionTolerance = 0.01_m;
         inline constexpr units::meters_per_second_t kVelocityTolerance = 0.1_mps;
@@ -53,7 +53,7 @@ namespace IntakeConstants {
     inline constexpr int kCurrentLimit(50);
 
     // Assume initial encoder position is 0 when fully retracted
-    inline constexpr meter_t kExtendSoftLimit = 0.3_m;
+    inline constexpr meter_t kExtendSoftLimit = 0.25_m;
     inline constexpr meter_t kRetractSoftLimit = 0.0_m;
 
     inline constexpr double kExtendRetractGearRatio(1.0 / 20.0); // 20 to 1 reduction gear
