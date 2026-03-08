@@ -15,10 +15,12 @@
 #include <networktables/NetworkTableInstance.h>
 #include <networktables/DoubleTopic.h>
 
+#include <subsystems/DriveSubsystem.h>
+
 class IntakeSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
-    IntakeSubsystem();
+    IntakeSubsystem(DriveSubsystem* drive);
 
     void SetPosition(units::meter_t position);
     units::meter_t GetPosition();
@@ -39,6 +41,7 @@ public:
     void SetExtendRetractVoltage(units::volt_t voltage);
 
     frc2::CommandPtr IntakeCommand(units::turns_per_second_t velocity);
+    frc2::CommandPtr IntakeCommand(); // maintain desired speed, calculaed by CalculateIntakeSpeed
 
     void Periodic() override;
 
@@ -71,4 +74,6 @@ private:
     nt::DoublePublisher m_intakeVelocityPub;
     nt::DoublePublisher m_intakeVoltagePub;
     nt::DoublePublisher m_extendRetractVoltagePub;
+
+    DriveSubsystem* m_drive; // for retrieving forward speed only; not required in commands
 };

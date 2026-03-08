@@ -29,43 +29,44 @@ double RobotContainer::PreprocessJoystickInput(double input) {
 void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
-    // m_drive.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         meters_per_second_t xSpeed = m_xLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetLeftY())
-    //             * DrivetrainConstants::kMaxSpeed
-    //         );
-    //         meters_per_second_t ySpeed = m_yLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetLeftX())
-    //              * DrivetrainConstants::kMaxSpeed
-    //         );
-    //         radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetRightX())
-    //             * DrivetrainConstants::kMaxAngularSpeed
-    //         );
-
-    //         //m_drive.Drive(xSpeed, ySpeed, rotSpeed);
-    //     },
-    //     { &m_drive }
-    // ));
-
-    m_intake.SetDefaultCommand(frc2::RunCommand(
+    m_drive.SetDefaultCommand(frc2::RunCommand(
         [this] {
-            units::volt_t extendVoltage;
-            extendVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
-                            * IntakeConstants::kMaxVoltage;
-            
-            m_intake.SetExtendRetractVoltage(extendVoltage);
+            meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+            meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                 * DrivetrainConstants::kMaxSpeed
+            );
+            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetRightX())
+                * DrivetrainConstants::kMaxAngularSpeed
+            );
 
-            units::volt_t intakeVoltage;
-            intakeVoltage = PreprocessJoystickInput(-m_driverController.GetRightY())
-                            * IntakeConstants::kMaxVoltage;
-
-            m_intake.SetIntakeVoltage(intakeVoltage);
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
         },
-        { &m_intake }
+        { &m_drive }
     ));
 
+    // m_intake.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::volt_t extendVoltage;
+    //         extendVoltage = PreprocessJoystickInput(-m_driverController.GetLeftY())
+    //                         * IntakeConstants::kMaxVoltage;
+            
+    //         m_intake.SetExtendRetractVoltage(extendVoltage);
+
+    //         units::volt_t intakeVoltage;
+    //         intakeVoltage = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * IntakeConstants::kMaxVoltage;
+
+    //         m_intake.SetIntakeVoltage(intakeVoltage);
+    //     },
+    //     { &m_intake }
+    // ));
+
+    m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
     m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     m_driverController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_driverController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));

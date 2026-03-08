@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-IntakeSubsystem::IntakeSubsystem() :
+IntakeSubsystem::IntakeSubsystem(DriveSubsystem* drive) :
 m_extendRetractMotor(HardwareConstants::kExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless), 
 m_followerExtendRetractMotor(HardwareConstants::kFollowerExtendRetractMotorID, rev::spark::SparkMax::MotorType::kBrushless),
 m_intakeMotor(HardwareConstants::kIntakeMotorID, rev::spark::SparkMax::MotorType::kBrushless),
@@ -17,7 +17,8 @@ m_extendRetractPID(
     {IntakeConstants::extendRetract::kMaxVelocity, IntakeConstants::extendRetract::kMaxAcceleration}
 ),
 m_intakeFeedforward(IntakeConstants::intake::kS, IntakeConstants::intake::kV, IntakeConstants::intake::kA),
-m_intakePID(IntakeConstants::intake::kP, IntakeConstants::intake::kI, IntakeConstants::intake::kD)
+m_intakePID(IntakeConstants::intake::kP, IntakeConstants::intake::kI, IntakeConstants::intake::kD),
+m_drive(drive)
 {
     //intake motor config
     rev::spark::SparkMaxConfig intakeMotorConfig;
@@ -193,6 +194,17 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
         [this, velocity] { SetIntakeVelocity(velocity); },
         [this] { IntakeControl(); }
     ).FinallyDo([this] { StopIntake(); });
+}
+
+frc2::CommandPtr IntakeSubsystem::IntakeCommand() {
+    return Run([this] {
+        /* compute desired intake velocity */
+        auto [forwardVel, sideVel, angularVel] = m_drive->GetVelocity();
+        units::turns_per_second_t intakeVel = CalculateIntakeSpeed(forwardVel);
+        m_intakePID.SetSetpoint(intakeVel.value()); // set setpoint without resetting controller
+
+        IntakeControl();
+    }).FinallyDo([this] { StopIntake(); });
 }
 
 void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {

@@ -52,6 +52,7 @@ public:
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
     frc::SwerveDriveKinematics<4>& GetKinematics();
+    frc::ChassisSpeeds GetVelocity();
 
     frc2::CommandPtr ToggleFieldRelativeCommand();
 

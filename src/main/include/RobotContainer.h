@@ -41,7 +41,7 @@ private:
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive{};
     ShooterSubsystem m_shooter{};
-    IntakeSubsystem m_intake{};
+    IntakeSubsystem m_intake{&m_drive};
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
 
     void ConfigureBindings();
