@@ -62,6 +62,10 @@ private:
 
     // publishers
     nt::DoublePublisher m_extendRetractPositionPub;
+    nt::DoublePublisher m_extendRetractVelocityPub;
     nt::DoublePublisher m_extendRetractMotorCurrentPub;
     nt::DoublePublisher m_followerExtendRetractMotorCurrentPub;
+    nt::DoublePublisher m_intakeVelocityPub;
+    nt::DoublePublisher m_intakeVoltagePub;
+    nt::DoublePublisher m_extendRetractVoltagePub;
 };

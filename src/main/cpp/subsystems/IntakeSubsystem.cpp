@@ -81,19 +81,29 @@ m_intakePID(IntakeConstants::intake::kP, IntakeConstants::intake::kI, IntakeCons
 void IntakeSubsystem::ConfigurePublishers()
 {
     m_extendRetractPositionPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/ExtendRetractPosition").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/Position").Publish();
+    m_extendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/Velocity").Publish();
     m_extendRetractMotorCurrentPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/ExtendRetractMotorCurrent").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/Current").Publish();
     m_followerExtendRetractMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Intake/FollowerExtendRetractMotorCurrent").Publish();
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerCurrent").Publish();
+    m_extendRetractVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/Voltage").Publish();
+    m_intakeVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/Motor/Velocity").Publish();
+    m_intakeVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/Motor/Voltage").Publish();
 }
 
 void IntakeSubsystem::Periodic()
 {
     /* publish current state */
-    m_extendRetractPositionPub.Set(m_extendRetractEncoder.GetPosition());
+    m_extendRetractPositionPub.Set(GetPosition().value());
+    m_extendRetractVelocityPub.Set(GetExtendRetractVelocity().value());
     m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
     m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
+    m_intakeVelocityPub.Set(GetIntakeVelocity().value());
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
@@ -127,6 +137,7 @@ void IntakeSubsystem::ExtendRetractControl() {
         units::volt_t{m_extendRetractPID.Calculate(GetPosition())}
         + m_extendRetractFeedforward.Calculate(m_extendRetractPID.GetSetpoint().velocity);
     m_extendRetractMotor.SetVoltage(output);
+    m_extendRetractVoltagePub.Set(output.value());
 }
 
 bool IntakeSubsystem::IsAtPosition() {
@@ -135,6 +146,7 @@ bool IntakeSubsystem::IsAtPosition() {
 
 void IntakeSubsystem::StopExtendRetract() {
     m_extendRetractMotor.SetVoltage(0.0_V); // should set the motor to coast
+    m_extendRetractVoltagePub.Set(0.0);
 }
 
 frc2::CommandPtr IntakeSubsystem::ExtendRetractCommand(units::meter_t position) {
@@ -158,7 +170,7 @@ void IntakeSubsystem::IntakeControl() {
     units::volt_t output =
         units::volt_t{m_intakePID.Calculate(GetIntakeVelocity().value())}
         + m_intakeFeedforward.Calculate(units::turns_per_second_t{m_intakePID.GetSetpoint()});
-    m_intakeMotor.SetVoltage(output);
+    SetIntakeVoltage(output);
 }
 
 bool IntakeSubsystem::IsAtVelocity() {
@@ -177,7 +189,7 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
     .FinallyDo([this] { StopIntake(); });
 }
 
-void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage)
-{
-  m_intakeMotor.SetVoltage(voltage);
+void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
+    m_intakeMotor.SetVoltage(voltage);
+    m_intakeVoltagePub.Set(voltage.value());
 }
