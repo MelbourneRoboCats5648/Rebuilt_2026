@@ -197,7 +197,7 @@ frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t veloci
 }
 
 frc2::CommandPtr IntakeSubsystem::IntakeCommand() {
-    return Run([this] {
+    return StartRun([this] { m_intakePID.Reset(); }, [this] {
         /* compute desired intake velocity */
         auto [forwardVel, sideVel, angularVel] = m_drive->GetVelocity();
         units::turns_per_second_t intakeVel = CalculateIntakeSpeed(forwardVel);
