@@ -41,15 +41,3 @@ void ChoreoController::Reset()
 bool ChoreoController::AtSetpoint() {
     return m_xController.AtSetpoint() && m_yController.AtSetpoint() && m_headingController.AtSetpoint();
 }
-
-frc::PIDController& ChoreoController::getXController(){
-    return m_xController;
-}
-
-frc::PIDController& ChoreoController::getYController(){
-    return m_yController;
-}
-
-frc::PIDController& ChoreoController::getHeadingController(){
-    return m_headingController;
-}

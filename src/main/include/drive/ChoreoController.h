@@ -13,10 +13,6 @@ public:
 
     void Reset();
 
-    frc::PIDController& getXController();
-    frc::PIDController& getYController();
-    frc::PIDController& getHeadingController();
-
     bool AtSetpoint();
 
 private:

@@ -66,7 +66,7 @@ frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<cho
     
     //choreo::Trajectory<choreo::SwerveSample> temporaryTrajectory;
 
-    return drive->NewFollowTrajectoryCommand(choreoTraj);
+    return drive->FollowTrajectoryCommand(choreoTraj);
 }
 
 frc2::CommandPtr autos::ChoreoAutoTest(DriveSubsystem* drive) {
