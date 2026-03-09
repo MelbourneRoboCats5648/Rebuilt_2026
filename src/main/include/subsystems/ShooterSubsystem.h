@@ -47,7 +47,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     private:
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
-        meters_per_second_t AdjustedBallSpeed(meters_per_second_t theoreticalSpeed); // based on measurement of the 'theoretical ball speed' found in function above
+        meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
         meter_t CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2);
 
         TalonFXConfiguration createMotorConfig();
@@ -68,4 +68,12 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_shooterAnglePub;
         nt::DoublePublisher m_angleMotorVoltagePub;
         nt::DoublePublisher m_angleMotorCurrentPub;
+
+        // shooter speed debugging
+        nt::DoublePublisher m_requiredSpedPub;
+        nt::DoublePublisher m_adjustedSpeedPub;
+        
+        double m_requiredSpeed;
+        double m_adjustedSpeed;
+        
 };

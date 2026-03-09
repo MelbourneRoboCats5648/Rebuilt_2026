@@ -13,7 +13,7 @@ using namespace units::acceleration;
 
 namespace FieldConstants {
 
-    inline constexpr meter_t HubHeight(1.888);
+    inline constexpr meter_t HubHeight(1.83);
     inline constexpr meters_per_second_squared_t gravity(9.8);
 
     inline constexpr frc::Translation2d kHubPosition {182.11_in, 158.84_in};

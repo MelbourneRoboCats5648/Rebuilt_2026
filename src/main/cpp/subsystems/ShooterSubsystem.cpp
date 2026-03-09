@@ -70,6 +70,11 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
     m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
+
+    m_adjustedSpeedPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/adjustedSpeed").Publish();
+    m_requiredSpedPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/requiredSpeed").Publish();
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -101,6 +106,9 @@ void ShooterSubsystem::Periodic() {
         m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
         m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
         m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
+
+        m_requiredSpedPub.Set(m_requiredSpeed);
+        m_adjustedSpeedPub.Set(m_adjustedSpeed);
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
@@ -128,12 +136,10 @@ units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
+    meters_per_second_t adjustedSpeed = AdjustedBallSpeed(requiredSpeed);
 
-    meters_per_second_t actualSpeed = AdjustedBallSpeed(requiredSpeed);
-
-    double conversionFactor = requiredSpeed / actualSpeed;
-
-    meters_per_second_t adjustedSpeed = requiredSpeed * conversionFactor;
+    m_requiredSpeed = requiredSpeed.value();
+    m_adjustedSpeed = adjustedSpeed.value();
 
     double metresPerTurn = 2 * std::numbers::pi * ShooterConstants::kFlyWheelRadius.value();
     return units::turns_per_second_t{adjustedSpeed.value() / metresPerTurn};
@@ -157,18 +163,18 @@ meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degre
         return speed;
 }
 
-meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t theoreticalSpeed) {
+meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
     // coefficients found from curve fitting
-    double a = 0.0270;
-    double b = -0.4191;
-    double c = 7.3711;
+    double a = -0.8418;
+    double b = 14.6320;
+    double c = -46.5525;
 
-    double x = theoreticalSpeed.value();
+    double x = actualSpeed.value();
 
-    meters_per_second_t adjustedSpeed = 
-        meters_per_second_t(a * x * x + b * x + c);
+    meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
     return adjustedSpeed;
 }
+
 
 meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2) {
     return p1.Distance(p2);

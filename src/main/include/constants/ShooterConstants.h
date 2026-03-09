@@ -14,7 +14,7 @@ namespace ShooterConstants {
         inline constexpr double kP = 1.0;
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
-        inline constexpr double kV = 0.4;
+        inline constexpr double kV = 0.25;
         inline constexpr double kS = 0.07;
         inline constexpr double kA = 0;
     }
@@ -25,7 +25,7 @@ namespace ShooterConstants {
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(10);
-    inline constexpr inch_t kFlyWheelRadius(2_in);
+    inline constexpr units::meter_t kFlyWheelRadius(2_in);
 
     inline constexpr int kCurrentLimit(50);
 
