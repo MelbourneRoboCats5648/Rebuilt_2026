@@ -7,6 +7,7 @@
 #include <frc2/command/button/Trigger.h>
 #include <frc2/command/RunCommand.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/Commands.h>
 
 #include <choreo/trajectory/Trajectory.h>
 
@@ -185,4 +186,20 @@ void RobotContainer::ConfigureBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
     return m_chooser.GetSelected();
+    // fixme: consider doing a sequence starting with GetCalibrationCommand()
+}
+
+frc2::CommandPtr RobotContainer::GetCalibrationCommand() {
+    return frc2::cmd::Either(
+        frc2::cmd::None(), // do nothing if m_isCalibrated is true
+        frc2::cmd::Parallel(m_shooter.RetractToLimitCommand(), m_intake.RetractToLimitCommand()),
+        [this] {
+            if (!m_isCalibrated) {
+                m_isCalibrated = true; // should be false only once
+                return false;
+            } else {
+                return true;
+            }
+        }
+    );
 }
