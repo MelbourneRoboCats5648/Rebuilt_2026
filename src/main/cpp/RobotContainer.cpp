@@ -111,6 +111,8 @@ void RobotContainer::ConfigureBindings() {
         { &m_shooter }
     ));
 
+    m_driverController.POVUp().WhileTrue(m_shooter.RetractToLimitCommand());
+
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
