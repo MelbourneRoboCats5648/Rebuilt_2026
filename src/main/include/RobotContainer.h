@@ -32,6 +32,7 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
+    frc2::CommandPtr GetCalibrationCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -65,4 +66,6 @@ private:
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;
+
+    bool m_isCalibrated = false;
 };

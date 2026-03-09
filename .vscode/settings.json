@@ -16,6 +16,6 @@
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
-    "optional": "cpp"
+    "numbers": "cpp"
   }
 }
