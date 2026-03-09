@@ -28,8 +28,8 @@ ShooterSubsystem::ShooterSubsystem()
 
     angleMotorConfig
     .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
-    .Inverted(true);
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+    // .Inverted(true);
     
     angleMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
@@ -38,16 +38,15 @@ ShooterSubsystem::ShooterSubsystem()
       .D(ShooterConstants::angle::kD)
       .OutputRange(-1, 1);
 
-    m_angleEncoder.SetPosition(0);
-
+    m_angleEncoder.SetPosition(ShooterConstants::kMaxAngleSoftLimit.value());
 
     angleMotorConfig.softLimit
-    .ForwardSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    .ReverseSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
+    .ForwardSoftLimit(ShooterConstants::kMaxAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    .ReverseSoftLimit(ShooterConstants::kMinAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
     angleMotorConfig.encoder
-    .PositionConversionFactor(ShooterConstants::kAngleGearRatio)
-    .VelocityConversionFactor(ShooterConstants::kAngleGearRatio);
+    .PositionConversionFactor(ShooterConstants::kAngleDegreesPerTurn)
+    .VelocityConversionFactor(ShooterConstants::kAngleDegreesPerTurn);
 
     //SetDefaultCommand(ShootCommand(0_tps));
     SetDefaultCommand(DefaultShootCommand());
@@ -70,6 +69,8 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
     m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleOfShooter").Publish();
+    m_shooterAngleVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorVelocity").Publish();
     m_angleMotorVoltagePub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
     m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
@@ -117,6 +118,7 @@ void ShooterSubsystem::Periodic() {
         m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
         m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
         m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
+        m_shooterAngleVelocityPub.Set(GetAngleVelocity().value());
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
@@ -126,8 +128,13 @@ void ShooterSubsystem::Shoot(units::volt_t volts){
     m_motor.SetVoltage(volts);
 }
 
-void ShooterSubsystem::GoToAngle(units::turn_t angle) {
-    m_angleController.SetReference(angle.value(), rev::spark::SparkLowLevel::ControlType::kPosition);
+void ShooterSubsystem::GoToAngle(units::degree_t angle) {
+    double clampedAngleDeg = std::clamp(angle.value(), ShooterConstants::kMinAngle.value(), ShooterConstants::kMaxAngle.value());
+    m_angleController.SetReference(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
+}
+
+frc2::CommandPtr ShooterSubsystem::GoToAngleCommand(units::degree_t angle) {
+    return RunOnce([this, angle] { GoToAngle(angle); });
 }
 
 void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
@@ -206,27 +213,68 @@ meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, 
     return p1.Distance(p2);
 }
 
-turns_per_second_t ShooterSubsystem::GetAngleVelocity() {
-    return turns_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
+degrees_per_second_t ShooterSubsystem::GetAngleVelocity() {
+    return degrees_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
 }
 
 frc2::CommandPtr ShooterSubsystem::RetractToLimitCommand() {
     return
+        /* extend for a bit to ensure we'll be able to retract the hood over a distance */
         RunOnce([this] {
-            // initially set encoder position to max angle
+            // set position to max angle to defeat soft limit
             m_angleEncoder.SetPosition(ShooterConstants::kMaxAngleSoftLimit.value());
-            // then pull the intake in at a slow speed
+            // then extend the hood
             m_angleMotor.SetVoltage(-ShooterConstants::angle::kCalibrationVoltage);
         })
-        // then wait until...
-        .AndThen(frc2::cmd::Sequence(
-            // 1. we speed up past the threshold
-            frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < -ShooterConstants::angle::kCalibrationVelocityThreshold; }),
-            // 2. then we slow down past it again - indicating that we've reached the end
-            frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > -ShooterConstants::angle::kCalibrationVelocityThreshold; })
-        ))
-        .FinallyDo([this] {
-            m_angleMotor.StopMotor();
+        .AndThen(frc2::cmd::Wait(ShooterConstants::angle::kCalibrationPreTime))
+        .AndThen(
+            RunOnce([this] {
+                // initially set encoder position to min angle
+                m_angleEncoder.SetPosition(ShooterConstants::kMinAngleSoftLimit.value());
+                // then pull the hood in at a slow speed
+                m_angleMotor.SetVoltage(ShooterConstants::angle::kCalibrationVoltage);
+            })
+            .AndThen(frc2::cmd::Sequence(
+                // 1. we speed up past the threshold
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > ShooterConstants::angle::kCalibrationVelocityThreshold; }),
+                // 2. then we slow down past it again - indicating that we've reached the end
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < ShooterConstants::angle::kCalibrationVelocityThreshold; })
+            ))
+            .WithTimeout(ShooterConstants::angle::kCalibrationTimeout)
+            .FinallyDo([this] {
+                m_angleMotor.StopMotor();
+                m_angleEncoder.SetPosition(ShooterConstants::kMaxAngleSoftLimit.value());
+            })
+        );
+}
+
+frc2::CommandPtr ShooterSubsystem::ExtendToLimitCommand() {
+    return
+        /* retract for a bit to ensure we'll be able to extend the hood over a distance */
+        RunOnce([this] {
+            // set position to min angle to defeat soft limit
             m_angleEncoder.SetPosition(ShooterConstants::kMinAngleSoftLimit.value());
-        });
+            // then retract the hood
+            m_angleMotor.SetVoltage(ShooterConstants::angle::kCalibrationVoltage);
+        })
+        .AndThen(frc2::cmd::Wait(ShooterConstants::angle::kCalibrationPreTime))
+        .AndThen(
+            RunOnce([this] {
+                // initially set encoder position to max angle
+                m_angleEncoder.SetPosition(ShooterConstants::kMaxAngleSoftLimit.value());
+                // then pull the hood out at a slow speed
+                m_angleMotor.SetVoltage(-ShooterConstants::angle::kCalibrationVoltage);
+            })
+            .AndThen(frc2::cmd::Sequence(
+                // 1. we speed up past the threshold
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < -ShooterConstants::angle::kCalibrationVelocityThreshold; }),
+                // 2. then we slow down past it again - indicating that we've reached the end
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > -ShooterConstants::angle::kCalibrationVelocityThreshold; })
+            ))
+            .WithTimeout(ShooterConstants::angle::kCalibrationTimeout)
+            .FinallyDo([this] {
+                m_angleMotor.StopMotor();
+                m_angleEncoder.SetPosition(ShooterConstants::kMinAngleSoftLimit.value());
+            })
+        );
 }

@@ -39,7 +39,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 
         void Shoot(units::volt_t volts);
-        void GoToAngle(units::turn_t angle);
+        void GoToAngle(units::degree_t angle);
+        frc2::CommandPtr GoToAngleCommand(units::degree_t angle);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
@@ -50,9 +51,10 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         void Periodic() override;
 
         frc2::CommandPtr RetractToLimitCommand();
+        frc2::CommandPtr ExtendToLimitCommand();
 
     private:
-        turns_per_second_t GetAngleVelocity();
+        degrees_per_second_t GetAngleVelocity();
         frc2::CommandPtr DefaultShootCommand();
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
@@ -79,6 +81,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_shooterAnglePub;
         nt::DoublePublisher m_angleMotorVoltagePub;
         nt::DoublePublisher m_angleMotorCurrentPub;
+        nt::DoublePublisher m_shooterAngleVelocityPub;
 
         // shooter speed debugging
         nt::DoublePublisher m_requiredSpedPub;

@@ -52,25 +52,25 @@ double RobotContainer::PreprocessJoystickInput(double input) {
 void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
-    m_drive.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            meters_per_second_t xSpeed = m_xLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftY())
-                * DrivetrainConstants::kMaxSpeed
-            );
-            meters_per_second_t ySpeed = m_yLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftX())
-                 * DrivetrainConstants::kMaxSpeed
-            );
-            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetRightX())
-                * DrivetrainConstants::kMaxAngularSpeed
-            );
+    // m_drive.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         meters_per_second_t xSpeed = m_xLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetLeftY())
+    //             * DrivetrainConstants::kMaxSpeed
+    //         );
+    //         meters_per_second_t ySpeed = m_yLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetLeftX())
+    //              * DrivetrainConstants::kMaxSpeed
+    //         );
+    //         radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
+    //             PreprocessJoystickInput(-m_driverController.GetRightX())
+    //             * DrivetrainConstants::kMaxAngularSpeed
+    //         );
 
-            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
-        },
-        { &m_drive }
-    ));
+    //         m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+    //     },
+    //     { &m_drive }
+    // ));
 
     // m_intake.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
@@ -94,7 +94,7 @@ void RobotContainer::ConfigureBindings() {
     m_driverController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_driverController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_driverController.POVUp().OnTrue(m_intake.RetractToLimitCommand());
+    // m_driverController.POVUp().WhileTrue(m_intake.RetractToLimitCommand());
 
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
@@ -156,23 +156,28 @@ void RobotContainer::ConfigureBindings() {
     // ));
 
 
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::turn_t angle;
-            angle = PreprocessJoystickInput(-m_driverController.GetRightY())
-                            * ShooterConstants::kMaxTurns;
-            //angle = units::math::abs(angle);
-            m_shooter.GoToAngle(angle);
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::degree_t angle;
+    //         angle = (PreprocessJoystickInput(-m_driverController.GetRightY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
+    //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngleSoftLimit;
+    //         angle = units::math::abs(angle);
+    //         m_shooter.GoToAngle(angle);
 
-            units::degree_t angleDeg = angle.value() * -1.0 * (units::degree_t{15}) + units::degree_t{70};
-            units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
-            units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angleDeg);
-            m_shooter.ShootAngularVelocity(flyWheelSpeed);
-        },
-        { &m_shooter }
-    ));
+    //         // units::degree_t angleDeg = angle.value() * -1.0 * (units::degree_t{15}) + units::degree_t{70};
+    //         // units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
+    //         // units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angleDeg);
+    //         //flyWheelSpeed = 50_tps;
+    //         //m_shooter.ShootAngularVelocity(flyWheelSpeed);
+    //     },
+    //     { &m_shooter }
+    // ));
 
-    m_driverController.POVUp().WhileTrue(m_shooter.RetractToLimitCommand());
+    m_driverController.LeftTrigger().OnTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle));
+    m_driverController.RightTrigger().OnTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle));
+
+    m_driverController.POVDown().OnTrue(m_shooter.RetractToLimitCommand());
+    m_driverController.POVUp().OnTrue(m_shooter.ExtendToLimitCommand());
 
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
