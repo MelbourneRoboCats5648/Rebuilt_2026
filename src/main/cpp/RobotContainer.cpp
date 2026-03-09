@@ -102,9 +102,9 @@ void RobotContainer::ConfigureBindings() {
             m_shooter.GoToAngle(angle);
 
 
-            units::degree_t angleDeg = angle.value() * (units::degree_t{12}) + units::degree_t{60};
+            units::degree_t angleDeg = angle.value() * -1.0 * (units::degree_t{15}) + units::degree_t{70};
             units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
-            distanceToHub = 2_m;
+            distanceToHub = 1.5_m;
             units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angleDeg);
             m_shooter.ShootAngularVelocity(flyWheelSpeed);
         },
