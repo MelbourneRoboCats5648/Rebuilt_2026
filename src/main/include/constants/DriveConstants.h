@@ -35,12 +35,13 @@ namespace DriveModuleConstants {
 
     namespace SpeedMotor {
         inline constexpr double kGearRatio = 6.75;
-        inline constexpr double kP = 2.5;    // value of 2.8 introduces instability on the 2025 robot base
+        inline constexpr double kP = 2.0;    // value of 2.8 introduces instability on the 2025 robot base
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
-        inline constexpr double kS = 0.1438; // found by linear regression (LR)
-        inline constexpr double kV = 0.7797; // found by LR in units of Volts per (turns per second)
+        inline constexpr double kS = 0.0959800231072556; // found by linear regression (LR)
+        inline constexpr double kV = 0.776168369501521; // found by LR in units of Volts per (turns per second)
         inline constexpr double kA = 0.0;    // tried tuning this but appears to be unused
+        // fixme: tune on final robot
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
         inline constexpr ampere_t kLowerCurrentLimit = 60_A;
@@ -51,11 +52,11 @@ namespace DriveModuleConstants {
     };
 
     namespace DirectionEncoder {
-        inline constexpr turn_t kFrontLeftOffset = -0.4189453125_tr;
-        inline constexpr turn_t kFrontRightOffset = -0.161865234375_tr;
-        inline constexpr turn_t kBackLeftOffset = 0.4599609375_tr;
-        inline constexpr turn_t kBackRightOffset = -0.2197265625_tr;
-    };
+        inline constexpr turn_t kFrontLeftOffset = -0.4189453125_tr + 0.5_tr;
+        inline constexpr turn_t kFrontRightOffset = -0.161865234375_tr + 0.5_tr;
+        inline constexpr turn_t kBackLeftOffset = 0.4599609375_tr - 0.5_tr;
+        inline constexpr turn_t kBackRightOffset = -0.2197265625_tr + 0.5_tr;
+    }; // fixme - mag offsets are 180 deg off - make sure we are at the right direction before taking measurements
 };
 
 namespace DrivetrainConstants {
@@ -76,7 +77,7 @@ namespace DrivetrainConstants {
 
     namespace Autonomous {
         namespace XYController {
-            inline constexpr double kP = 2.0;
+            inline constexpr double kP = 3.0;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
             inline constexpr meter_t kTolerance = 0.05_m;
@@ -88,5 +89,7 @@ namespace DrivetrainConstants {
             inline constexpr radian_t kPositionTolerance = 1_deg;
             inline constexpr radians_per_second_t kVelocityTolerance = 1_deg_per_s;
         };
-    };
+
+        inline constexpr double kTrajTimeTolerance = 0.1; // additional ratio on top of total traj time
+    }; // NOTE: repurposed for Choreo controller
 };

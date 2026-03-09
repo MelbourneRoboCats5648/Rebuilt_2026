@@ -5,9 +5,12 @@
 #include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc2/command/SwerveControllerCommand.h>
 
+#include <commands/ChoreoTrajectoryCommand.h>
+
 using namespace ctre::phoenix6::configs;
 
-DriveSubsystem::DriveSubsystem() {
+DriveSubsystem::DriveSubsystem()
+{
     m_statePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructArrayTopic<frc::SwerveModuleState>("DriveTrain/SwerveStates").Publish();
     m_commandPublisher = nt::NetworkTableInstance::GetDefault()
@@ -15,7 +18,7 @@ DriveSubsystem::DriveSubsystem() {
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("DriveTrain/Pose").Publish();
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
-        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();    
+        .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory").Publish();
     
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
@@ -37,7 +40,7 @@ DriveSubsystem::DriveSubsystem() {
 }
 
 void DriveSubsystem::Periodic() {
-    m_poseEstimator.Update(frc::Rotation2d{GetHeading()},
+    m_poseEstimator.Update(frc::Rotation2d{GetGyroHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
 
@@ -59,10 +62,16 @@ void DriveSubsystem::SimulationPeriodic() {
 
 /* gyroscope */
 void DriveSubsystem::ResetGyro() {
-    m_gyro.Reset();}
+   m_gyro.Reset();
+}
+
+degree_t DriveSubsystem::GetGyroHeading() {
+    return m_gyro.GetRotation2d().Degrees();
+}
 
 degree_t DriveSubsystem::GetHeading() {
-    return m_gyro.GetRotation2d().Degrees();
+    // return m_gyro.GetRotation2d().Degrees();
+    return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
@@ -114,7 +123,7 @@ frc::Pose2d DriveSubsystem::GetPose() {
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose) 
 {
-    m_poseEstimator.ResetPosition(frc::Rotation2d{GetHeading()},
+    m_poseEstimator.ResetPosition(frc::Rotation2d{GetGyroHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);
@@ -123,7 +132,7 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
   return CreateTrajectory(
     m_poseEstimator.GetEstimatedPosition(),
-    targetPose
+    std::move(targetPose)
   );
 }
 
@@ -135,9 +144,9 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
 
   // A trajectory to follow.  All units in meters.
   auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
-      currentPose, //current pose from pose estimatior
+      std::move(currentPose), //current pose from pose estimatior
       {},
-      targetPose,
+      std::move(targetPose),
       config);
 
   return traj;
@@ -176,6 +185,11 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     .FinallyDo([this] { this->Stop(); });
 }
 
+frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory) {
+    return ChoreoTrajectoryCommand(this, m_choreoController, trajectory).ToPtr();
+}
+
+
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> headingLambda) {
     return RunOnce([this, headingLambda] {
         radian_t heading = headingLambda();
@@ -201,4 +215,13 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
 {
     return RunOnce([this] { m_isFieldRelative = !m_isFieldRelative; });
+}
+
+frc::ChassisSpeeds DriveSubsystem::GetVelocity() {
+    return m_kinematics.ToChassisSpeeds(
+        m_frontLeftModule.GetState(),
+        m_frontRightModule.GetState(),
+        m_backLeftModule.GetState(),
+        m_backRightModule.GetState()
+    );
 }

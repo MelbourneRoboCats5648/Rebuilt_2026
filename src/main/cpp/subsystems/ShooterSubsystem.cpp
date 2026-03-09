@@ -7,6 +7,7 @@
 #include <units/math.h>
 
 #include <frc2/command/Commands.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
@@ -48,7 +49,8 @@ ShooterSubsystem::ShooterSubsystem()
     .PositionConversionFactor(ShooterConstants::kAngleGearRatio)
     .VelocityConversionFactor(ShooterConstants::kAngleGearRatio);
 
-    SetDefaultCommand(ShootCommand(0_tps));
+    //SetDefaultCommand(ShootCommand(0_tps));
+    SetDefaultCommand(DefaultShootCommand());
 
     m_angleMotor.Configure(
       angleMotorConfig,
@@ -77,6 +79,9 @@ ShooterSubsystem::ShooterSubsystem()
         .GetDoubleTopic("Shooter/adjustedSpeed").Publish();
     m_requiredSpedPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/requiredSpeed").Publish();
+
+    // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
+    // frc::SmartDashboard::PutNumber("ShooterVelocity", 0.0); // initialise shooter target velocity with default of 0.0
 }
 
 TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
@@ -100,6 +105,10 @@ TalonFXConfiguration ShooterSubsystem::createMotorConfig(){
 
 void ShooterSubsystem::Periodic() {
         /* publish current state */
+
+        // uncomment below to allow target velocity to be set via smart dashboard
+        //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
+
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
@@ -126,9 +135,24 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_motor.SetControl(velocityVoltage);
 }
 
-frc2::CommandPtr ShooterSubsystem::ShootCommand(units::turns_per_second_t angularVelocity) {
-    return Run([this, angularVelocity]{
-                ShootAngularVelocity(angularVelocity);
+void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
+    m_targetVelocity = velocity;
+}
+
+units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
+    return m_targetVelocity;
+}
+
+frc2::CommandPtr ShooterSubsystem::DefaultShootCommand() {
+    return Run([this]{
+                ShootAngularVelocity(m_targetVelocity);
+            });
+}
+
+// This command will be used to set the velocity of the flywheel shooter along with the default shoot command
+frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_second_t angularVelocity) {
+    return RunOnce([this, angularVelocity]{
+                SetTargetVelocity(angularVelocity);
             });
 }
 

@@ -36,10 +36,14 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         ShooterSubsystem();
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
-        frc2::CommandPtr ShootCommand(units::turns_per_second_t angularVelocity);
+        frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
+
         void Shoot(units::volt_t volts);
         void GoToAngle(units::turn_t angle);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
+
+        void SetTargetVelocity(units::turns_per_second_t velocity);
+        units::turns_per_second_t GetTargetVelocity() const;
 
         units::meter_t DistanceToHub(frc::Pose2d robotPose);
 
@@ -49,6 +53,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
     private:
         turns_per_second_t GetAngleVelocity();
+        frc2::CommandPtr DefaultShootCommand();
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
@@ -63,6 +68,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
         rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
         
+        units::turns_per_second_t m_targetVelocity{0_tps};
+
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;
         nt::DoublePublisher m_followerMotorWheelVelPub;

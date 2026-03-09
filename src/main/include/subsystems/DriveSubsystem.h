@@ -16,12 +16,13 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
+#include <drive/ChoreoController.h>
+
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
-
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
@@ -37,8 +38,9 @@ public:
 
     /* gyroscope */
     void ResetGyro();
-    degree_t GetHeading();
-    
+    degree_t GetGyroHeading();
+
+    degree_t GetHeading(); // get heading from pose estimator    
 
     /* kinematics/"set speed" */
     void Drive(
@@ -52,6 +54,7 @@ public:
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
     frc::SwerveDriveKinematics<4>& GetKinematics();
+    frc::ChassisSpeeds GetVelocity();
 
     frc2::CommandPtr ToggleFieldRelativeCommand();
 
@@ -63,13 +66,13 @@ public:
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
     frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
+    frc2::CommandPtr FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory);
 
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
-
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,
@@ -127,6 +130,8 @@ private:
         },
         m_thetaController
     };
+
+    ChoreoController m_choreoController;
 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
