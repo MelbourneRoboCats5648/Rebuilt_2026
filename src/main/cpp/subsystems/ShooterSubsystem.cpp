@@ -127,10 +127,16 @@ units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
 }
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
-    meters_per_second_t ballSpeed = CalculateBallSpeed(distance, angle);
+    meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
+
+    meters_per_second_t actualSpeed = AdjustedBallSpeed(requiredSpeed);
+
+    double conversionFactor = requiredSpeed / actualSpeed;
+
+    meters_per_second_t adjustedSpeed = requiredSpeed * conversionFactor;
 
     double metresPerTurn = 2 * std::numbers::pi * ShooterConstants::kFlyWheelRadius.value();
-    return units::turns_per_second_t{ballSpeed.value()/metresPerTurn};
+    return units::turns_per_second_t{adjustedSpeed.value() / metresPerTurn};
 }
 
 // derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
