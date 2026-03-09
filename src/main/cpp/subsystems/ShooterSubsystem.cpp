@@ -151,6 +151,19 @@ meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degre
         return speed;
 }
 
+meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t theoreticalSpeed) {
+    // coefficients found from curve fitting
+    double a = 0.0270;
+    double b = -0.4191;
+    double c = 7.3711;
+
+    double x = theoreticalSpeed.value();
+
+    meters_per_second_t adjustedSpeed = 
+        meters_per_second_t(a * x * x + b * x + c);
+    return adjustedSpeed;
+}
+
 meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2) {
     return p1.Distance(p2);
 }
