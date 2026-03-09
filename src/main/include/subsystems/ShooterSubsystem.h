@@ -20,7 +20,6 @@
 #include <networktables/DoubleTopic.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
-#include <frc/controller/ProfiledPIDController.h>
 
 using namespace units::velocity;
 using namespace units::angle;
