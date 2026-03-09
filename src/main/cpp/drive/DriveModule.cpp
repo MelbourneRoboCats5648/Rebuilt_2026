@@ -2,6 +2,8 @@
 #include <ctre/phoenix6/core/CoreCANcoder.hpp>
 #include <ctre/phoenix6/CANBus.hpp>
 
+#include <constants/HardwareConstants.h>
+
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::signals;
 using namespace ctre::phoenix6::controls;
@@ -13,9 +15,9 @@ using namespace units::voltage;
 DriveModule::DriveModule(
     int speedMotorID, int directionMotorID, int directionEncoderID,
     turn_t magOffset
-) : m_speedMotor(speedMotorID, "rio"),
-    m_directionMotor(directionMotorID, "rio"),
-    m_directionEncoder(directionEncoderID, "rio")
+) : m_speedMotor(speedMotorID, HardwareConstants::kPhoenixCAN),
+    m_directionMotor(directionMotorID, HardwareConstants::kPhoenixCAN),
+    m_directionEncoder(directionEncoderID, HardwareConstants::kPhoenixCAN)
 {
     SetSpeedMotorConfig();
     SetDirectionMotorConfig();

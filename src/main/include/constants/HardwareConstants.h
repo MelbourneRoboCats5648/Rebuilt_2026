@@ -1,6 +1,10 @@
 #pragma once
 
+#include <ctre/phoenix6/CANBus.hpp>
+
 namespace HardwareConstants {
+    inline constexpr ctre::phoenix6::CANBus kPhoenixCAN = ctre::phoenix6::CANBus::RoboRIO();
+
     inline constexpr int kGyroID = 14;
 
     // Swerve Motors
