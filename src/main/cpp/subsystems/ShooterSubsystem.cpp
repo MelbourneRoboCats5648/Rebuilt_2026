@@ -6,6 +6,8 @@
 
 #include <units/math.h>
 
+#include <frc2/command/Commands.h>
+
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
@@ -172,4 +174,29 @@ meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t theo
 
 meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2) {
     return p1.Distance(p2);
+}
+
+turns_per_second_t ShooterSubsystem::GetAngleVelocity() {
+    return turns_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
+}
+
+frc2::CommandPtr ShooterSubsystem::RetractToLimitCommand() {
+    return
+        RunOnce([this] {
+            // initially set encoder position to max angle
+            m_angleEncoder.SetPosition(ShooterConstants::kMaxAngleSoftLimit.value());
+            // then pull the intake in at a slow speed
+            m_angleMotor.SetVoltage(-ShooterConstants::angle::kCalibrationVoltage);
+        })
+        // then wait until...
+        .AndThen(frc2::cmd::Sequence(
+            // 1. we speed up past the threshold
+            frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < -ShooterConstants::angle::kCalibrationVelocityThreshold; }),
+            // 2. then we slow down past it again - indicating that we've reached the end
+            frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > -ShooterConstants::angle::kCalibrationVelocityThreshold; })
+        ))
+        .FinallyDo([this] {
+            m_angleMotor.StopMotor();
+            m_angleEncoder.SetPosition(ShooterConstants::kMinAngleSoftLimit.value());
+        });
 }

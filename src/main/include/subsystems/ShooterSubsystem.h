@@ -25,6 +25,7 @@
 using namespace units::velocity;
 using namespace units::angle;
 using namespace units::length;
+using namespace units::angular_velocity;
 
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
@@ -44,7 +45,10 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         void Periodic() override;
 
+        frc2::CommandPtr RetractToLimitCommand();
+
     private:
+        turns_per_second_t GetAngleVelocity();
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t theoreticalSpeed); // based on measurement of the 'theoretical ball speed' found in function above

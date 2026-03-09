@@ -39,6 +39,9 @@ namespace ShooterConstants {
         inline constexpr double kP = 0.5;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
+
+        inline constexpr units::volt_t kCalibrationVoltage = 1_V; // fixme
+        inline constexpr units::turns_per_second_t kCalibrationVelocityThreshold = 1_deg_per_s;
     }
 
 };
