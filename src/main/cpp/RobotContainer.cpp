@@ -53,25 +53,25 @@ double RobotContainer::PreprocessJoystickInput(double input) {
 void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
-    // m_drive.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         meters_per_second_t xSpeed = m_xLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetLeftY())
-    //             * DrivetrainConstants::kMaxSpeed
-    //         );
-    //         meters_per_second_t ySpeed = m_yLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetLeftX())
-    //              * DrivetrainConstants::kMaxSpeed
-    //         );
-    //         radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-    //             PreprocessJoystickInput(-m_driverController.GetRightX())
-    //             * DrivetrainConstants::kMaxAngularSpeed
-    //         );
+    m_drive.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+            meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                 * DrivetrainConstants::kMaxSpeed
+            );
+            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetRightX())
+                * DrivetrainConstants::kMaxAngularSpeed
+            );
 
-    //         m_drive.Drive(xSpeed, ySpeed, rotSpeed);
-    //     },
-    //     { &m_drive }
-    // ));
+            m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+        },
+        { &m_drive }
+    ));
 
     m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
@@ -80,21 +80,21 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
    
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::degree_t angle;
-            angle = (PreprocessJoystickInput(-m_driverController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
-                            * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
-            m_shooter.GoToAngle(angle);
+    // m_shooter.SetDefaultCommand(frc2::RunCommand(
+    //     [this] {
+    //         units::degree_t angle;
+    //         angle = (PreprocessJoystickInput(-m_driverController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
+    //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
+    //         m_shooter.GoToAngle(angle);
 
-            units::turns_per_second_t angularVelocity;
-            angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
-                            * ShooterConstants::kMaxAngularVelocity;
-            angularVelocity = units::math::abs(angularVelocity);
-            m_shooter.ShootAngularVelocity(angularVelocity);
-        },
-        { &m_shooter }
-    ));
+    //         units::turns_per_second_t angularVelocity;
+    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //                         * ShooterConstants::kMaxAngularVelocity;
+    //         angularVelocity = units::math::abs(angularVelocity);
+    //         m_shooter.ShootAngularVelocity(angularVelocity);
+    //     },
+    //     { &m_shooter }
+    // ));
 
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
