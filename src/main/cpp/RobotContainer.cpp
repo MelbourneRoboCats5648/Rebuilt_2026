@@ -75,8 +75,9 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
-    m_driverController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
-    m_driverController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+    
+    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
    
@@ -104,11 +105,11 @@ void RobotContainer::ConfigureBindings() {
     //     { &m_shooter }
     // ));
 
-    m_driverController.LeftTrigger().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
-    m_driverController.RightTrigger().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
+    m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
+    m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
 
-    //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
-    //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
+    //m_mechController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+    //m_mechController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
