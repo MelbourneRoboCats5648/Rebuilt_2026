@@ -80,15 +80,16 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
    
-    // m_shooter.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         units::turns_per_second_t angularVelocity;
-    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
-    //                         * ShooterConstants::kMaxAngularVelocity;
-    //         m_shooter.ShootAngularVelocity(angularVelocity);
-    //     },
-    //     { &m_shooter }
-    // ));
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::turns_per_second_t angularVelocity;
+            angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+                            * ShooterConstants::kMaxAngularVelocity;
+            angularVelocity = units::math::abs(angularVelocity);
+            m_shooter.ShootAngularVelocity(angularVelocity);
+        },
+        { &m_shooter }
+    ));
 
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
