@@ -36,8 +36,8 @@ void Robot::DisabledPeriodic() {}
 void Robot::AutonomousInit() {
   m_autonomousCommand = m_container.GetAutonomousCommand();
 
-  if (m_autonomousCommand) {
-    frc2::CommandScheduler::GetInstance().Schedule(m_autonomousCommand.value());
+  if (m_autonomousCommand != nullptr) {
+    m_autonomousCommand->Schedule();
   }
 }
 
@@ -51,6 +51,9 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
+
+  frc2::CommandScheduler::GetInstance()
+    .Schedule(m_calibrationCommand);
 }
 
 /**

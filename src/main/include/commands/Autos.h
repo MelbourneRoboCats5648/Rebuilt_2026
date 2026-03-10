@@ -10,6 +10,9 @@
 #include <subsystems/DriveSubsystem.h>
 
 namespace autos {
+
+void LoadTrajectories(); // to be called during RobotContainer init BEFORE using any of the below functions
+
 /**
  * Example static factory for an autonomous command.
  */
@@ -19,5 +22,18 @@ frc2::CommandPtr AutoTesting(DriveSubsystem* drive);
 
 frc2::CommandPtr AutoTesting2(DriveSubsystem* drive);
 
+frc2::CommandPtr AutoClimb(DriveSubsystem* drive);
+
+frc2::CommandPtr AutoDepot(DriveSubsystem* drive);
+
+frc2::CommandPtr AutoNeutralCollect(DriveSubsystem* drive);
+
+frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
+
+frc2::CommandPtr ChoreoAutoTest(DriveSubsystem* drive);
+
+frc2::CommandPtr ChoreoAutoPlan1(DriveSubsystem* drive);
 
 }  // namespace autos
+
+
