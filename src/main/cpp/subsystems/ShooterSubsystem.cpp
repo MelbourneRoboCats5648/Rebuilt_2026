@@ -76,6 +76,11 @@ ShooterSubsystem::ShooterSubsystem()
     m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
 
+    m_shooterVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/Voltage").Publish();
+    m_shooterTargetVelPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/TargetVelocity").Publish();
+
     m_adjustedSpeedPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/adjustedSpeed").Publish();
     m_requiredSpedPub= nt::NetworkTableInstance::GetDefault()
@@ -119,6 +124,7 @@ void ShooterSubsystem::Periodic() {
         m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
         m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
         m_shooterAngleVelocityPub.Set(GetAngleVelocity().value());
+        m_shooterVoltagePub.Set(m_motor.GetMotorVoltage().GetValueAsDouble());
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
@@ -140,6 +146,7 @@ frc2::CommandPtr ShooterSubsystem::GoToAngleCommand(units::degree_t angle) {
 void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity);
     m_motor.SetControl(velocityVoltage);
+    m_shooterTargetVelPub.Set(angularVelocity.value());
 }
 
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){

@@ -12,11 +12,11 @@ using namespace units::angle;
 
 namespace ShooterConstants {
     namespace motor {
-        inline constexpr double kP = 0.0; // fixme - we'll need kP (1.0 previously)
+        inline constexpr double kP = 0.2;
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
-        inline constexpr double kV = 0.25;
-        inline constexpr double kS = 0.07;
+        inline constexpr double kV = 0.22956;
+        inline constexpr double kS = 0.087569;
         inline constexpr double kA = 0;
     }
 
