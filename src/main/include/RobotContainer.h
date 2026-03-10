@@ -16,6 +16,7 @@
 #include "subsystems/ShooterSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
+#include "subsystems/FeederSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -44,6 +45,7 @@ private:
     DriveSubsystem m_drive;
     ShooterSubsystem m_shooter{};
     IntakeSubsystem m_intake{m_drive};
+    FeederSubsystem m_feeder;
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
 
     void ConfigureBindings();

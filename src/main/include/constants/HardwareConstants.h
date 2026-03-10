@@ -35,6 +35,4 @@ namespace HardwareConstants {
     // Climb Motors
     inline constexpr int kClimbMotorID = 21;
     inline constexpr int kClimbFollowerMotorID = 22;
-
-    inline constexpr int kFeederMotorID = 24;
 };

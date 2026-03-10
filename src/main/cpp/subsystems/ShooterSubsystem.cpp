@@ -128,6 +128,8 @@ void ShooterSubsystem::Periodic() {
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
+
+
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){
@@ -147,10 +149,6 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity);
     m_motor.SetControl(velocityVoltage);
     m_shooterTargetVelPub.Set(angularVelocity.value());
-}
-
-void ShooterSubsystem::FeederAngularVelocity(units::turns_per_second_t angularVelocity){
-
 }
 
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
@@ -205,26 +203,6 @@ meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degre
             );
 
         return speed;
-}
-
-Feeder::Feeder()
-    : m_motor(HardwareConstants::kFeederMotorID, rev::spark::SparkMax::MotorType::kBrushless)
-{
-    rev::spark::SparkMaxConfig motorConfig;
-
-    motorConfig
-    .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
-    
-    m_motor.Configure(
-      motorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
-    );
-}
-
-void Feeder::Feed(units::volt_t volts){
-    m_motor.SetVoltage(volts);
 }
 
 meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {

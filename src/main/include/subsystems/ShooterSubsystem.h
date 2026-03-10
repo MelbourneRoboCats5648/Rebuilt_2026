@@ -21,8 +21,6 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 
-#include <helpers/Feeder.h>
-
 using namespace units::velocity;
 using namespace units::angle;
 using namespace units::length;
@@ -51,18 +49,12 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         void Periodic() override;
 
-        void Feed(units::volt_t volts);
-        void FeederAngularVelocity(units::turns_per_second_t angularVelocity);
-        frc2::CommandPtr FeedCommand(units::turns_per_second_t angularVelocity);
-
         frc2::CommandPtr RetractToLimitCommand();
         frc2::CommandPtr ExtendToLimitCommand();
 
     private:
         degrees_per_second_t GetAngleVelocity();
         frc2::CommandPtr DefaultShootCommand();
-
-        Feeder m_feeder;
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
