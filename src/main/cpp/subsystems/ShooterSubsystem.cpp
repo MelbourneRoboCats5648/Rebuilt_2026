@@ -128,6 +128,8 @@ void ShooterSubsystem::Periodic() {
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
+
+
 }
 
 void ShooterSubsystem::Shoot(units::volt_t volts){

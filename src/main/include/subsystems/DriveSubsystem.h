@@ -5,7 +5,7 @@
 
 #include <ctre/phoenix6/Pigeon2.hpp>
 
-#include <drive/DriveModule.h>
+#include <helpers/DriveModule.h>
 
 #include <constants/HardwareConstants.h>
 #include <constants/DriveConstants.h>
@@ -16,7 +16,7 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
-#include <drive/ChoreoController.h>
+#include <helpers/ChoreoController.h>
 
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>

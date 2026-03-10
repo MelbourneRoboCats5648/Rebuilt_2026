@@ -5,6 +5,8 @@
 #include "units/angular_velocity.h"
 #include <units/voltage.h>
 #include "FieldConstants.h"
+#include <units/current.h>
+
 
 
 using namespace units::length;
@@ -51,4 +53,6 @@ namespace ShooterConstants {
     }
 
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(50);
+
+    inline constexpr units::volt_t kFeederVoltage(10_V);
 };
