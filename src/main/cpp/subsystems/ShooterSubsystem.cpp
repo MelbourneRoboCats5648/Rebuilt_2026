@@ -117,11 +117,11 @@ void ShooterSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
-        units::meter_t distToHub = m_drive.DistanceToTarget();
-        units::turn_t targetAngle = (distToHub > 2_m) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
+        units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+        units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
         SetTargetAngle(targetAngle);
 
-        units::turns_per_second_t flywheelVelocity =  CalculateFlyWheelSpeed(distToHub, m_targetAngle);
+        units::turns_per_second_t flywheelVelocity =  CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
         SetTargetVelocity(flywheelVelocity);
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
