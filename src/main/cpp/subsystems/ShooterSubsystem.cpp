@@ -176,7 +176,7 @@ frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_sec
 
 units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
     frc::Translation2d hubPosition =
-        (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kBlue)
+        (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue)
             ? FieldConstants::kBlueHubPosition
             : FieldConstants::kRedHubPosition;
     return CalculateDistanceBetweenPoints(robotPose.Translation(), hubPosition);
