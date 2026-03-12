@@ -24,7 +24,11 @@ namespace HardwareConstants {
     inline constexpr int kShooterFlywheelID = 15;
     inline constexpr int kShooterFlywheelFollowerID = 16;
 
+    // feeder
     inline constexpr int kShooterFeederID = 17;
+    inline constexpr int kShooterLeaderSideFeederID = 24;
+    inline constexpr int kShooterFollowerSideFeederID = 25;
+
     inline constexpr int kShooterHoodID = 18;
 
     // Intake Motors

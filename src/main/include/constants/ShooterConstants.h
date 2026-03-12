@@ -55,4 +55,5 @@ namespace ShooterConstants {
     inline constexpr units::turns_per_second_t kMaxAngularVelocity(50);
 
     inline constexpr units::volt_t kFeederVoltage(10_V);
+    inline constexpr units::volt_t kSideFeederVoltage(6.7_V); // fixme
 };
