@@ -117,7 +117,7 @@ void ShooterSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
-        units::meter_t distToHub = DistanceToHub(m_drive.GetPose());
+        units::meter_t distToHub = m_drive.DistanceToTarget();
         units::turn_t targetAngle = (distToHub > 2_m) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
         SetTargetAngle(targetAngle);
 
@@ -187,14 +187,6 @@ frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_sec
             });
 }
 
-units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
-    frc::Translation2d hubPosition =
-        (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue)
-            ? FieldConstants::kBlueHubPosition
-            : FieldConstants::kRedHubPosition;
-    return CalculateDistanceBetweenPoints(robotPose.Translation(), hubPosition);
-}
-
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
     meters_per_second_t adjustedSpeed = AdjustedBallSpeed(requiredSpeed);
@@ -234,11 +226,6 @@ meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t actu
 
     meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
     return adjustedSpeed;
-}
-
-
-meter_t ShooterSubsystem::CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2) {
-    return p1.Distance(p2);
 }
 
 degrees_per_second_t ShooterSubsystem::GetAngleVelocity() {

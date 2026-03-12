@@ -50,8 +50,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         void SetTargetAngle(units::turn_t angle);
 
-        units::meter_t DistanceToHub(frc::Pose2d robotPose);
-
         void Periodic() override;
 
         frc2::CommandPtr RetractToLimitCommand();
@@ -65,7 +63,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
-        meter_t CalculateDistanceBetweenPoints(frc::Translation2d p1, frc::Translation2d p2);
 
         TalonFXConfiguration createMotorConfig();
 

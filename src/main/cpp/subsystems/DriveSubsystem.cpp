@@ -261,3 +261,7 @@ frc::ChassisSpeeds DriveSubsystem::GetVelocity() {
         m_backRightModule.GetState()
     );
 }
+
+units::meter_t DriveSubsystem::DistanceToTarget() {
+    return GetPose().Translation().Distance(m_targetPosition);
+}

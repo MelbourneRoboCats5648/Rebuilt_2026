@@ -75,6 +75,7 @@ public:
     frc2::CommandPtr AlignToTargetCommand();
 
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
+    units::meter_t DistanceToTarget();
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
