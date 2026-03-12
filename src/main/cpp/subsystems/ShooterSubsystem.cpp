@@ -8,6 +8,8 @@
 #include <frc2/command/Commands.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <frc/DriverStation.h>
+
 using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
@@ -186,7 +188,11 @@ frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_sec
 }
 
 units::meter_t ShooterSubsystem::DistanceToHub(frc::Pose2d robotPose){
-    return CalculateDistanceBetweenPoints(robotPose.Translation(), FieldConstants::kHubPosition);
+    frc::Translation2d hubPosition =
+        (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue)
+            ? FieldConstants::kBlueHubPosition
+            : FieldConstants::kRedHubPosition;
+    return CalculateDistanceBetweenPoints(robotPose.Translation(), hubPosition);
 }
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {

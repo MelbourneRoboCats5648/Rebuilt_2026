@@ -24,7 +24,7 @@
 
 #include <frc/trajectory/Trajectory.h>
 
-#include <subsystems/DriveSubsystem.h>
+#include "constants/FieldConstants.h"
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
@@ -72,6 +72,9 @@ public:
 
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
+    frc2::CommandPtr AlignToTargetCommand();
+
+    units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
 
 private:
     Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
@@ -141,5 +144,7 @@ private:
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 
     bool m_isFieldRelative = false;
+
+    frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
 
 };
