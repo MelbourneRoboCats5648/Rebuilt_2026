@@ -140,7 +140,7 @@ void ShooterSubsystem::Shoot(units::volt_t volts){
 
 void ShooterSubsystem::GoToAngle(units::degree_t angle) {
     double clampedAngleDeg = std::clamp(angle.value(), ShooterConstants::kMinAngle.value(), ShooterConstants::kMaxAngle.value());
-    m_angleController.SetReference(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
+    m_angleController.SetSetpoint(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
 }
 
 frc2::CommandPtr ShooterSubsystem::GoToAngleCommand(units::degree_t angle) {
