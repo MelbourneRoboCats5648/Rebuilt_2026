@@ -41,6 +41,11 @@ private:
         OperatorConstants::kDriverControllerPort
     };
 
+    frc2::CommandXboxController m_mechController{
+        OperatorConstants::kOperatorControllerPort
+    };
+
+
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
     ShooterSubsystem m_shooter{};
