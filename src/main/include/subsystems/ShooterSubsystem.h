@@ -21,6 +21,8 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 
+#include <subsystems/DriveSubsystem.h>
+
 using namespace units::velocity;
 using namespace units::angle;
 using namespace units::length;
@@ -32,7 +34,7 @@ using namespace ctre::phoenix6::hardware;
 class ShooterSubsystem : public frc2::SubsystemBase {
 
     public:
-        ShooterSubsystem();
+        ShooterSubsystem(DriveSubsystem& drive);
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
@@ -53,6 +55,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr ExtendToLimitCommand();
 
     private:
+        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
+
         degrees_per_second_t GetAngleVelocity();
         frc2::CommandPtr DefaultShootCommand();
 
