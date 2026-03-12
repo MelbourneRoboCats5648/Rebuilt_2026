@@ -238,17 +238,14 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
 
 units::radian_t DriveSubsystem::HeadingToTarget()
 {
-    frc::Rotation2d angleFieldRelToTarget = (m_targetPosition - GetPose().Translation()).Angle();
-    frc::Rotation2d angleRobotToFieldRel = GetPose().Rotation();
-
-    frc::Rotation2d angleRobotToTarget = angleFieldRelToTarget - angleRobotToFieldRel;
-
-    return angleRobotToTarget.Radians();
+    return (m_targetPosition - GetPose().Translation()).Angle().Radians();
+    // this will return the angle that the vector from robot position to target position makes with X+ axis
+    // which is the desired heading to turn the robot to
 }
 
 frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 {
-    return AlignHeadingCommand(HeadingToTarget());
+    return AlignHeadingCommand([this] { return HeadingToTarget(); });
 }
 
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
