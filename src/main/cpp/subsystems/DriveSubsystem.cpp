@@ -7,6 +7,8 @@
 
 #include <commands/ChoreoTrajectoryCommand.h>
 
+#include <frc/DriverStation.h>
+
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem()
@@ -44,6 +46,28 @@ void DriveSubsystem::Periodic() {
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
 
+    // Adjust location of target position based on robot location wrt hub
+    frc::Translation2d hubPosition =
+        (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue)
+        ? FieldConstants::kBlueHubPosition
+        : FieldConstants::kRedHubPosition;
+    auto xPosition = GetPose().X();
+    auto yPosition = GetPose().Y();
+    if (
+        xPosition > FieldConstants::kBlueHubPosition.X()
+        && xPosition < FieldConstants::kRedHubPosition.X()
+    ) {
+        // robot is in neutral zone - aim out of the hub
+        if (yPosition < hubPosition.Y()) { // below centre line
+            m_targetPosition = hubPosition - FieldConstants::kNeutralOffset;
+        } else { // above centre line
+            m_targetPosition = hubPosition + FieldConstants::kNeutralOffset;
+        }
+    } else {
+        // robot is in shooting zone - aim towards alliance hub
+        m_targetPosition = hubPosition;
+    }
+    
     /* publish current state */
     m_statePublisher.Set(
         std::vector{
@@ -210,6 +234,18 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
     return AlignHeadingCommand([heading] { return heading; });
+}
+
+units::radian_t DriveSubsystem::HeadingToTarget()
+{
+    return (m_targetPosition - GetPose().Translation()).Angle().Radians();
+    // this will return the angle that the vector from robot position to target position makes with X+ axis
+    // which is the desired heading to turn the robot to
+}
+
+frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
+{
+    return AlignHeadingCommand([this] { return HeadingToTarget(); });
 }
 
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
