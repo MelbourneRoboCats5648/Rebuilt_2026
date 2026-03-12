@@ -1,5 +1,4 @@
 #include "subsystems/ShooterSubsystem.h"
-#include "constants/ShooterConstants.h"
 #include "constants/FieldConstants.h"
 
 #include <rev/config/SparkMaxConfig.h>
@@ -116,6 +115,13 @@ void ShooterSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
+        units::meter_t distToHub = DistanceToHub(m_drive.GetPose());
+        units::turn_t targetAngle = (distToHub > 2_m) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
+        SetTargetAngle(targetAngle);
+
+        units::turns_per_second_t flywheelVelocity =  CalculateFlyWheelSpeed(distToHub, m_targetAngle);
+        SetTargetVelocity(flywheelVelocity);
+
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
@@ -156,6 +162,11 @@ void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
     m_targetVelocity = velocity;
 }
 
+void ShooterSubsystem::SetTargetAngle(units::turn_t angle)
+{
+    m_targetAngle = angle;
+}
+
 units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
 }
@@ -163,6 +174,7 @@ units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
 frc2::CommandPtr ShooterSubsystem::DefaultShootCommand() {
     return Run([this]{
                 ShootAngularVelocity(m_targetVelocity);
+                GoToAngle(m_targetAngle);
             });
 }
 
