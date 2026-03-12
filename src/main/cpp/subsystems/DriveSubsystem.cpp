@@ -44,6 +44,22 @@ void DriveSubsystem::Periodic() {
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
 
+    // Adjust location of target position based on robot location wrt hub
+    if (GetPose().X() < FieldConstants::kHubPosition.X())
+    {
+        // robot is in the shooting zone
+        m_targetPosition = FieldConstants::kHubPosition;
+    }
+    else if (GetPose().Y() < FieldConstants::kHubPosition.Y())
+    {
+        // robot is in neutral zone and right of the hub (wrt field relative)
+        m_targetPosition = FieldConstants::kHubPosition - FieldConstants::kPositionOffset;
+    }
+    else{
+        // robot is in neutral zone and left of the hub (wrt field relative)
+        m_targetPosition = FieldConstants::kHubPosition + FieldConstants::kPositionOffset;
+    }
+    
     /* publish current state */
     m_statePublisher.Set(
         std::vector{
@@ -210,6 +226,21 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
 
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading) {
     return AlignHeadingCommand([heading] { return heading; });
+}
+
+units::radian_t DriveSubsystem::HeadingToTarget()
+{
+    frc::Rotation2d angleFieldRelToTarget = (m_targetPosition - GetPose().Translation()).Angle();
+    frc::Rotation2d angleRobotToFieldRel = GetPose().Rotation();
+
+    frc::Rotation2d angleRobotToTarget = angleFieldRelToTarget - angleRobotToFieldRel;
+
+    return angleRobotToTarget.Radians();
+}
+
+frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
+{
+    return AlignHeadingCommand(HeadingToTarget());
 }
 
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()

@@ -115,6 +115,9 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
+    m_driverController.B().WhileTrue(m_drive.AlignToTargetCommand().
+                                    AndThen(m_feeder.FeedCommand().Repeatedly()));
+
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
