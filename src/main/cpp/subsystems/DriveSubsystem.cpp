@@ -7,6 +7,8 @@
 
 #include <commands/ChoreoTrajectoryCommand.h>
 
+#include <frc/DriverStation.h>
+
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem()
@@ -45,19 +47,25 @@ void DriveSubsystem::Periodic() {
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()});
 
     // Adjust location of target position based on robot location wrt hub
-    if (GetPose().X() < FieldConstants::kHubPosition.X())
-    {
-        // robot is in the shooting zone
-        m_targetPosition = FieldConstants::kHubPosition;
-    }
-    else if (GetPose().Y() < FieldConstants::kHubPosition.Y())
-    {
-        // robot is in neutral zone and right of the hub (wrt field relative)
-        m_targetPosition = FieldConstants::kHubPosition - FieldConstants::kPositionOffset;
-    }
-    else{
-        // robot is in neutral zone and left of the hub (wrt field relative)
-        m_targetPosition = FieldConstants::kHubPosition + FieldConstants::kPositionOffset;
+    frc::Translation2d hubPosition =
+        (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kBlue)
+        ? FieldConstants::kBlueHubPosition
+        : FieldConstants::kRedHubPosition;
+    auto xPosition = GetPose().X();
+    auto yPosition = GetPose().Y();
+    if (
+        xPosition > FieldConstants::kBlueHubPosition.X()
+        && xPosition < FieldConstants::kRedHubPosition.X()
+    ) {
+        // robot is in neutral zone - aim out of the hub
+        if (yPosition < hubPosition.Y()) { // below centre line
+            m_targetPosition = hubPosition - FieldConstants::kNeutralOffset;
+        } else { // above centre line
+            m_targetPosition = hubPosition + FieldConstants::kNeutralOffset;
+        }
+    } else {
+        // robot is in shooting zone - aim towards alliance hub
+        m_targetPosition = hubPosition;
     }
     
     /* publish current state */

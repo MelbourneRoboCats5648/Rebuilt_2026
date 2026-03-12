@@ -145,6 +145,6 @@ private:
 
     bool m_isFieldRelative = false;
 
-    frc::Translation2d m_targetPosition = FieldConstants::kHubPosition;
+    frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
 
 };
