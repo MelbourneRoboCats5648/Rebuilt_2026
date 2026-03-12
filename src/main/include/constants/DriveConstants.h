@@ -52,10 +52,11 @@ namespace DriveModuleConstants {
     };
 
     namespace DirectionEncoder {
-        inline constexpr turn_t kFrontLeftOffset = -0.4189453125_tr + 0.5_tr;
-        inline constexpr turn_t kFrontRightOffset = -0.161865234375_tr + 0.5_tr;
-        inline constexpr turn_t kBackLeftOffset = 0.4599609375_tr - 0.5_tr;
-        inline constexpr turn_t kBackRightOffset = -0.2197265625_tr + 0.5_tr;
+        // mag offset zero position requies all swerve module bolts pointing towards the right (negative Y axis of robot) 
+        inline constexpr turn_t kFrontLeftOffset = 0.07568359375_tr;
+        inline constexpr turn_t kFrontRightOffset = 0.325927734375_tr;
+        inline constexpr turn_t kBackLeftOffset = -0.055419921875_tr;
+        inline constexpr turn_t kBackRightOffset = 0.26953125_tr;
     }; // fixme - mag offsets are 180 deg off - make sure we are at the right direction before taking measurements
 };
 
