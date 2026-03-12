@@ -56,4 +56,6 @@ namespace ShooterConstants {
 
     inline constexpr units::volt_t kFeederVoltage(10_V);
     inline constexpr units::volt_t kSideFeederVoltage(5_V); // fixme
+
+    inline constexpr units::meter_t kRangeThreshold = 2.0_m; // threshold for changing between min (high range) and max (low range) angle
 };

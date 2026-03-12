@@ -48,7 +48,7 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
-    ShooterSubsystem m_shooter{};
+    ShooterSubsystem m_shooter{m_drive};
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder;
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed

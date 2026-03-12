@@ -104,8 +104,8 @@ void RobotContainer::ConfigureBindings() {
     //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
     //         m_shooter.GoToAngle(angle);
 
-    //         units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
-    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angle);
+    //         units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToTarget, angle);
     //         m_shooter.ShootAngularVelocity(flyWheelSpeed);
     //     },
     //     { &m_shooter }
