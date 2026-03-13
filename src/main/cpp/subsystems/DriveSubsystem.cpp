@@ -43,6 +43,10 @@ DriveSubsystem::DriveSubsystem()
     // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
 }
 
+bool DriveSubsystem::IsBlueAlliance() {
+    return (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue);
+}
+
 void DriveSubsystem::Periodic() {
     m_poseEstimator.Update(frc::Rotation2d{GetGyroHeading()},
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
@@ -50,7 +54,7 @@ void DriveSubsystem::Periodic() {
 
     // Adjust location of target position based on robot location wrt hub
     frc::Translation2d hubPosition =
-        (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kBlue)
+        (IsBlueAlliance())
         ? FieldConstants::kBlueHubPosition
         : FieldConstants::kRedHubPosition;
     auto xPosition = GetPose().X();
@@ -100,9 +104,9 @@ degree_t DriveSubsystem::GetHeading() {
     return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
-void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed)
+void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed, bool teleop)
 {
-    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative);
+    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative, teleop);
 
     if (m_isFieldRelative) {
         std::cout << "FIELD RELATIVE" << std::endl;
@@ -114,20 +118,31 @@ void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpee
 /* kinematics/"set speed" */
 void DriveSubsystem::Drive(
     meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-    bool fieldRelative
+    bool fieldRelative, bool teleop
 ) {
-    auto states =
-        m_kinematics.ToSwerveModuleStates(frc::ChassisSpeeds::Discretize(
-           fieldRelative ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                               xSpeed, ySpeed, rotSpeed, frc::Rotation2d{GetHeading()})
-                         : frc::ChassisSpeeds{xSpeed, ySpeed, rotSpeed},
-           frc::TimedRobot::kDefaultPeriod));
+    frc::ChassisSpeeds speeds;
+    if (fieldRelative) {
+        units::radian_t heading = GetHeading();
+        if (teleop && !IsBlueAlliance()) { // flip heading
+            heading -= 180_deg;
+        }
+        speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+            xSpeed, ySpeed, rotSpeed,
+            frc::Rotation2d{heading}
+        );
+    } else { // robot-relative
+        speeds = {xSpeed, ySpeed, rotSpeed};
+    }
+
+    auto states = m_kinematics.ToSwerveModuleStates(
+        frc::ChassisSpeeds::Discretize(speeds, frc::TimedRobot::kDefaultPeriod)
+    );
 
     SetModuleStates(states);
 }
 
 void DriveSubsystem::Stop() {
-    Drive(0_mps, 0_mps, 0_rad_per_s, false);
+    Drive(0_mps, 0_mps, 0_rad_per_s, false, false);
 }
 
 void DriveSubsystem::SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states) {
@@ -230,7 +245,7 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
     }).AndThen(
         Run([this] {
             radians_per_second_t angularRate{m_thetaController.Calculate(GetHeading())};
-            Drive(0_mps, 0_mps, angularRate, false);
+            Drive(0_mps, 0_mps, angularRate, false, false);
         }).Until([this] {
             return m_thetaController.AtGoal();
         })
