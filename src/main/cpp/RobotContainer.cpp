@@ -29,6 +29,7 @@ RobotContainer::RobotContainer() {
     m_autoNeutralCollect = autos::AutoNeutralCollect(&m_drive);
     m_choreoTest = autos::ChoreoAutoTest(&m_drive);
     m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
+    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder);
 
     //adding commands to the auto chooser
     m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
@@ -37,6 +38,7 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Auto Neutral Collect", m_autoNeutralCollect.value().get());
     m_chooser.AddOption("Choreo Test", m_choreoTest.value().get());
     m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.value().get());
+    m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
@@ -73,13 +75,16 @@ void RobotContainer::ConfigureBindings() {
         { &m_drive }
     ));
 
-    m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
     m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
+
+    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
+    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
+    m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
    
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
@@ -104,20 +109,26 @@ void RobotContainer::ConfigureBindings() {
     //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
     //         m_shooter.GoToAngle(angle);
 
-    //         units::meter_t distanceToHub = m_shooter.DistanceToHub(m_drive.GetPose());
-    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToHub, angle);
+    //         units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToTarget, angle);
     //         m_shooter.ShootAngularVelocity(flyWheelSpeed);
     //     },
     //     { &m_shooter }
     // ));
 
-    m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
-    m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
+    //m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
+    //m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
 
-    m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
+    //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
-    m_driverController.B().WhileTrue(m_drive.AlignToTargetCommand().
-                                    AndThen(m_feeder.FeedCommand().Repeatedly()));
+    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
+
+    m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
+    m_driverController.RightTrigger().WhileTrue(m_feeder.FeedCommand());
+
+    //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
+    //                                AndThen(m_feeder.FeedCommand()));
+
 
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
     //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());

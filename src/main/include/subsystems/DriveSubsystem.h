@@ -46,12 +46,13 @@ public:
 
     /* kinematics/"set speed" */
     void Drive(
-    meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed
+        meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
+        bool teleop = true // if true, this will invert the field-relative heading if we're on the red alliance
     );
 
     void Drive(
         meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-        bool isfieldRelative
+        bool isfieldRelative, bool teleop
     );
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
@@ -75,8 +76,10 @@ public:
     frc2::CommandPtr AlignToTargetCommand();
 
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
+    units::meter_t DistanceToTarget();
 
 private:
+    bool IsBlueAlliance();
     Pigeon2 m_gyro{HardwareConstants::kGyroID, HardwareConstants::kPhoenixCAN};
 
     DriveModule m_frontLeftModule{
@@ -143,7 +146,7 @@ private:
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 
-    bool m_isFieldRelative = false;
+    bool m_isFieldRelative = true;
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
 
