@@ -16,6 +16,7 @@
 #include "subsystems/ShooterSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
+#include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
@@ -52,6 +53,7 @@ private:
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder;
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
+    VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
 
     void ConfigureBindings();
 
@@ -68,6 +70,8 @@ private:
     std::optional<frc2::CommandPtr> m_autoNeutralCollect;
     std::optional<frc2::CommandPtr> m_choreoTest;
     std::optional<frc2::CommandPtr> m_choreoPlan1;
+    std::optional<frc2::CommandPtr> m_SCR_ShootTrench;
+
     // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
     // the std::optional<> wrapper allows it to be assigned later in runtime
 

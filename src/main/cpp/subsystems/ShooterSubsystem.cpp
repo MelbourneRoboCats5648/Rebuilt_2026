@@ -155,7 +155,7 @@ frc2::CommandPtr ShooterSubsystem::GoToAngleCommand(units::degree_t angle) {
 }
 
 void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
-    ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity);
+    ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
     m_shooterTargetVelPub.Set(angularVelocity.value());
 }
@@ -185,6 +185,29 @@ frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_sec
     return RunOnce([this, angularVelocity]{
                 SetTargetVelocity(angularVelocity);
             });
+}
+
+frc2::CommandPtr ShooterSubsystem::IncreaseFlywheelVelocity()
+{
+    return RunOnce([this] {
+        m_scaleFlywheelVelocity += ShooterConstants::kFlywheelVelScalingIncrement;
+        m_scaleFlywheelVelocity = std::clamp(m_scaleFlywheelVelocity, ShooterConstants::kMinFlywheelVelocityScaling, ShooterConstants::kMaxFlywheelVelocityScaling);
+    });
+}
+
+frc2::CommandPtr ShooterSubsystem::DecreaseFlywheelVelocity()
+{
+    return RunOnce([this] {
+        m_scaleFlywheelVelocity -= ShooterConstants::kFlywheelVelScalingIncrement;
+        m_scaleFlywheelVelocity = std::clamp(m_scaleFlywheelVelocity, ShooterConstants::kMinFlywheelVelocityScaling, ShooterConstants::kMaxFlywheelVelocityScaling);
+    });
+}
+
+frc2::CommandPtr ShooterSubsystem::ResetFlywheelVelocity()
+{
+    return RunOnce([this] {
+        m_scaleFlywheelVelocity = 1.0;
+    });
 }
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {

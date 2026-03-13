@@ -16,6 +16,8 @@ static choreo::Trajectory<choreo::SwerveSample> Test_Path2;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_InitToShoot;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
+static choreo::Trajectory<choreo::SwerveSample> Plan2_Shoot;
+static choreo::Trajectory<choreo::SwerveSample> Plan2_UnderTrench;
 
 void autos::LoadTrajectories() {    
     TestPath = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath").value();
@@ -24,6 +26,8 @@ void autos::LoadTrajectories() {
     Plan1_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_InitToShoot").value();
     Plan1_ShootToCollect = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_ShootToCollect").value();
     Plan1_CollectToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_CollectToShoot").value();
+    Plan2_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
+    Plan2_UnderTrench = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path2").value();
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
@@ -82,6 +86,14 @@ frc2::CommandPtr autos::ChoreoAutoPlan1(DriveSubsystem* drive) {
         ChoreoAuto(drive, Plan1_ShootToCollect)
         // collect
         // so on...
+    );
+}
+
+frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder) {
+    return frc2::cmd::Sequence(
+        ChoreoAuto(drive, Plan2_Shoot),
+        feeder->FeedCommand().Repeatedly().WithTimeout(5_s),
+        ChoreoAuto(drive, Plan2_UnderTrench)
     );
 }
 
