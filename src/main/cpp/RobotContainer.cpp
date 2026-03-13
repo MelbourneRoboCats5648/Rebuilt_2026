@@ -81,7 +81,7 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
-    m_mechController.POVCenter().OnTrue(m_shooter.ResetFlywheelVelocity());
+    m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
 
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
    
