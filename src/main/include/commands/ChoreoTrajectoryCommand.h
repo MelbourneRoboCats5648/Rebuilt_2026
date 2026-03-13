@@ -37,4 +37,6 @@ private:
     // for debugging
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
+
+    bool m_isRed;
 };
