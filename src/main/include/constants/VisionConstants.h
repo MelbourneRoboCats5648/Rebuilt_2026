@@ -9,8 +9,8 @@ namespace VisionConstants {
     inline const std::string kCameraName = "photonvision";
 
     inline constexpr frc::Transform3d kCameraLocation{
-        frc::Translation3d{0.0_m, 0.0_m, 0.0_m}, // fixme
-        frc::Rotation3d{0_deg, 0_deg /* fixme: change this */ , 0_deg}
+        frc::Translation3d{-0.180_m, 0.0_m, 0.500_m},
+        frc::Rotation3d{0_deg, -45_deg, 0_deg}
     };
 
     inline const Eigen::Matrix<double, 3, 1> kSingleTagStdDevs{4, 4, 8};
