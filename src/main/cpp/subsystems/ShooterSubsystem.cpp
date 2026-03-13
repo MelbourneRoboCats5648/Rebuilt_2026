@@ -206,7 +206,7 @@ frc2::CommandPtr ShooterSubsystem::DecreaseFlywheelVelocity()
 frc2::CommandPtr ShooterSubsystem::ResetFlywheelVelocity()
 {
     return RunOnce([this] {
-        m_scaleFlywheelVelocity = 1.0;
+        m_scaleFlywheelVelocity = ShooterConstants::kDefaultFlywheelVelocityScaling;
     });
 }
 
