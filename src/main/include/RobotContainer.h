@@ -16,6 +16,7 @@
 #include "subsystems/ShooterSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
+#include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
@@ -52,6 +53,7 @@ private:
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder;
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
+    VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
 
     void ConfigureBindings();
 
