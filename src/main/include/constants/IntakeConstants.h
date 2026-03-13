@@ -17,7 +17,7 @@ using namespace units::voltage;
 namespace IntakeConstants {
     inline constexpr double PI = 3.145; // fixme - get the const value from the correct math library
 
-    inline constexpr meters_per_second_t kTargetIntakeSurfaceSpeed = 8.0_mps;  // desired linear surface speed of the intake wheel (fixme - check this value)
+    inline constexpr meters_per_second_t kTargetIntakeSurfaceSpeed = 7.0_mps;  // desired linear surface speed of the intake wheel (fixme - check this value)
     // 7.5-8.0 m/s is doable if there's a net, otherwise use 7.0 m/s
 
     inline constexpr meter_t kIntakeWheelDiameter = 4.0_in;  // fixme - check this value
