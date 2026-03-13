@@ -18,6 +18,9 @@ static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
 static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
 static choreo::Trajectory<choreo::SwerveSample> Plan2_Shoot;
 static choreo::Trajectory<choreo::SwerveSample> Plan2_UnderTrench;
+static choreo::Trajectory<choreo::SwerveSample> Shoot_fromLeft;
+static choreo::Trajectory<choreo::SwerveSample> Shoot_fromRight;
+static choreo::Trajectory<choreo::SwerveSample> Shoot_fromMiddle;
 
 void autos::LoadTrajectories() {    
     TestPath = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath").value();
@@ -28,6 +31,9 @@ void autos::LoadTrajectories() {
     Plan1_CollectToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_CollectToShoot").value();
     Plan2_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
     Plan2_UnderTrench = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path2").value();
+    Shoot_fromLeft = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromLeft").value();
+    Shoot_fromMiddle = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromMiddle").value();
+    Shoot_fromRight= choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromRight").value();
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
@@ -97,6 +103,33 @@ frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem
         ),
         feeder->FeedCommand().WithTimeout(5_s),
         ChoreoAuto(drive, Plan2_UnderTrench)
+    );
+}
+
+frc2::CommandPtr autos::ChoreoShootFromLeft(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
+    return frc2::cmd::Sequence(
+        frc2::cmd::Parallel(
+        ChoreoAuto(drive, Shoot_fromLeft),
+        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
+        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
+    );
+}
+
+frc2::CommandPtr autos::ChoreoShootFromRight(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
+    return frc2::cmd::Sequence(
+        frc2::cmd::Parallel(
+        ChoreoAuto(drive, Shoot_fromRight),
+        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
+        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
+    );
+}
+
+frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
+    return frc2::cmd::Sequence(
+        frc2::cmd::Parallel(
+        ChoreoAuto(drive, Shoot_fromMiddle),
+        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
+        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
     );
 }
 

@@ -29,7 +29,12 @@ RobotContainer::RobotContainer() {
     m_autoNeutralCollect = autos::AutoNeutralCollect(&m_drive);
     m_choreoTest = autos::ChoreoAutoTest(&m_drive);
     m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
+
     m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootFromRight = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootFromMiddle = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
+
 
     //adding commands to the auto chooser
     m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
@@ -39,6 +44,9 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Choreo Test", m_choreoTest.value().get());
     m_chooser.AddOption("Choreo Plan 1", m_choreoPlan1.value().get());
     m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
+    m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
+    m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
+    m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);

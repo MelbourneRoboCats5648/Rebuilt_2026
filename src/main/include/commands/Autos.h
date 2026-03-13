@@ -38,6 +38,12 @@ frc2::CommandPtr ChoreoAutoPlan1(DriveSubsystem* drive);
 
 frc2::CommandPtr ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
 
+frc2::CommandPtr ChoreoShootFromLeft(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+
+frc2::CommandPtr ChoreoShootFromRight(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+
+frc2::CommandPtr ChoreoShootFromMiddle(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+
 }  // namespace autos
 
 
