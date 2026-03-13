@@ -75,13 +75,17 @@ void RobotContainer::ConfigureBindings() {
         { &m_drive }
     ));
 
-    m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
+    //m_driverController.X().WhileTrue(m_intake.IntakeCommand()); // should slow down as the robot moves forward
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
     m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_driverController.A().OnTrue(m_drive.ToggleFieldRelativeCommand());
+    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
+    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
+    m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
+
+    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
    
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
@@ -113,12 +117,12 @@ void RobotContainer::ConfigureBindings() {
     //     { &m_shooter }
     // ));
 
-    m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
-    m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
+    //m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
+    //m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
 
-    m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
+    //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
-    m_driverController.B().WhileTrue(m_drive.AlignToTargetCommand().
+    m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
                                     AndThen(m_feeder.FeedCommand().Repeatedly()));
 
     //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());

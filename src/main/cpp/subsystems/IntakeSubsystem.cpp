@@ -81,6 +81,8 @@ m_drive(drive)
     m_extendPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
     m_retractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
     m_intakePID.SetTolerance(IntakeConstants::intake::kTolerance.value());
+
+    SetDefaultCommand(IntakeCommand());
 }
 
 void IntakeSubsystem::ConfigurePublishers()
