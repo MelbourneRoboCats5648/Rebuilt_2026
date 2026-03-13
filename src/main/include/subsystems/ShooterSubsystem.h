@@ -54,6 +54,9 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         frc2::CommandPtr RetractToLimitCommand();
         frc2::CommandPtr ExtendToLimitCommand();
+        frc2::CommandPtr IncreaseFlywheelVelocity();
+        frc2::CommandPtr DecreaseFlywheelVelocity();
+        frc2::CommandPtr ResetFlywheelVelocity();
 
     private:
         DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
@@ -63,6 +66,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
+
+        double m_scaleFlywheelVelocity = 1.0; // default is scaling by unity (no change in speed)
 
         TalonFXConfiguration createMotorConfig();
 
