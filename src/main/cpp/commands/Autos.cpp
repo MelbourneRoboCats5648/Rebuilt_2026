@@ -35,7 +35,8 @@ static bool IsCalibrated = false;
 frc2::CommandPtr autos::CalibrationCommand(IntakeSubsystem* intake, ShooterSubsystem* shooter) {
     return frc2::cmd::Either(
         frc2::cmd::None(), // do nothing if IsCalibrated is true
-        frc2::cmd::Parallel(shooter->RetractToLimitCommand(), intake->RetractToLimitCommand()),
+        // frc2::cmd::Parallel(shooter->RetractToLimitCommand(), intake->RetractToLimitCommand()),
+        shooter->RetractToLimitCommand(),
         [] {
             if (!IsCalibrated) {
                 IsCalibrated = true; // should be false only once
@@ -115,8 +116,16 @@ frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem
                 intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
             )
         ),
-        feeder->FeedCommand().WithTimeout(5_s),
-        ChoreoAuto(drive, Plan2_UnderTrench)
+        frc2::cmd::Parallel(
+            shooter->DefaultShootCommand(),
+            frc2::cmd::Wait(1_s).AndThen( // ramp up delay
+                frc2::cmd::Sequence(
+                    feeder->FeedCommand().WithTimeout(5_s),
+                    ChoreoAuto(drive, Plan2_UnderTrench)
+                )
+            )
+        )
+        
     );
 }
 
