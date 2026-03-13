@@ -117,7 +117,7 @@ void ShooterSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
-        units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+        units::meter_t distanceToTarget = m_drive.DistanceToTarget() + 0.3_m; // fixme
         units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
         SetTargetAngle(targetAngle);
 
@@ -161,6 +161,13 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
 }
 
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
+    /* clamp velocity */
+    if (velocity > ShooterConstants::kMaxAngularVelocity) {
+        velocity = ShooterConstants::kMaxAngularVelocity;
+    } else if (velocity < ShooterConstants::kMinAngularVelocity) {
+        velocity = ShooterConstants::kMinAngularVelocity;
+    }
+
     m_targetVelocity = velocity;
 }
 

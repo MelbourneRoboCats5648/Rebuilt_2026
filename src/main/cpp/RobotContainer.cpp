@@ -144,16 +144,5 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 }
 
 frc2::CommandPtr RobotContainer::GetCalibrationCommand() {
-    return frc2::cmd::Either(
-        frc2::cmd::None(), // do nothing if m_isCalibrated is true
-        frc2::cmd::Parallel(m_shooter.RetractToLimitCommand(), m_intake.RetractToLimitCommand()),
-        [this] {
-            if (!m_isCalibrated) {
-                m_isCalibrated = true; // should be false only once
-                return false;
-            } else {
-                return true;
-            }
-        }
-    );
+    return autos::CalibrationCommand(&m_intake, &m_shooter);
 }

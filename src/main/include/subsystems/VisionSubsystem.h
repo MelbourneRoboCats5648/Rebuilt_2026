@@ -23,10 +23,9 @@ private:
     photon::PhotonCamera m_camera{VisionConstants::kCameraName};
     photon::PhotonPoseEstimator m_photonEstimator{
         VisionConstants::kTagLayout,
-        photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
         VisionConstants::kCameraLocation
     };
-    // photon::PhotonPipelineResult m_latestResult;
+    photon::PhotonPipelineResult m_latestResult;
 
     Eigen::Matrix<double, 3, 1> GetEstimationStdDevs(frc::Pose2d pose);
 

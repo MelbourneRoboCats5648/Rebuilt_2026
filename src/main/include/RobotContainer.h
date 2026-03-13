@@ -80,6 +80,4 @@ private:
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;
-
-    bool m_isCalibrated = false;
 };
