@@ -9,6 +9,7 @@
 #include "subsystems/ExampleSubsystem.h"
 #include <subsystems/DriveSubsystem.h>
 #include <subsystems/FeederSubsystem.h>
+#include <subsystems/IntakeSubsystem.h>
 
 namespace autos {
 
@@ -35,7 +36,7 @@ frc2::CommandPtr ChoreoAutoTest(DriveSubsystem* drive);
 
 frc2::CommandPtr ChoreoAutoPlan1(DriveSubsystem* drive);
 
-frc2::CommandPtr ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder);
+frc2::CommandPtr ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
 
 }  // namespace autos
 

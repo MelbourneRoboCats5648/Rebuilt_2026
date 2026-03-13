@@ -89,9 +89,12 @@ frc2::CommandPtr autos::ChoreoAutoPlan1(DriveSubsystem* drive) {
     );
 }
 
-frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder) {
+frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
     return frc2::cmd::Sequence(
-        ChoreoAuto(drive, Plan2_Shoot),
+        frc2::cmd::Parallel(
+            ChoreoAuto(drive, Plan2_Shoot),
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
+        ),
         feeder->FeedCommand().Repeatedly().WithTimeout(5_s),
         ChoreoAuto(drive, Plan2_UnderTrench)
     );
