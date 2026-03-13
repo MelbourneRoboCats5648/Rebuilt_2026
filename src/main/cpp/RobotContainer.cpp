@@ -29,7 +29,7 @@ RobotContainer::RobotContainer() {
     m_autoNeutralCollect = autos::AutoNeutralCollect(&m_drive);
     m_choreoTest = autos::ChoreoAutoTest(&m_drive);
     m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
-    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder);
+    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder, &m_intake);
 
     //adding commands to the auto chooser
     m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
