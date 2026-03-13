@@ -17,6 +17,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
+#include "subsystems/FeederSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -33,6 +34,7 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
+    frc2::CommandPtr GetCalibrationCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -40,10 +42,16 @@ private:
         OperatorConstants::kDriverControllerPort
     };
 
+    frc2::CommandXboxController m_mechController{
+        OperatorConstants::kOperatorControllerPort
+    };
+
+
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
-    ShooterSubsystem m_shooter{};
+    ShooterSubsystem m_shooter{m_drive};
     IntakeSubsystem m_intake{m_drive};
+    FeederSubsystem m_feeder;
     //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
 
@@ -62,9 +70,13 @@ private:
     std::optional<frc2::CommandPtr> m_autoNeutralCollect;
     std::optional<frc2::CommandPtr> m_choreoTest;
     std::optional<frc2::CommandPtr> m_choreoPlan1;
+    std::optional<frc2::CommandPtr> m_SCR_ShootTrench;
+
     // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
     // the std::optional<> wrapper allows it to be assigned later in runtime
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;
+
+    bool m_isCalibrated = false;
 };

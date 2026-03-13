@@ -8,7 +8,7 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "subsystems/DriveSubsystem.h"
-#include "drive/ChoreoController.h"
+#include "helpers/ChoreoController.h"
 
 #include <networktables/StructTopic.h>
 #include <networktables/StructArrayTopic.h>

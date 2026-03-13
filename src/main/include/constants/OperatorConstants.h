@@ -16,5 +16,6 @@
 
 namespace OperatorConstants {
     inline constexpr int kDriverControllerPort = 0;
+    inline constexpr int kOperatorControllerPort = 1; //fixme - not sure about which port it would actually be.
     inline constexpr double kDeadband = 0.1;
 };
