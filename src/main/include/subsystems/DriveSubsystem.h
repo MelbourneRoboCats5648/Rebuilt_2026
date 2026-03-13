@@ -80,7 +80,7 @@ public:
 
 private:
     bool IsBlueAlliance();
-    Pigeon2 m_gyro{HardwareConstants::kGyroID, "rio"};
+    Pigeon2 m_gyro{HardwareConstants::kGyroID, HardwareConstants::kPhoenixCAN};
 
     DriveModule m_frontLeftModule{
         HardwareConstants::kFrontLeftSpeedID, HardwareConstants::kFrontLeftDirectionID, HardwareConstants::kFrontLeftEncoderID,

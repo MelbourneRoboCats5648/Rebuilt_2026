@@ -25,8 +25,8 @@ ClimbSubsystem::ClimbSubsystem()
     
     m_motor.Configure(
       motorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
 
@@ -39,8 +39,8 @@ ClimbSubsystem::ClimbSubsystem()
 
     m_followerMotor.Configure(
       followerConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     m_controller.SetTolerance(ClimbConstants::kClimbPositionTolerance, ClimbConstants::kClimbVelocityTolerance);

@@ -32,8 +32,8 @@ m_drive(drive)
 
     m_intakeMotor.Configure(
       intakeMotorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     //extend retract motor config
@@ -56,8 +56,8 @@ m_drive(drive)
     
     m_extendRetractMotor.Configure(
       ExtendRetractMotorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     m_extendRetractEncoder.SetPosition(0);
@@ -72,8 +72,8 @@ m_drive(drive)
 
     m_followerExtendRetractMotor.Configure(
       FollowerExtendRetractMotorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     ConfigurePublishers();

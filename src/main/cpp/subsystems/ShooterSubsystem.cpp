@@ -15,8 +15,8 @@ using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
 
 ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive)
-: m_motor(HardwareConstants::kShooterFlywheelID, "rio"),
-  m_follower(HardwareConstants::kShooterFlywheelFollowerID, "rio"),
+: m_motor(HardwareConstants::kShooterFlywheelID, HardwareConstants::kPhoenixCAN),
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, HardwareConstants::kPhoenixCAN),
   m_drive(drive)
   {
     TalonFXConfiguration flyWheelMotorConfig = createMotorConfig();
@@ -55,8 +55,8 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive)
 
     m_angleMotor.Configure(
       angleMotorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
@@ -147,7 +147,7 @@ void ShooterSubsystem::Shoot(units::volt_t volts){
 
 void ShooterSubsystem::GoToAngle(units::degree_t angle) {
     double clampedAngleDeg = std::clamp(angle.value(), ShooterConstants::kMinAngle.value(), ShooterConstants::kMaxAngle.value());
-    m_angleController.SetReference(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
+    m_angleController.SetSetpoint(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
 }
 
 frc2::CommandPtr ShooterSubsystem::GoToAngleCommand(units::degree_t angle) {

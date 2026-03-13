@@ -19,8 +19,8 @@ FeederSubsystem::FeederSubsystem()
     
     m_motor.Configure(
       motorConfig,
-      rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-      rev::spark::SparkMax::PersistMode::kPersistParameters
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
     );
 
     rev::spark::SparkMaxConfig leaderSideConfig;
@@ -30,8 +30,8 @@ FeederSubsystem::FeederSubsystem()
         .Inverted(true);
     m_leaderSideMotor.Configure(
         leaderSideConfig,
-        rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-        rev::spark::SparkMax::PersistMode::kPersistParameters
+        rev::ResetMode::kResetSafeParameters,
+        rev::PersistMode::kPersistParameters
     );
 
     rev::spark::SparkMaxConfig followerSideConfig;
@@ -41,8 +41,8 @@ FeederSubsystem::FeederSubsystem()
         // .Follow(m_leaderSideMotor, true); // inverted from leader
     m_followerSideMotor.Configure(
         followerSideConfig,
-        rev::spark::SparkMax::ResetMode::kResetSafeParameters,
-        rev::spark::SparkMax::PersistMode::kPersistParameters
+        rev::ResetMode::kResetSafeParameters,
+        rev::PersistMode::kPersistParameters
     );
 }
 
