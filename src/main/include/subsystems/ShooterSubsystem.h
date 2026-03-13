@@ -67,7 +67,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
 
-        double m_scaleFlywheelVelocity = 1.0; // default is scaling by unity (no change in speed)
+        double m_scaleFlywheelVelocity = ShooterConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
 
         TalonFXConfiguration createMotorConfig();
 
