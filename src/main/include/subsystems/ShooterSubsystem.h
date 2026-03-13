@@ -59,8 +59,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr ResetFlywheelVelocity();
 
     private:
-        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
-
         degrees_per_second_t GetAngleVelocity();
         frc2::CommandPtr DefaultShootCommand();
 
@@ -73,6 +71,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         TalonFX m_motor;
         TalonFX m_follower;
+        
+        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
 
         rev::spark::SparkMax m_angleMotor{HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless};
         rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
