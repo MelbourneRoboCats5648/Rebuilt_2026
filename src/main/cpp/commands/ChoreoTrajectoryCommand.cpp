@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include <frc/DriverStation.h>
+
 ChoreoTrajectoryCommand::ChoreoTrajectoryCommand(DriveSubsystem* drive, ChoreoController& controller, choreo::Trajectory<choreo::SwerveSample>& trajectory)
     : m_drive(drive), m_controller(controller), m_trajectory(trajectory) {
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
@@ -17,7 +19,8 @@ void ChoreoTrajectoryCommand::Initialize() {
     m_controller.Reset();
     m_timer.Restart();
     
-    m_drive->GetPoseEstimator().ResetPose(m_trajectory.GetInitialPose().value());
+    m_isRed = (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kRed);
+    m_drive->GetPoseEstimator().ResetPose(m_trajectory.GetInitialPose(m_isRed).value());
     
     m_trajectoryPublisher.Set(m_trajectory.GetPoses());
 }
@@ -26,7 +29,10 @@ void ChoreoTrajectoryCommand::Execute() {
     units::second_t elapsed = m_timer.Get();
     // std::cout << "elapsed time: " << elapsed.value() << std::endl;
 
-    choreo::SwerveSample sample = m_trajectory.SampleAt(elapsed).value(); // fixme (issue #45) - SampleAt() allows mirroring for red alliance 
+    choreo::SwerveSample sample = m_trajectory.SampleAt(elapsed).value();
+    if (m_isRed) {
+        sample = sample.Flipped(); // flip for red alliance
+    }
     m_posePublisher.Set(sample.GetPose());
 
     frc::ChassisSpeeds speed = m_controller.FollowTrajectory(sample, m_drive->GetPose());
