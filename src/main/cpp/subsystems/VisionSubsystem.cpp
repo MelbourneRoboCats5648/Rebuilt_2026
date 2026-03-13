@@ -1,8 +1,6 @@
 #include <subsystems/VisionSubsystem.h>
 
 VisionSubsystem::VisionSubsystem(frc::SwerveDrivePoseEstimator<4>& estimator) : m_estimator(estimator) {
-    m_photonEstimator.SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
-
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
         .GetStructTopic<frc::Pose2d>("Vision/Pose").Publish();
 }
@@ -10,7 +8,11 @@ VisionSubsystem::VisionSubsystem(frc::SwerveDrivePoseEstimator<4>& estimator) : 
 void VisionSubsystem::Periodic() {
     // run each new pipeline result through our pose estimator
     for (const auto& result : m_camera.GetAllUnreadResults()) {
-        auto estimatedPose = m_photonEstimator.Update(result); // estimated pose from this result
+        auto estimatedPose = m_photonEstimator.EstimateCoprocMultiTagPose(result); // estimated pose from this result
+        if (!estimatedPose) {
+            estimatedPose = m_photonEstimator.EstimateLowestAmbiguityPose(result);
+        }
+        m_latestResult = result;
 
         if (estimatedPose) { // pose can be resolved
             frc::Pose2d pose = estimatedPose->estimatedPose.ToPose2d();
@@ -28,7 +30,7 @@ void VisionSubsystem::Periodic() {
 Eigen::Matrix<double, 3, 1> VisionSubsystem::GetEstimationStdDevs(frc::Pose2d pose) {
     Eigen::Matrix<double, 3, 1> stddevs = VisionConstants::kSingleTagStdDevs;
 
-    auto targets = m_camera.GetLatestResult().GetTargets();
+    auto targets = m_latestResult.GetTargets();
     int numTags = 0;
     units::meter_t avgDist = 0_m;
     for (const auto& tgt: targets) {
