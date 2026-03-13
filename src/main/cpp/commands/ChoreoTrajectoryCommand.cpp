@@ -19,7 +19,7 @@ void ChoreoTrajectoryCommand::Initialize() {
     m_controller.Reset();
     m_timer.Restart();
     
-    m_isRed = (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kRed);
+    m_isRed = (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kRed);
     m_drive->GetPoseEstimator().ResetPose(m_trajectory.GetInitialPose(m_isRed).value());
     
     m_trajectoryPublisher.Set(m_trajectory.GetPoses());
