@@ -144,7 +144,7 @@ private:
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 
-    bool m_isFieldRelative = false;
+    bool m_isFieldRelative = true;
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
 
