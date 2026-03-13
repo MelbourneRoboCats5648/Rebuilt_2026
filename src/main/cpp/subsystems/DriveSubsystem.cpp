@@ -42,7 +42,7 @@ DriveSubsystem::DriveSubsystem()
 }
 
 bool DriveSubsystem::IsBlueAlliance() {
-    return (frc::DriverStation::GetAlliance().value() == frc::DriverStation::Alliance::kBlue);
+    return (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue);
 }
 
 void DriveSubsystem::Periodic() {
