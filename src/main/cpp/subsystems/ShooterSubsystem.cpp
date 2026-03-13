@@ -161,6 +161,13 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
 }
 
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
+    /* clamp velocity */
+    if (velocity > ShooterConstants::kMaxAngularVelocity) {
+        velocity = ShooterConstants::kMaxAngularVelocity;
+    } else if (velocity < ShooterConstants::kMinAngularVelocity) {
+        velocity = ShooterConstants::kMinAngularVelocity;
+    }
+
     m_targetVelocity = velocity;
 }
 
