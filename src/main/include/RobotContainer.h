@@ -34,7 +34,6 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
-    frc2::CommandPtr GetCalibrationCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed

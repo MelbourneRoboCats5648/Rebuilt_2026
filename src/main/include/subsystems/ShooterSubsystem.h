@@ -102,5 +102,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         
         double m_requiredSpeed;
         double m_adjustedSpeed;
-        
+
+        bool m_isCalibrated = false;        
 };
