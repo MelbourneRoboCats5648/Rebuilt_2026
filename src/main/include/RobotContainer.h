@@ -64,6 +64,7 @@ private:
     frc::SlewRateLimiter<units::radians_per_second> m_rotLimiter{DrivetrainConstants::kMaxAngularAcceleration};
 
     // auto options
+    std::optional<frc2::CommandPtr> m_autoNone;
     std::optional<frc2::CommandPtr> m_autoClimb;
     std::optional<frc2::CommandPtr> m_autoTesting;
     std::optional<frc2::CommandPtr> m_autoDepot;
@@ -77,6 +78,4 @@ private:
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;
-
-    bool m_isCalibrated = false;
 };

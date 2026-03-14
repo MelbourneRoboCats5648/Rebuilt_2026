@@ -23,15 +23,17 @@ RobotContainer::RobotContainer() {
 
     // load autonomous trajectories and commands
     autos::LoadTrajectories();
+    m_autoNone = frc2::cmd::None();
     m_autoClimb = autos::AutoClimb(&m_drive);
     m_autoTesting = autos::AutoTesting(&m_drive);
     m_autoDepot = autos::AutoDepot(&m_drive);
     m_autoNeutralCollect = autos::AutoNeutralCollect(&m_drive);
     m_choreoTest = autos::ChoreoAutoTest(&m_drive);
     m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
-    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_feeder, &m_shooter);
 
     //adding commands to the auto chooser
+    m_chooser.AddOption("No Autonomous", m_autoNone.value().get());
     m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
     m_chooser.AddOption("Climb Auto", m_autoClimb.value().get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.value().get());
@@ -142,16 +144,5 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 }
 
 frc2::CommandPtr RobotContainer::GetCalibrationCommand() {
-    return frc2::cmd::Either(
-        frc2::cmd::None(), // do nothing if m_isCalibrated is true
-        frc2::cmd::Parallel(m_shooter.RetractToLimitCommand(), m_intake.RetractToLimitCommand()),
-        [this] {
-            if (!m_isCalibrated) {
-                m_isCalibrated = true; // should be false only once
-                return false;
-            } else {
-                return true;
-            }
-        }
-    );
+    return autos::CalibrationCommand(&m_intake, &m_shooter);
 }
