@@ -10,12 +10,6 @@
 #include "commands/ExampleCommand.h"
 
 // pre-loaded trajectories - static so that they are local to this file ONLY
-// static choreo::Trajectory<choreo::SwerveSample> TestPath;
-// static choreo::Trajectory<choreo::SwerveSample> Test_Path1;
-// static choreo::Trajectory<choreo::SwerveSample> Test_Path2;
-// static choreo::Trajectory<choreo::SwerveSample> Plan1_InitToShoot;
-// static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
-// static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
 static choreo::Trajectory<choreo::SwerveSample> ShootTrench_Shoot;
 static choreo::Trajectory<choreo::SwerveSample> ShootTrench_UnderTrench;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromLeft;
