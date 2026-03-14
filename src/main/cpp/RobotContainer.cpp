@@ -23,7 +23,9 @@ RobotContainer::RobotContainer() {
 
     // load autonomous trajectories and commands
     autos::LoadTrajectories();
-    m_autoNone = frc2::cmd::None();
+    m_autoNone = frc2::cmd::RunOnce([this] {
+        m_drive.ResetHeadingWithAlliance();
+    });
     m_autoClimb = autos::AutoClimb(&m_drive);
     m_autoTesting = autos::AutoTesting(&m_drive);
     m_autoDepot = autos::AutoDepot(&m_drive);

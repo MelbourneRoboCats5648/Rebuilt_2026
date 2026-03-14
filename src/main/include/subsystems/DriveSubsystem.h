@@ -66,6 +66,7 @@ public:
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
     void ResetHeading(degree_t heading);
+    void ResetHeadingWithAlliance();
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
