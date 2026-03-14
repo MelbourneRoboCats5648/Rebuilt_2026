@@ -14,16 +14,13 @@ class ClimbSubsystem : public frc2::SubsystemBase{
     ClimbSubsystem();
 
     frc2::CommandPtr ClimbUpCommand();
-    frc2::CommandPtr ClimbDownCommand();
 
-    void ResetEncoder();
-    void ResetMotor();
-    void LimitSwitchActivation();
+    void ClimbUp();
 
 private:
     rev::spark::SparkMax m_motor;
     rev::spark::SparkMax m_followerMotor;
 
-    frc::ProfiledPIDController<units::meter> m_controller;
+    //frc::ProfiledPIDController<units::meter> m_controller;
 
 };

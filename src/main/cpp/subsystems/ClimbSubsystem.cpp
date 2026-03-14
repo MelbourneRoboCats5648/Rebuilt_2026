@@ -5,19 +5,23 @@
 ClimbSubsystem::ClimbSubsystem()
 : 
   m_motor(HardwareConstants::kClimbMotorID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_followerMotor(HardwareConstants::kClimbFollowerMotorID, rev::spark::SparkMax::MotorType::kBrushless),
-  m_controller(ClimbConstants::kClimbPID.kP, ClimbConstants::kClimbPID.kI, ClimbConstants::kClimbPID.kD, ClimbConstants::trapezoidProfileClimb, ClimbConstants::kDt)
-
+  m_followerMotor(HardwareConstants::kClimbFollowerMotorID, rev::spark::SparkMax::MotorType::kBrushless)
 {
     rev::spark::SparkMaxConfig motorConfig;
 
     motorConfig
     .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
 
-    motorConfig.softLimit
-    .ForwardSoftLimit(ClimbConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    .ReverseSoftLimit(ClimbConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
+    //motorConfig.softLimit
+    //.ForwardSoftLimit(ClimbConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    //.ReverseSoftLimit(ClimbConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    const double metresPerTurn = ClimbConstants::kClimbSprocketDia * std::numbers::pi * ClimbConstants::kGearRatio;
+
+    motorConfig.encoder
+      .PositionConversionFactor(metresPerTurn)
+      .VelocityConversionFactor(metresPerTurn / 60); // by default Spark Max returns RPM; we want to convert to m/s here (hence we divide by 60 too)
 
     motorConfig.encoder
     .PositionConversionFactor(ClimbConstants::kGearRatio)
@@ -43,13 +47,11 @@ ClimbSubsystem::ClimbSubsystem()
       rev::PersistMode::kPersistParameters
     );
 
-    m_controller.SetTolerance(ClimbConstants::kClimbPositionTolerance, ClimbConstants::kClimbVelocityTolerance);
-
 
 };
 
 frc2::CommandPtr ClimbSubsystem::ClimbUpCommand() {
-  return Run([this] { m_motor.Set(0.1); });
+  return Run([this] { m_motor.Set(ClimbConstants::kMaxVoltage.value()); });
 }
 
 // frc2::CommandPtr ClimbSubsystem::ClimbDownCommand() {

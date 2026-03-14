@@ -52,7 +52,7 @@ private:
     ShooterSubsystem m_shooter{m_drive};
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder;
-    //ClimbSubsystem m_climb{};   // fixme - uncomment once climb can be constructed
+    ClimbSubsystem m_climb{};   
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
 
     void ConfigureBindings();

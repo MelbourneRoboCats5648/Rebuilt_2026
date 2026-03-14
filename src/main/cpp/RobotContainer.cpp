@@ -87,6 +87,9 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
     m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
+
+    m_mechController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+
    
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
@@ -130,12 +133,6 @@ void RobotContainer::ConfigureBindings() {
 
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));
-
-
-    //m_driverController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
-    //m_driverController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
-    //m_mechController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
-    //m_mechController.LeftTrigger().WhileTrue(m_climb.ClimbDownCommand());
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
