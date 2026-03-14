@@ -76,6 +76,10 @@ namespace DrivetrainConstants {
 
     inline constexpr degree_t kInitialGyroAngle = 0_deg;
 
+    // with front facing away from DS
+    inline constexpr degree_t kInitialBlueHeading = 0_deg;
+    inline constexpr degree_t kInitialRedHeading = 180_deg;
+
     namespace Autonomous {
         namespace XYController {
             inline constexpr double kP = 3.0;

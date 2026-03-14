@@ -65,6 +65,7 @@ public:
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
     void ResetPose(frc::Pose2d pose);
+    void ResetHeading(degree_t heading);
 
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);

@@ -32,6 +32,11 @@ DriveSubsystem::DriveSubsystem()
 
     ResetGyro();
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
+    ResetHeading(
+        (IsBlueAlliance())
+        ? DrivetrainConstants::kInitialBlueHeading
+        : DrivetrainConstants::kInitialRedHeading
+    );
 
     m_holonomicController.SetTolerance(
         frc::Pose2d(
@@ -174,6 +179,10 @@ void DriveSubsystem::ResetPose(frc::Pose2d pose)
                     {m_frontLeftModule.GetPosition(), m_frontRightModule.GetPosition(),
                     m_backLeftModule.GetPosition(), m_backRightModule.GetPosition()},
                     pose);
+}
+
+void DriveSubsystem::ResetHeading(degree_t heading) {
+    m_poseEstimator.ResetRotation(frc::Rotation2d{heading});
 }
 
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose) {
