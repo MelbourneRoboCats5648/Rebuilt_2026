@@ -46,10 +46,16 @@ ClimbSubsystem::ClimbSubsystem()
 
     m_positionPub = nt::NetworkTableInstance::GetDefault()
       .GetDoubleTopic("Climb/Position").Publish();
+    m_currentPub = nt::NetworkTableInstance::GetDefault()
+      .GetDoubleTopic("Climb/Current").Publish();
+    m_followerCurrentPub = nt::NetworkTableInstance::GetDefault()
+      .GetDoubleTopic("Climb/FollowerCurrent").Publish();
 };
 
 void ClimbSubsystem::Periodic() {
   m_positionPub.Set(m_motor.GetEncoder().GetPosition());
+  m_currentPub.Set(m_motor.GetOutputCurrent());
+  m_followerCurrentPub.Set(m_followerMotor.GetOutputCurrent());
 }
 
 frc2::CommandPtr ClimbSubsystem::RetractCommand() {

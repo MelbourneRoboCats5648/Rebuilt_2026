@@ -29,7 +29,7 @@ namespace ClimbConstants {
     inline constexpr meter_t kExtendSoftLimit = (67_m);  
     inline constexpr meter_t kRetractSoftLimit = (0_m);
 
-    inline constexpr int kCurrentLimit = (60);
+    inline constexpr int kCurrentLimit = (50);
     
     inline constexpr volt_t kExtendVoltage = 5_V;
     inline constexpr volt_t kRetractVoltage = 12_V; // fixme

@@ -24,6 +24,8 @@ private:
     rev::spark::SparkMax m_followerMotor;
 
     nt::DoublePublisher m_positionPub;
+    nt::DoublePublisher m_currentPub;
+    nt::DoublePublisher m_followerCurrentPub;
 
     //frc::ProfiledPIDController<units::meter> m_controller;
 
