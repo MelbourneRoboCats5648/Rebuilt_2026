@@ -83,7 +83,8 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
     m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
 
-    m_mechController.RightTrigger().WhileTrue(m_climb.ClimbUpCommand());
+    m_mechController.LeftTrigger().WhileTrue(m_climb.ExtendCommand());
+    m_mechController.RightTrigger().WhileTrue(m_climb.RetractCommand());
 
    
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
