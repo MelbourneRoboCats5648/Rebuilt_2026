@@ -56,7 +56,7 @@ namespace ShooterConstants {
     inline constexpr units::turns_per_second_t kMinAngularVelocity(37.5);
 
     inline constexpr double kFlywheelVelScalingIncrement(0.05); // 5% scaling of flywheel velocity
-    inline constexpr double kDefaultFlywheelVelocityScaling(1.05); // tested on practice field, works with min angle (fixme - properly tune robot)
+    inline constexpr double kDefaultFlywheelVelocityScaling(1.0); // tested on practice field, works with min angle (fixme - properly tune robot)
     inline constexpr double kMinFlywheelVelocityScaling(0.5); // allow flywheel speed to be reduced to 50% of nominal
     inline constexpr double kMaxFlywheelVelocityScaling(1.5); // allow flywheel velocity to be increased to 150% of nominal
 
