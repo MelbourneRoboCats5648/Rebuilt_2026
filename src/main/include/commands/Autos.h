@@ -19,8 +19,6 @@ void LoadTrajectories(); // to be called during RobotContainer init BEFORE using
 /**
  * Example static factory for an autonomous command.
  */
-frc2::CommandPtr CalibrationCommand(IntakeSubsystem* intake, ShooterSubsystem* shooter);
-
 frc2::CommandPtr ExampleAuto(ExampleSubsystem* subsystem);
 
 frc2::CommandPtr AutoTesting(DriveSubsystem* drive);

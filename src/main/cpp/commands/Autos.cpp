@@ -30,24 +30,6 @@ void autos::LoadTrajectories() {
     Plan2_UnderTrench = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path2").value();
 }
 
-static bool IsCalibrated = false;
-
-frc2::CommandPtr autos::CalibrationCommand(IntakeSubsystem* intake, ShooterSubsystem* shooter) {
-    return frc2::cmd::Either(
-        frc2::cmd::None(), // do nothing if IsCalibrated is true
-        // frc2::cmd::Parallel(shooter->RetractToLimitCommand(), intake->RetractToLimitCommand()),
-        shooter->RetractToLimitCommand(),
-        [] {
-            if (!IsCalibrated) {
-                IsCalibrated = true; // should be false only once
-                return false;
-            } else {
-                return true;
-            }
-        }
-    );
-}
-
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
   return frc2::cmd::Sequence(subsystem->ExampleMethodCommand(),
                              ExampleCommand(subsystem).ToPtr());
@@ -111,21 +93,10 @@ frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             ChoreoAuto(drive, Plan2_Shoot),
-            frc2::cmd::Sequence( // calibrate before doing anything
-                CalibrationCommand(intake, shooter),
-                intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
-            )
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
-        frc2::cmd::Parallel(
-            shooter->DefaultShootCommand(),
-            frc2::cmd::Wait(1_s).AndThen( // ramp up delay
-                frc2::cmd::Sequence(
-                    feeder->FeedCommand().WithTimeout(5_s),
-                    ChoreoAuto(drive, Plan2_UnderTrench)
-                )
-            )
-        )
-        
+        feeder->FeedCommand().WithTimeout(5_s),
+        ChoreoAuto(drive, Plan2_UnderTrench)  
     );
 }
 

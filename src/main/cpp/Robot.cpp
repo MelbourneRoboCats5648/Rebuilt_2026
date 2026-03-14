@@ -51,9 +51,6 @@ void Robot::TeleopInit() {
   if (m_autonomousCommand) {
     m_autonomousCommand->Cancel();
   }
-
-  frc2::CommandScheduler::GetInstance()
-    .Schedule(m_calibrationCommand);
 }
 
 /**
