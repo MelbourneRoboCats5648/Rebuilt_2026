@@ -131,11 +131,14 @@ void ShooterSubsystem::Periodic() {
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
         units::meter_t distanceToTarget = m_drive.DistanceToTarget() + 0.3_m; // fixme
-        units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
-        SetTargetAngle(targetAngle);
+        // units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
+        
 
-        units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
-        SetTargetVelocity(flywheelVelocity);
+        // units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
+        // SetTargetVelocity(flywheelVelocity);
+
+        SetFlywheelVelocityAndAngle(distanceToTarget);
+
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
@@ -229,6 +232,42 @@ frc2::CommandPtr ShooterSubsystem::ResetFlywheelVelocity()
         m_scaleFlywheelVelocity = ShooterConstants::kDefaultFlywheelVelocityScaling;
     });
 }
+
+void ShooterSubsystem::SetFlywheelVelocityAndAngle(meter_t distanceToTarget)
+{
+    units::degree_t angle;
+    units::turns_per_second_t velocity;
+
+    if (distanceToTarget > 3.3_m)
+    {
+        angle = ShooterConstants::kMinAngle;
+        velocity = 45_tps;
+    }
+    else if(distanceToTarget > 2.8_m)
+    {
+        angle = ShooterConstants::kMinAngle; // max angle could also work
+        velocity = 50_tps;
+    }
+    else if (distanceToTarget > 2.5_m)
+    {
+        angle = ShooterConstants::kMaxAngle;
+        velocity = 45_tps;
+    }
+    else if (distanceToTarget > 2.0_m)
+    {
+        angle = ShooterConstants::kMaxAngle;
+        velocity = 43_tps;
+    }
+    else
+    {
+        angle = ShooterConstants::kMaxAngle;
+        velocity = 40_tps;
+    }
+
+    SetTargetAngle(angle);
+    SetTargetVelocity(velocity);
+}
+
 
 units::turns_per_second_t ShooterSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
     meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
