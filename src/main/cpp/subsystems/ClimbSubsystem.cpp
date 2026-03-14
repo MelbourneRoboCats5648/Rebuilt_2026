@@ -11,21 +11,19 @@ ClimbSubsystem::ClimbSubsystem()
 
     motorConfig
     .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
-    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake);
+    .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
+    .Inverted(true);
 
-    //motorConfig.softLimit
-    //.ForwardSoftLimit(ClimbConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
-    //.ReverseSoftLimit(ClimbConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
+    motorConfig.softLimit
+      .ForwardSoftLimit(ClimbConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
+      .ReverseSoftLimit(ClimbConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
     const double metresPerTurn = ClimbConstants::kClimbSprocketDia * std::numbers::pi * ClimbConstants::kGearRatio;
+    // fixme
 
     motorConfig.encoder
       .PositionConversionFactor(metresPerTurn)
-      .VelocityConversionFactor(metresPerTurn / 60); // by default Spark Max returns RPM; we want to convert to m/s here (hence we divide by 60 too)
-
-    motorConfig.encoder
-    .PositionConversionFactor(ClimbConstants::kGearRatio)
-    .VelocityConversionFactor(ClimbConstants::kGearRatio);
+      .VelocityConversionFactor(metresPerTurn);
     
     m_motor.Configure(
       motorConfig,
@@ -38,8 +36,7 @@ ClimbSubsystem::ClimbSubsystem()
 
     followerConfig
       .SmartCurrentLimit(ClimbConstants::kCurrentLimit)
-      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake)
-      .Follow(m_motor, true);  // invert = true
+      .SetIdleMode(rev::spark::SparkMaxConfig::kBrake); // less risk than follow since it didn't work with feeder
 
     m_followerMotor.Configure(
       followerConfig,
@@ -50,13 +47,27 @@ ClimbSubsystem::ClimbSubsystem()
 
 };
 
-frc2::CommandPtr ClimbSubsystem::ClimbUpCommand() {
-  return Run([this] { m_motor.Set(ClimbConstants::kMaxVoltage.value()); });
+frc2::CommandPtr ClimbSubsystem::RetractCommand() {
+  return Run([this] {
+    m_motor.SetVoltage(-ClimbConstants::kRetractVoltage);
+    m_followerMotor.SetVoltage(-ClimbConstants::kRetractVoltage);
+  }).FinallyDo([this] {
+    m_motor.StopMotor();
+    m_followerMotor.StopMotor();
+  });
 }
 
-// frc2::CommandPtr ClimbSubsystem::ClimbDownCommand() {
-//   return Run([this] { m_motor.Set(-0.1); });
-// }
+frc2::CommandPtr ClimbSubsystem::ExtendCommand() {
+  return Run([this] {
+    m_motor.SetVoltage(ClimbConstants::kExtendVoltage);
+    m_followerMotor.SetVoltage(ClimbConstants::kExtendVoltage);
+  }).FinallyDo([this] {
+    m_motor.StopMotor();
+    m_followerMotor.StopMotor();
+  });
+}
+
+
 
 
 

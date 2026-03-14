@@ -26,11 +26,13 @@ namespace ClimbConstants {
     // inline constexpr meter_t kInitHeight = (67_m); 
     // inline constexpr meter_t kDefaultHeight = (67_m);
 
-    //inline constexpr meter_t kExtendSoftLimit = (67_m);  
-    //inline constexpr meter_t kRetractSoftLimit = (0_m);
+    inline constexpr meter_t kExtendSoftLimit = (67_m);  
+    inline constexpr meter_t kRetractSoftLimit = (0_m);
 
-    inline constexpr int kCurrentLimit = (50);
-    inline constexpr volt_t kMaxVoltage = 5_V; // fixme - increase for comp
+    inline constexpr int kCurrentLimit = (60);
+    
+    inline constexpr volt_t kExtendVoltage = 5_V;
+    inline constexpr volt_t kRetractVoltage = 12_V; // fixme
 
     inline constexpr double kGearRatio = (1/60.0);
 

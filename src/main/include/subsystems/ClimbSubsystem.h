@@ -13,7 +13,8 @@ class ClimbSubsystem : public frc2::SubsystemBase{
     public:
     ClimbSubsystem();
 
-    frc2::CommandPtr ClimbUpCommand();
+    frc2::CommandPtr RetractCommand();
+    frc2::CommandPtr ExtendCommand();
 
     void ClimbUp();
 
