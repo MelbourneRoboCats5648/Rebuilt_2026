@@ -30,10 +30,10 @@ RobotContainer::RobotContainer() {
     // m_choreoTest = autos::ChoreoAutoTest(&m_drive);
     // m_choreoPlan1 = autos::ChoreoAutoPlan1(&m_drive);
 
-    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
-    m_SCR_ShootFromRight = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
-    m_SCR_ShootFromMiddle = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_feeder, &m_intake);
+    m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_feeder, &m_intake);
 
 
     //adding commands to the auto chooser
