@@ -23,7 +23,9 @@ RobotContainer::RobotContainer() {
 
     // load autonomous trajectories and commands
     autos::LoadTrajectories();
-    m_autoNone = frc2::cmd::None();
+    m_autoNone = frc2::cmd::RunOnce([this] {
+        m_drive.ResetHeadingWithAlliance();
+    });
     m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_feeder, &m_intake);
     m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_feeder, &m_intake);
