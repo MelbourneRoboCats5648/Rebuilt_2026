@@ -32,6 +32,4 @@ class Robot : public frc::TimedRobot {
   frc2::Command* m_autonomousCommand;
 
     RobotContainer m_container{};
-
-  frc2::CommandPtr m_calibrationCommand{m_container.GetCalibrationCommand()};
 };

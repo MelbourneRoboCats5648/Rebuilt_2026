@@ -34,7 +34,6 @@ public:
     RobotContainer();
 
     frc2::Command* GetAutonomousCommand();
-    frc2::CommandPtr GetCalibrationCommand();
 
 private:
     // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -72,6 +71,9 @@ private:
     std::optional<frc2::CommandPtr> m_choreoTest;
     std::optional<frc2::CommandPtr> m_choreoPlan1;
     std::optional<frc2::CommandPtr> m_SCR_ShootTrench;
+    std::optional<frc2::CommandPtr> m_SCR_ShootFromLeft;
+    std::optional<frc2::CommandPtr> m_SCR_ShootFromMiddle;
+    std::optional<frc2::CommandPtr> m_SCR_ShootFromRight;
 
     // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
     // the std::optional<> wrapper allows it to be assigned later in runtime

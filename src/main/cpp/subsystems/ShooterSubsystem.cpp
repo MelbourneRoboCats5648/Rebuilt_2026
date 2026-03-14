@@ -51,7 +51,20 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive)
     .VelocityConversionFactor(ShooterConstants::kAngleDegreesPerTurn);
 
     //SetDefaultCommand(ShootCommand(0_tps));
-    SetDefaultCommand(DefaultShootCommand());
+    SetDefaultCommand(
+        frc2::cmd::Either(
+            DefaultShootCommand(), // if calibrated, run default shoot command
+            RetractToLimitCommand(), // otherwise, do the hood calibration
+            [this] {
+                if (!m_isCalibrated) {
+                    m_isCalibrated = true; // should be false only once
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        ).Repeatedly() // if calibration finishes, re-run this command (which will take us to default shoot command)
+    );
 
     m_angleMotor.Configure(
       angleMotorConfig,
