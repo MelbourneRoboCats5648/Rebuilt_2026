@@ -6,24 +6,25 @@
 #include <frc2/command/CommandPtr.h>
 #include <constants/HardwareConstants.h>
 
-
 #include <frc/controller/ProfiledPIDController.h>
+
+#include <networktables/DoubleTopic.h>
 
 class ClimbSubsystem : public frc2::SubsystemBase{
     public:
     ClimbSubsystem();
 
-    frc2::CommandPtr ClimbUpCommand();
-    frc2::CommandPtr ClimbDownCommand();
+    void Periodic() override;
 
-    void ResetEncoder();
-    void ResetMotor();
-    void LimitSwitchActivation();
+    frc2::CommandPtr RetractCommand();
+    frc2::CommandPtr ExtendCommand();
 
 private:
     rev::spark::SparkMax m_motor;
     rev::spark::SparkMax m_followerMotor;
 
-    frc::ProfiledPIDController<units::meter> m_controller;
+    nt::DoublePublisher m_positionPub;
+
+    //frc::ProfiledPIDController<units::meter> m_controller;
 
 };

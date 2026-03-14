@@ -53,7 +53,7 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive)
     //SetDefaultCommand(ShootCommand(0_tps));
     SetDefaultCommand(
         frc2::cmd::Either(
-            DefaultShootCommand(), // if calibrated, run default shoot command
+            Run([this] { GoToAngle(m_targetAngle); }), // if calibrated, run the hood motor (not the flywheel)
             RetractToLimitCommand(), // otherwise, do the hood calibration
             [this] {
                 if (!m_isCalibrated) {
@@ -134,7 +134,7 @@ void ShooterSubsystem::Periodic() {
         units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
         SetTargetAngle(targetAngle);
 
-        units::turns_per_second_t flywheelVelocity =  CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
+        units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
         SetTargetVelocity(flywheelVelocity);
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
@@ -193,11 +193,11 @@ units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
 }
 
-frc2::CommandPtr ShooterSubsystem::DefaultShootCommand() {
+frc2::CommandPtr ShooterSubsystem::ShootCommand() {
     return Run([this]{
                 ShootAngularVelocity(m_targetVelocity);
-                GoToAngle(m_targetAngle);
-            });
+                GoToAngle(m_targetAngle); // since we are taking over the default command
+            }).FinallyDo([this] { m_motor.StopMotor(); });
 }
 
 // This command will be used to set the velocity of the flywheel shooter along with the default shoot command
