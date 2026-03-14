@@ -1,6 +1,7 @@
 #include "subsystems/ClimbSubsystem.h"
 
 #include <rev/config/SparkMaxConfig.h>
+#include <networktables/NetworkTableInstance.h>
 
 ClimbSubsystem::ClimbSubsystem()
 : 
@@ -31,7 +32,6 @@ ClimbSubsystem::ClimbSubsystem()
       rev::PersistMode::kPersistParameters
     );
 
-
     rev::spark::SparkMaxConfig followerConfig;
 
     followerConfig
@@ -44,8 +44,13 @@ ClimbSubsystem::ClimbSubsystem()
       rev::PersistMode::kPersistParameters
     );
 
-
+    m_positionPub = nt::NetworkTableInstance::GetDefault()
+      .GetDoubleTopic("Climb/Position").Publish();
 };
+
+void ClimbSubsystem::Periodic() {
+  m_positionPub.Set(m_motor.GetEncoder().GetPosition());
+}
 
 frc2::CommandPtr ClimbSubsystem::RetractCommand() {
   return Run([this] {
