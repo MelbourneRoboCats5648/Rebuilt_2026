@@ -21,6 +21,9 @@ void LoadTrajectories(); // to be called during RobotContainer init BEFORE using
  */
 frc2::CommandPtr ExampleAuto(ExampleSubsystem* subsystem);
 
+frc2::CommandPtr ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder);
+frc2::CommandPtr ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, units::second_t feedTime);
+
 frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj);
 
 // frc2::CommandPtr ChoreoAutoTest(DriveSubsystem* drive);
@@ -29,11 +32,11 @@ frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::Sw
 
 frc2::CommandPtr ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
 
-frc2::CommandPtr ChoreoShootFromLeft(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+frc2::CommandPtr ChoreoShootFromLeft(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
 
-frc2::CommandPtr ChoreoShootFromRight(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+frc2::CommandPtr ChoreoShootFromRight(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
 
-frc2::CommandPtr ChoreoShootFromMiddle(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake);
+frc2::CommandPtr ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
 
 }  // namespace autos
 

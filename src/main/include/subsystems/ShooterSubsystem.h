@@ -58,7 +58,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr DecreaseFlywheelVelocity();
         frc2::CommandPtr ResetFlywheelVelocity();
         
-        frc2::CommandPtr DefaultShootCommand();
+        frc2::CommandPtr ShootCommand();
 
     private:
         degrees_per_second_t GetAngleVelocity();
