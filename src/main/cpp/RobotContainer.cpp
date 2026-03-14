@@ -135,9 +135,4 @@ void RobotContainer::ConfigureBindings() {
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
     return m_chooser.GetSelected();
-    // fixme: consider doing a sequence starting with GetCalibrationCommand()
-}
-
-frc2::CommandPtr RobotContainer::GetCalibrationCommand() {
-    return autos::CalibrationCommand(&m_intake, &m_shooter);
 }
