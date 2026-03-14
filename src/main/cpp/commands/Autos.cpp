@@ -37,7 +37,7 @@ frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem*
 }
 
 frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, units::second_t feedTime) {
-    return ShootCommand(shooter, feeder).WithTimeout(feedTime);
+    return ShootCommand(shooter, feeder).WithTimeout(ShooterConstants::kRampTime + feedTime);
 }
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj) {
