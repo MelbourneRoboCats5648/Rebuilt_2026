@@ -16,21 +16,15 @@
 // static choreo::Trajectory<choreo::SwerveSample> Plan1_InitToShoot;
 // static choreo::Trajectory<choreo::SwerveSample> Plan1_ShootToCollect;
 // static choreo::Trajectory<choreo::SwerveSample> Plan1_CollectToShoot;
-static choreo::Trajectory<choreo::SwerveSample> Plan2_Shoot;
-static choreo::Trajectory<choreo::SwerveSample> Plan2_UnderTrench;
+static choreo::Trajectory<choreo::SwerveSample> ShootTrench_Shoot;
+static choreo::Trajectory<choreo::SwerveSample> ShootTrench_UnderTrench;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromLeft;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromRight;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromMiddle;
 
-void autos::LoadTrajectories() {    
-    // TestPath = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("TestPath").value();
-    // Test_Path1 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path1").value();
-    // Test_Path2 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Test_Path2").value();
-    // Plan1_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_InitToShoot").value();
-    // Plan1_ShootToCollect = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_ShootToCollect").value();
-    // Plan1_CollectToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("Plan1_CollectToShoot").value();
-    Plan2_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
-    Plan2_UnderTrench = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path2").value();
+void autos::LoadTrajectories() {
+    ShootTrench_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
+    ShootTrench_UnderTrench = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path2").value();
     Shoot_fromLeft = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromLeft").value();
     Shoot_fromMiddle = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromMiddle").value();
     Shoot_fromRight= choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromRight").value();
@@ -60,34 +54,13 @@ frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
 }
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj) {
-    
-    //choreo::Trajectory<choreo::SwerveSample> temporaryTrajectory;
-
     return drive->FollowTrajectoryCommand(choreoTraj);
 }
-
-// frc2::CommandPtr autos::ChoreoAutoTest(DriveSubsystem* drive) {
-//     return frc2::cmd::Sequence(
-//         ChoreoAuto(drive, Test_Path1),
-//         frc2::cmd::Wait(5_s),
-//         ChoreoAuto(drive, Test_Path2)
-//     );
-// }
-
-// frc2::CommandPtr autos::ChoreoAutoPlan1(DriveSubsystem* drive) {
-//     return frc2::cmd::Sequence(
-//         ChoreoAuto(drive, Plan1_InitToShoot),
-//         // shoot
-//         ChoreoAuto(drive, Plan1_ShootToCollect)
-//         // collect
-//         // so on...
-//     );
-// }
 
 frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-            ChoreoAuto(drive, Plan2_Shoot),
+            ChoreoAuto(drive, ShootTrench_Shoot),
             frc2::cmd::Sequence( // calibrate before doing anything
                 CalibrationCommand(intake, shooter),
                 intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
@@ -98,72 +71,39 @@ frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem
             frc2::cmd::Wait(1_s).AndThen( // ramp up delay
                 frc2::cmd::Sequence(
                     feeder->FeedCommand().WithTimeout(5_s),
-                    ChoreoAuto(drive, Plan2_UnderTrench)
+                    ChoreoAuto(drive, ShootTrench_UnderTrench)
                 )
             )
         )
-        
     );
 }
 
 frc2::CommandPtr autos::ChoreoShootFromLeft(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-        ChoreoAuto(drive, Shoot_fromLeft),
-        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
-        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
+            ChoreoAuto(drive, Shoot_fromLeft),
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
+        ),
+        feeder->FeedCommand().WithTimeout(7_s)
     );
 }
 
 frc2::CommandPtr autos::ChoreoShootFromRight(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-        ChoreoAuto(drive, Shoot_fromRight),
-        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
-        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
+            ChoreoAuto(drive, Shoot_fromRight),
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
+        ),
+        feeder->FeedCommand().WithTimeout(7_s)
     );
 }
 
 frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, FeederSubsystem* feeder, IntakeSubsystem* intake) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-        ChoreoAuto(drive, Shoot_fromMiddle),
-        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)),
-        feeder ->FeedCommand().Repeatedly().WithTimeout(7_s)
+            ChoreoAuto(drive, Shoot_fromMiddle),
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
+        ),
+        feeder->FeedCommand().WithTimeout(7_s)
     );
 }
-
-// frc2::CommandPtr autos::AutoDepot(DriveSubsystem* drive) {
-//     frc::Pose2d startPose{3.5439321994781494_m, 4.022441864013672_m, 0_rad};
-//     frc::Pose2d targetPose{2.4197206497192383_m, 4.022441864013672_m, 0_rad};
-
-//     frc::Trajectory traj = drive->CreateTrajectory(startPose, targetPose);
-
-//     return frc2::cmd::Sequence(
-
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{3.54_m, 4.02_m, 0_rad}, frc::Pose2d{2.42_m, 4.02_m, 0_rad})),
-//         //shoot
-//         drive->AlignHeadingCommand(2.34_rad),
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{0.46_m, 4.94_m, 1.57_rad})),
-//         //intake
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{1.39_m, 6.88_m, -0.95_rad})),
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{2.43_m, 4.04_m,0_rad}))
-//         //shoot
-
-//     );
-// }
-
-// frc2::CommandPtr autos::AutoNeutralCollect(DriveSubsystem* drive) {
-
-//     return frc2::cmd::Sequence(
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{12.958328247070312_m, 3.980616807937622_m, 3.141592653589793_rad}, frc::Pose2d{14.186327934265137_m, 4.008525848388672_m, 3.141592653589793_rad})),
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{14.25610065460205_m, 0.6873465180397034_m, 3.1149323264619024_rad})),
-//         //shoot->ShootToHubCommand()
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{9.888330459594727_m, 1.3432096242904663_m, 1.5707963267948966_rad})),
-//         drive->FollowTrajectoryCommand(drive->CreateTrajectory(frc::Pose2d{8.939422607421875_m, 2.850299596786499_m, 1.5707963267948966_rad})),
-//         //intake->ExtendIntake()
-//         //intake->IntakeBalls()
-//         drive->AlignHeadingCommand(180_deg)
-//         //shoot->ShootToAllianceCommand()
-//     );
-// }
