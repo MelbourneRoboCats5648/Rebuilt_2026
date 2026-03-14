@@ -52,9 +52,9 @@ frc2::CommandPtr ClimbSubsystem::ClimbUpCommand() {
   return Run([this] { m_motor.Set(0.1); });
 }
 
-frc2::CommandPtr ClimbSubsystem::ClimbDownCommand() {
-  return Run([this] { m_motor.Set(-0.1); });
-}
+// frc2::CommandPtr ClimbSubsystem::ClimbDownCommand() {
+//   return Run([this] { m_motor.Set(-0.1); });
+// }
 
 
 

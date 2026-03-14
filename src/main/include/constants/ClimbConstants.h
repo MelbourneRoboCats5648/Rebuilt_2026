@@ -5,6 +5,7 @@
 #include <units/time.h>
 #include <units/velocity.h>
 #include <units/acceleration.h>
+#include <units/voltage.h>
 
 #include <frc/trajectory/TrapezoidProfile.h>
 
@@ -14,6 +15,7 @@ struct PIDConstants {
 
 using namespace units::length;
 using namespace units::current;
+using namespace units::voltage;
 
 namespace ClimbConstants {
     
@@ -21,14 +23,16 @@ namespace ClimbConstants {
 
     //fixme - change and add parameters later. placeholder values atm. 
 
-    inline constexpr meter_t kInitHeight = (67_m); 
-    inline constexpr meter_t kDefaultHeight = (67_m);
+    // inline constexpr meter_t kInitHeight = (67_m); 
+    // inline constexpr meter_t kDefaultHeight = (67_m);
 
-    inline constexpr meter_t kExtendSoftLimit = (67_m);
-    inline constexpr meter_t kRetractSoftLimit = (67_m);
+    inline constexpr meter_t kExtendSoftLimit = (67_m);  
+    inline constexpr meter_t kRetractSoftLimit = (0_m);
 
     inline constexpr int kCurrentLimit = (50);
-    inline constexpr double kGearRatio = (67);
+    inline constexpr volt_t kMaxVoltage = 2_V;
+
+    inline constexpr double kGearRatio = (60);
 
 
     //PID 
