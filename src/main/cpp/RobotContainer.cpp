@@ -23,6 +23,7 @@ RobotContainer::RobotContainer() {
 
     // load autonomous trajectories and commands
     autos::LoadTrajectories();
+    m_autoNone = frc2::cmd::None();
     m_autoClimb = autos::AutoClimb(&m_drive);
     m_autoTesting = autos::AutoTesting(&m_drive);
     m_autoDepot = autos::AutoDepot(&m_drive);
@@ -32,6 +33,7 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_feeder, &m_shooter);
 
     //adding commands to the auto chooser
+    m_chooser.AddOption("No Autonomous", m_autoNone.value().get());
     m_chooser.AddOption("Testing Auto", m_autoTesting.value().get());
     m_chooser.AddOption("Climb Auto", m_autoClimb.value().get());
     m_chooser.AddOption("Depot Auto", m_autoDepot.value().get());
