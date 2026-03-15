@@ -68,7 +68,7 @@ namespace DrivetrainConstants {
         inline constexpr frc::Translation2d kBackRight{-0.2569_m, -0.2569_m};
     };
 
-    inline constexpr meters_per_second_t kMaxSpeed = 3.0_mps; // fixme - will need to increase this for comp
+    inline constexpr meters_per_second_t kMaxSpeed = 5.0_mps; // fixme - will need to increase this for comp
     inline constexpr meters_per_second_squared_t kMaxAcceleration = 3.0_mps_sq;
 
     inline constexpr radians_per_second_t kMaxAngularSpeed = (2 * M_PI) * 1_rad_per_s;
