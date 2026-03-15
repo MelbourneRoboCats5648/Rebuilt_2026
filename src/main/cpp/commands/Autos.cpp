@@ -15,6 +15,8 @@ static choreo::Trajectory<choreo::SwerveSample> ShootTrench_UnderTrench;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromLeft;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromRight;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromMiddle;
+static choreo::Trajectory<choreo::SwerveSample> Playoff_InitToShoot;
+static choreo::Trajectory<choreo::SwerveSample> Playoff_ShootToTower;
 
 void autos::LoadTrajectories() {
     ShootTrench_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
@@ -22,6 +24,8 @@ void autos::LoadTrajectories() {
     Shoot_fromLeft = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromLeft").value();
     Shoot_fromMiddle = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromMiddle").value();
     Shoot_fromRight= choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromRight").value();
+    Playoff_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Playoff_InitToShoot").value();
+    Playoff_ShootToTower = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Playoff_ShootToTower").value();
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
@@ -82,5 +86,15 @@ frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsy
             intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
         ShootCommand(shooter, feeder, 7_s)
+    );
+}
+
+frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+    return frc2::cmd::Sequence(
+        frc2::cmd::Wait(10_s),
+        ChoreoAuto(drive, Playoff_InitToShoot),
+        intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit), // too risky to extend while moving out (risk of smashing intake)
+        ShootCommand(shooter, feeder, 5_s),
+        ChoreoAuto(drive, Playoff_ShootToTower)
     );
 }

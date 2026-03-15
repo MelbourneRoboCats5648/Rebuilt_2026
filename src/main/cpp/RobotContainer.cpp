@@ -32,10 +32,11 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_feeder, &m_shooter);
-
+    m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_feeder, &m_shooter);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
+    m_chooser.AddOption("Playoff Auto", m_SCR_PlayoffAuto.value().get());
     m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
     m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
     m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
