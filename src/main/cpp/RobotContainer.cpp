@@ -15,6 +15,8 @@
 #include "units/math.h"
 #include "units/voltage.h"
 
+#include <iostream>
+
 RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
 
@@ -64,15 +66,37 @@ void RobotContainer::ConfigureBindings() {
                 PreprocessJoystickInput(-m_driverController.GetLeftX())
                  * DrivetrainConstants::kMaxSpeed
             );
+
+            if (m_invertControls) {
+                xSpeed *= -1.0;
+                ySpeed *= -1.0;
+            }
+
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetRightX())
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
             m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+
+            if (m_drive.IsFieldCentric()) {
+                std::cout << "FIELD RELATIVE    ";
+            } else {
+                std::cout << "ROBOT RELATIVE    ";
+            }
+            if (m_invertControls) {
+                std::cout << "JOYSTICK INVERTED";
+            } else {
+                std::cout << "JOYSTICK NORMAL";
+            }
+            std::cout << std::endl;
         },
         { &m_drive }
     ));
+
+    m_driverController.B().OnTrue(frc2::cmd::RunOnce([this] {
+        m_invertControls = !m_invertControls;
+    }));
 
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     

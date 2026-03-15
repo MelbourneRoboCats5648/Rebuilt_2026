@@ -68,6 +68,8 @@ public:
     void ResetHeading(degree_t heading);
     void ResetHeadingWithAlliance();
 
+    bool IsFieldCentric();
+
     frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
     frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
     frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);

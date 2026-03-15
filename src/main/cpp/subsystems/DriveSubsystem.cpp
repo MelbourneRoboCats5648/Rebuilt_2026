@@ -9,8 +9,6 @@
 
 #include <frc/DriverStation.h>
 
-#include <iostream>
-
 using namespace ctre::phoenix6::configs;
 
 DriveSubsystem::DriveSubsystem()
@@ -107,12 +105,10 @@ degree_t DriveSubsystem::GetHeading() {
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed, bool teleop)
 {
     Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative, teleop);
+}
 
-    if (m_isFieldRelative) {
-        std::cout << "FIELD RELATIVE" << std::endl;
-    } else {
-        std::cout << "ROBOT RELATIVE" << std::endl;
-    }    
+bool DriveSubsystem::IsFieldCentric() {
+    return m_isFieldRelative;
 }
 
 /* kinematics/"set speed" */
