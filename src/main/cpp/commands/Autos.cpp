@@ -91,7 +91,10 @@ frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsy
 
 frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
     return frc2::cmd::Sequence(
-        frc2::cmd::Wait(10_s),
+        frc2::cmd::Parallel(
+            frc2::cmd::Wait(10_s),
+            shooter->RetractToLimitCommand()
+        ),
         ChoreoAuto(drive, Playoff_InitToShoot),
         intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit), // too risky to extend while moving out (risk of smashing intake)
         ShootCommand(shooter, feeder, 5_s),
