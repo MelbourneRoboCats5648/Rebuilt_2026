@@ -39,6 +39,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
+        frc2::CommandPtr SetTargetAngleCommand(units::degree_t angle);
 
         void Shoot(units::volt_t volts);
         void GoToAngle(units::degree_t angle);
