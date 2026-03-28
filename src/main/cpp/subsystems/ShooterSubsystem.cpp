@@ -210,6 +210,14 @@ frc2::CommandPtr ShooterSubsystem::SetTargetVelocityCommand(units::turns_per_sec
             });
 }
 
+
+frc2::CommandPtr ShooterSubsystem::SetTargetAngleCommand(units::degree_t angle) {
+    return RunOnce([this, angle]{
+                SetTargetAngle(angle);
+            });
+}
+
+
 frc2::CommandPtr ShooterSubsystem::IncreaseFlywheelVelocity()
 {
     return RunOnce([this] {
