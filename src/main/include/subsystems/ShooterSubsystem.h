@@ -39,6 +39,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
+        frc2::CommandPtr SetTargetAngleCommand(units::degree_t angle);
 
         void Shoot(units::volt_t volts);
         void GoToAngle(units::degree_t angle);
@@ -47,6 +48,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
+        void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
+
 
         void SetTargetAngle(units::turn_t angle);
 
@@ -79,7 +82,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
         rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
         
-        units::turns_per_second_t m_targetVelocity{0_tps};
+        units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
         units::degree_t m_targetAngle{ShooterConstants::kMaxAngle};
 
         nt::DoublePublisher m_rotorVelPub;

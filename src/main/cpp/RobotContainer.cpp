@@ -15,6 +15,8 @@
 #include "units/math.h"
 #include "units/voltage.h"
 
+#include <iostream>
+
 RobotContainer::RobotContainer() {
     // Initialize all of your commands and subsystems here
 
@@ -30,10 +32,11 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_feeder, &m_shooter);
-
+    m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_feeder, &m_shooter);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
+    m_chooser.AddOption("Playoff Auto", m_SCR_PlayoffAuto.value().get());
     m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
     m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
     m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
@@ -64,15 +67,37 @@ void RobotContainer::ConfigureBindings() {
                 PreprocessJoystickInput(-m_driverController.GetLeftX())
                  * DrivetrainConstants::kMaxSpeed
             );
+
+            if (m_invertControls) {
+                xSpeed *= -1.0;
+                ySpeed *= -1.0;
+            }
+
             radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetRightX())
                 * DrivetrainConstants::kMaxAngularSpeed
             );
 
             m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+
+            if (m_drive.IsFieldCentric()) {
+                std::cout << "FIELD RELATIVE    ";
+            } else {
+                std::cout << "ROBOT RELATIVE    ";
+            }
+            if (m_invertControls) {
+                std::cout << "JOYSTICK INVERTED";
+            } else {
+                std::cout << "JOYSTICK NORMAL";
+            }
+            std::cout << std::endl;
         },
         { &m_drive }
     ));
+
+    m_driverController.B().OnTrue(frc2::cmd::RunOnce([this] {
+        m_invertControls = !m_invertControls;
+    }));
 
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
@@ -81,23 +106,27 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 
-    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
-    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
-    m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
+    m_mechController.X().OnTrue(m_shooter.SetTargetAngleCommand(ShooterConstants::kMinAngle));
+    m_mechController.Y().OnTrue(m_shooter.SetTargetAngleCommand(ShooterConstants::kMaxAngle));
 
-    m_mechController.LeftTrigger().WhileTrue(m_climb.ExtendCommand());
-    m_mechController.RightTrigger().WhileTrue(m_climb.RetractCommand());
+
+    // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
+    // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
+    // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
+
+    // m_mechController.LeftTrigger().WhileTrue(m_climb.ExtendCommand());
+    // m_mechController.RightTrigger().WhileTrue(m_climb.RetractCommand());
 
    
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
     //         units::degree_t angle;
-    //         angle = (PreprocessJoystickInput(-m_driverController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
+    //         angle = (PreprocessJoystickInput(-m_mechController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
     //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
     //         m_shooter.GoToAngle(angle);
 
     //         units::turns_per_second_t angularVelocity;
-    //         angularVelocity = PreprocessJoystickInput(-m_driverController.GetRightY())
+    //         angularVelocity = PreprocessJoystickInput(-m_mechController.GetRightY())
     //                         * ShooterConstants::kMaxAngularVelocity;
     //         angularVelocity = units::math::abs(angularVelocity);
     //         m_shooter.ShootAngularVelocity(angularVelocity);

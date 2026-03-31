@@ -74,10 +74,13 @@ private:
     std::optional<frc2::CommandPtr> m_SCR_ShootFromLeft;
     std::optional<frc2::CommandPtr> m_SCR_ShootFromMiddle;
     std::optional<frc2::CommandPtr> m_SCR_ShootFromRight;
+    std::optional<frc2::CommandPtr> m_SCR_PlayoffAuto;
 
     // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
     // the std::optional<> wrapper allows it to be assigned later in runtime
 
     //the chooser for the auto routines
     frc::SendableChooser<frc2::Command*> m_chooser;
+
+    bool m_invertControls = false;
 };
