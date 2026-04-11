@@ -1,7 +1,9 @@
 #include "subsystems/HoodSubsystem.h"
 #include "rev/config/SparkMaxConfig.h"
 
-HoodSubsystem::HoodSubsystem(){
+HoodSubsystem::HoodSubsystem(DriveSubsystem& drive):
+m_drive(drive)
+{
     rev::spark::SparkMaxConfig angleMotorConfig;
     
     m_angleMotor.Configure(
@@ -63,6 +65,10 @@ void HoodSubsystem::Periodic() {
     m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
     m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
     m_shooterAngleVelocityPub.Set(GetAngleVelocity().value());
+
+    units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+    units::turn_t targetAngle = (distanceToTarget > HoodConstants::kRangeThreshold) ? HoodConstants::kMinAngle : HoodConstants::kMaxAngle;
+    SetTargetAngle(targetAngle);
 }
 
 void HoodSubsystem::GoToAngle(units::degree_t angle) {
