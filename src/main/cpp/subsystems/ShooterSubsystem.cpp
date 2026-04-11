@@ -322,6 +322,10 @@ degrees_per_second_t ShooterSubsystem::GetAngleVelocity() {
     return degrees_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
 }
 
+struct ShootSolution ShooterSubsystem::CompensateShootSolutionForRobotVelocity(degree_t angle, meters_per_second_t speed) {
+    
+}
+
 frc2::CommandPtr ShooterSubsystem::RetractToLimitCommand() {
     return
         /* extend for a bit to ensure we'll be able to retract the hood over a distance */
