@@ -40,6 +40,14 @@ frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem*
     );
 }
 
+frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, HoodSubsystem* hood) {
+    return frc2::cmd::Parallel(
+        shooter->ShootCommand(),
+        hood->GoToAngleCommand(),
+        frc2::cmd::Wait(ShooterConstants::kRampTime).AndThen(feeder->FeedCommand())
+    );
+}
+
 frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, units::second_t feedTime) {
     return ShootCommand(shooter, feeder).WithTimeout(ShooterConstants::kRampTime + feedTime);
 }

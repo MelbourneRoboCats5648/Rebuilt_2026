@@ -80,6 +80,10 @@ frc2::CommandPtr HoodSubsystem::GoToAngleCommand(units::degree_t angle) {
     return RunOnce([this, angle] { GoToAngle(angle); });
 }
 
+frc2::CommandPtr HoodSubsystem::GoToAngleCommand() {
+    return RunOnce([this] { GoToAngle(m_targetAngle); });
+}
+
 void HoodSubsystem::SetTargetAngle(units::turn_t angle)
 {
     m_targetAngle = angle;
