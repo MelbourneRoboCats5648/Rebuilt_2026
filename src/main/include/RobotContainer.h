@@ -61,7 +61,6 @@ private:
 
     // auto options
     std::optional<frc2::CommandPtr> m_autoNone;
-    std::optional<frc2::CommandPtr> m_autoClimb;
     std::optional<frc2::CommandPtr> m_autoTesting;
     std::optional<frc2::CommandPtr> m_autoDepot;
     std::optional<frc2::CommandPtr> m_autoNeutralCollect;
