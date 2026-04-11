@@ -32,6 +32,37 @@ HoodSubsystem::HoodSubsystem(){
       rev::ResetMode::kResetSafeParameters,
       rev::PersistMode::kPersistParameters
     );
+
+    SetDefaultCommand(
+        frc2::cmd::Either(
+            Run([this] { GoToAngle(m_targetAngle); }), // if calibrated, run the hood motor (not the flywheel)
+            RetractToLimitCommand(), // otherwise, do the hood calibration
+            [this] {
+                if (!m_isCalibrated) {
+                    m_isCalibrated = true; // should be false only once
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        ).Repeatedly() // if calibration finishes, re-run this command (which will take us to default shoot command)
+    );
+
+    m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleOfShooter").Publish();
+    m_shooterAngleVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorVelocity").Publish();
+    m_angleMotorVoltagePub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
+    m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
+}
+
+void HoodSubsystem::Periodic() {
+    m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
+    m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
+    m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
+    m_shooterAngleVelocityPub.Set(GetAngleVelocity().value());
 }
 
 void HoodSubsystem::GoToAngle(units::degree_t angle) {

@@ -9,6 +9,8 @@
 
 #include <rev/SparkMax.h>
 
+#include <networktables/DoubleTopic.h>
+
 
 class HoodSubsystem : public frc2::SubsystemBase {
     public:
@@ -21,6 +23,8 @@ class HoodSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr RetractToLimitCommand();
     frc2::CommandPtr ExtendToLimitCommand();
 
+    void Periodic() override;
+
     private:
     degrees_per_second_t GetAngleVelocity();
     units::degree_t m_targetAngle{HoodConstants::kMaxAngle};
@@ -28,4 +32,11 @@ class HoodSubsystem : public frc2::SubsystemBase {
     rev::spark::SparkMax m_angleMotor{HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless};
     rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
+
+    nt::DoublePublisher m_shooterAnglePub;
+    nt::DoublePublisher m_angleMotorVoltagePub;
+    nt::DoublePublisher m_angleMotorCurrentPub;
+    nt::DoublePublisher m_shooterAngleVelocityPub;
+
+    bool m_isCalibrated = false;
 };
