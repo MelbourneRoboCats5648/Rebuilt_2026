@@ -10,12 +10,10 @@
 #include "constants/OperatorConstants.h"
 #include "constants/DriveConstants.h"
 #include <constants/ShooterConstants.h>
-#include "constants/ClimbConstants.h"
 
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/ShooterSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
-#include "subsystems/ClimbSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
 
@@ -50,8 +48,7 @@ private:
     DriveSubsystem m_drive;
     ShooterSubsystem m_shooter{m_drive};
     IntakeSubsystem m_intake{m_drive};
-    FeederSubsystem m_feeder;
-    ClimbSubsystem m_climb{};   
+    FeederSubsystem m_feeder; 
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
 
     void ConfigureBindings();
@@ -64,7 +61,6 @@ private:
 
     // auto options
     std::optional<frc2::CommandPtr> m_autoNone;
-    std::optional<frc2::CommandPtr> m_autoClimb;
     std::optional<frc2::CommandPtr> m_autoTesting;
     std::optional<frc2::CommandPtr> m_autoDepot;
     std::optional<frc2::CommandPtr> m_autoNeutralCollect;
