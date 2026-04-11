@@ -1,5 +1,121 @@
 #include "subsystems/HoodSubsystem.h"
+#include "rev/config/SparkMaxConfig.h"
 
-HoodSubsystem::HoodSubsystem(DriveSubsystem& drive){
+HoodSubsystem::HoodSubsystem(){
+    rev::spark::SparkMaxConfig angleMotorConfig;
     
+    m_angleMotor.Configure(
+      angleMotorConfig,
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
+    );
+
+    angleMotorConfig.closedLoop
+      .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
+      .P(HoodConstants::kP)
+      .I(HoodConstants::kI)
+      .D(HoodConstants::kD)
+      .OutputRange(-1, 1);
+
+    m_angleEncoder.SetPosition(HoodConstants::kMaxAngleSoftLimit.value());
+
+    angleMotorConfig.softLimit
+    .ForwardSoftLimit(HoodConstants::kMaxAngleSoftLimit.value()).ForwardSoftLimitEnabled(true)
+    .ReverseSoftLimit(HoodConstants::kMinAngleSoftLimit.value()).ReverseSoftLimitEnabled(true);
+
+    angleMotorConfig.encoder
+    .PositionConversionFactor(HoodConstants::kAngleDegreesPerTurn)
+    .VelocityConversionFactor(HoodConstants::kAngleDegreesPerTurn);
+
+    m_angleMotor.Configure(
+      angleMotorConfig,
+      rev::ResetMode::kResetSafeParameters,
+      rev::PersistMode::kPersistParameters
+    );
+}
+
+void HoodSubsystem::GoToAngle(units::degree_t angle) {
+    double clampedAngleDeg = std::clamp(angle.value(), HoodConstants::kMinAngle.value(), HoodConstants::kMaxAngle.value());
+    m_angleController.SetSetpoint(clampedAngleDeg, rev::spark::SparkLowLevel::ControlType::kPosition);
+}
+
+frc2::CommandPtr HoodSubsystem::GoToAngleCommand(units::degree_t angle) {
+    return RunOnce([this, angle] { GoToAngle(angle); });
+}
+
+void HoodSubsystem::SetTargetAngle(units::turn_t angle)
+{
+    m_targetAngle = angle;
+}
+
+frc2::CommandPtr HoodSubsystem::SetTargetAngleCommand(units::degree_t angle) {
+    return RunOnce([this, angle]{
+                SetTargetAngle(angle);
+            });
+}
+
+degrees_per_second_t HoodSubsystem::GetAngleVelocity() {
+    return degrees_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
+}
+
+frc2::CommandPtr HoodSubsystem::RetractToLimitCommand() {
+    return
+        /* extend for a bit to ensure we'll be able to retract the hood over a distance */
+        RunOnce([this] {
+            // set position to max angle to defeat soft limit
+            m_angleEncoder.SetPosition(HoodConstants::kMaxAngleSoftLimit.value());
+            // then extend the hood
+            m_angleMotor.SetVoltage(-HoodConstants::kCalibrationVoltage);
+        })
+        .AndThen(frc2::cmd::Wait(HoodConstants::kCalibrationPreTime))
+        .AndThen(
+            RunOnce([this] {
+                // initially set encoder position to min angle
+                m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
+                // then pull the hood in at a slow speed
+                m_angleMotor.SetVoltage(HoodConstants::kCalibrationVoltage);
+            })
+            .AndThen(frc2::cmd::Sequence(
+                // 1. we speed up past the threshold
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > HoodConstants::kCalibrationVelocityThreshold; }),
+                // 2. then we slow down past it again - indicating that we've reached the end
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < HoodConstants::kCalibrationVelocityThreshold; })
+            ))
+            .WithTimeout(HoodConstants::kCalibrationTimeout)
+            .FinallyDo([this] {
+                m_angleMotor.StopMotor();
+                m_angleEncoder.SetPosition(HoodConstants::kMaxAngleSoftLimit.value());
+            })
+        );
+}
+
+frc2::CommandPtr HoodSubsystem::ExtendToLimitCommand() {
+    return
+        /* retract for a bit to ensure we'll be able to extend the hood over a distance */
+        RunOnce([this] {
+            // set position to min angle to defeat soft limit
+            m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
+            // then retract the hood
+            m_angleMotor.SetVoltage(HoodConstants::kCalibrationVoltage);
+        })
+        .AndThen(frc2::cmd::Wait(HoodConstants::kCalibrationPreTime))
+        .AndThen(
+            RunOnce([this] {
+                // initially set encoder position to max angle
+                m_angleEncoder.SetPosition(HoodConstants::kMaxAngleSoftLimit.value());
+                // then pull the hood out at a slow speed
+                m_angleMotor.SetVoltage(-HoodConstants::kCalibrationVoltage);
+            })
+            .AndThen(frc2::cmd::Sequence(
+                // 1. we speed up past the threshold
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < -HoodConstants::kCalibrationVelocityThreshold; }),
+                // 2. then we slow down past it again - indicating that we've reached the end
+                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > -HoodConstants::kCalibrationVelocityThreshold; })
+            ))
+            .WithTimeout(HoodConstants::kCalibrationTimeout)
+            .FinallyDo([this] {
+                m_angleMotor.StopMotor();
+                m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
+            })
+        );
 }
