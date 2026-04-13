@@ -40,7 +40,7 @@ frc2::CommandPtr ChoreoShootFromRight(DriveSubsystem* drive, IntakeSubsystem* in
 
 frc2::CommandPtr ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
 
-frc2::CommandPtr PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter);
+frc2::CommandPtr PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter, HoodSubsystem* hood);
 
 }  // namespace autos
 

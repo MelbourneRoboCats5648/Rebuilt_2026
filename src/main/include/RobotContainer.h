@@ -18,6 +18,7 @@
 #include "subsystems/ClimbSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
+#include "subsystems/HoodSubsystem.h"
 
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -49,6 +50,7 @@ private:
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
     ShooterSubsystem m_shooter{m_drive};
+    HoodSubsystem m_hood{m_drive};
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder;
     ClimbSubsystem m_climb{};   
