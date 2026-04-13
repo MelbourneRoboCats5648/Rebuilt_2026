@@ -79,9 +79,8 @@ void ShooterSubsystem::Periodic() {
         units::meter_t distanceToTarget = m_drive.DistanceToTarget();
         units::turn_t targetAngle = (distanceToTarget > ShooterConstants::kRangeThreshold) ? ShooterConstants::kMinAngle : ShooterConstants::kMaxAngle;
         
-
-        units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, m_targetAngle);
-        //SetTargetVelocity(flywheelVelocity);
+        units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
+        SetTargetVelocity(flywheelVelocity); 
 
         //SetFlywheelVelocityAndAngle(distanceToTarget);
         //SetTargetVelocity(ShooterConstants::kMaxAngularVelocity);
@@ -111,6 +110,8 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
 
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
     /* clamp velocity */
+    // 109 - not related to your change, but for consistency and conciseness this can
+    //     - use the std::clamp function. Have a look at the IncreaseFlywheelVelocity() below
     if (velocity > ShooterConstants::kMaxAngularVelocity) {
         velocity = ShooterConstants::kMaxAngularVelocity;
     } else if (velocity < ShooterConstants::kMinAngularVelocity) {
@@ -119,6 +120,15 @@ void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
 
     m_targetVelocity = velocity;
 }
+
+/* 109 -  not sure whether i used clamp function correctly
+void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity)
+{
+    velocity = std::clamp(velocity, ShooterConstants::kMinAngularVelocity, ShooterConstants::kMaxAngularVelocity);
+
+    m_targetVelocity = velocity;
+}
+*/
 
 units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;

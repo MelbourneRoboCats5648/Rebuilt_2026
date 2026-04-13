@@ -51,13 +51,13 @@ m_drive(drive)
     );
 
     m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Angle/AngleOfShooter").Publish();
+        .GetDoubleTopic("Hood/AngleOfShooter").Publish();
     m_shooterAngleVelocityPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Angle/AngleMotorVelocity").Publish();
+        .GetDoubleTopic("Hood/AngleMotorVelocity").Publish();
     m_angleMotorVoltagePub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Angle/AngleMotorVoltage").Publish();
+        .GetDoubleTopic("Hood/AngleMotorVoltage").Publish();
     m_angleMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Angle/AngleMotorCurrent").Publish();
+        .GetDoubleTopic("Hood/AngleMotorCurrent").Publish();
 }
 
 void HoodSubsystem::Periodic() {
