@@ -39,24 +39,16 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
-        frc2::CommandPtr SetTargetAngleCommand(units::degree_t angle);
 
         void Shoot(units::volt_t volts);
-        void GoToAngle(units::degree_t angle);
-        frc2::CommandPtr GoToAngleCommand(units::degree_t angle);
         void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
-        void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
-
-
-        void SetTargetAngle(units::turn_t angle);
+        //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
 
         void Periodic() override;
 
-        frc2::CommandPtr RetractToLimitCommand();
-        frc2::CommandPtr ExtendToLimitCommand();
         frc2::CommandPtr IncreaseFlywheelVelocity();
         frc2::CommandPtr DecreaseFlywheelVelocity();
         frc2::CommandPtr ResetFlywheelVelocity();
@@ -64,8 +56,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr ShootCommand();
 
     private:
-        degrees_per_second_t GetAngleVelocity();
-
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
 
@@ -78,12 +68,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
         DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
 
-        rev::spark::SparkMax m_angleMotor{HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless};
-        rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
-        rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
-        
         units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
-        units::degree_t m_targetAngle{ShooterConstants::kMaxAngle};
 
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;
@@ -94,17 +79,10 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_shooterVoltagePub;
         nt::DoublePublisher m_shooterTargetVelPub;
 
-        nt::DoublePublisher m_shooterAnglePub;
-        nt::DoublePublisher m_angleMotorVoltagePub;
-        nt::DoublePublisher m_angleMotorCurrentPub;
-        nt::DoublePublisher m_shooterAngleVelocityPub;
-
         // shooter speed debugging
         nt::DoublePublisher m_requiredSpedPub;
         nt::DoublePublisher m_adjustedSpeedPub;
         
         double m_requiredSpeed;
-        double m_adjustedSpeed;
-
-        bool m_isCalibrated = false;        
+        double m_adjustedSpeed;        
 };
