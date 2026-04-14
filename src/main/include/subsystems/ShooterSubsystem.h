@@ -69,7 +69,6 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
 
         units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
-        units::degree_t m_targetAngle{ShooterConstants::kMaxAngle};
 
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;

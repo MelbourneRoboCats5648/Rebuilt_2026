@@ -48,6 +48,7 @@ namespace ShooterConstants {
 
     inline constexpr units::second_t kRampTime = 0.3_s; // time from stopped to ready for shooting
 
+    
     //hood - for the purpose of calculating flywheel velocity
     inline constexpr units::degree_t kMinAngleSoftLimit = 55_deg;
     inline constexpr units::degree_t kMaxAngleSoftLimit = 67_deg;

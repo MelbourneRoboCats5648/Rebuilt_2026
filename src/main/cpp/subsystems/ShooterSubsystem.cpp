@@ -108,27 +108,14 @@ void ShooterSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVel
     m_shooterTargetVelPub.Set(angularVelocity.value());
 }
 
-void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity){
-    /* clamp velocity */
-    // 109 - not related to your change, but for consistency and conciseness this can
-    //     - use the std::clamp function. Have a look at the IncreaseFlywheelVelocity() below
-    if (velocity > ShooterConstants::kMaxAngularVelocity) {
-        velocity = ShooterConstants::kMaxAngularVelocity;
-    } else if (velocity < ShooterConstants::kMinAngularVelocity) {
-        velocity = ShooterConstants::kMinAngularVelocity;
-    }
-
-    m_targetVelocity = velocity;
-}
-
-/* 109 -  not sure whether i used clamp function correctly
 void ShooterSubsystem::SetTargetVelocity(units::turns_per_second_t velocity)
 {
-    velocity = std::clamp(velocity, ShooterConstants::kMinAngularVelocity, ShooterConstants::kMaxAngularVelocity);
+    m_targetVelocity = std::clamp(
+        velocity, 
+        ShooterConstants::kMinAngularVelocity, 
+        ShooterConstants::kMaxAngularVelocity);
 
-    m_targetVelocity = velocity;
 }
-*/
 
 units::turns_per_second_t ShooterSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
