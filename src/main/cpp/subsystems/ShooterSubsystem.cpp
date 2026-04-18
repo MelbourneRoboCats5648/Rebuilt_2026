@@ -235,3 +235,12 @@ meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t actu
     meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
     return adjustedSpeed;
 }
+
+units::degree_t ShooterSubsystem::CompensateForTangentialSpeed(units::meters_per_second_t requiredBallShootingSpeed, units::degree_t requiredHoodAngle, units::meter_t robotTangentialSpeed) {
+    units::meters_per_second_t horizontalRadialBallSpeed = requiredBallShootingSpeed * cos(requiredHoodAngle);
+    
+    units::degree_t ballYawAngle = units::degree_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
+    units::degree_t compensatedYawAngle = -ballYawAngle;
+
+    return compensatedYawAngle;
+}

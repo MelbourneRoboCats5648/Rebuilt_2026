@@ -55,6 +55,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         
         frc2::CommandPtr ShootCommand();
 
+        units::degree_t CompensateForTangentialSpeed(units::meters_per_second_t requiredBallShootingSpeed, units::degree_t requiredHoodAngle, units::meter_t robotTangentialSpeed);
+
     private:
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
