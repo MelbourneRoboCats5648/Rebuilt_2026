@@ -33,8 +33,8 @@ using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
 
 struct ShootSolution{
-    degree_t angle();
-    meters_per_second_t velocity();
+    degree_t angle;
+    meters_per_second_t speed;
 };
 
 class ShooterSubsystem : public frc2::SubsystemBase {
@@ -51,7 +51,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
         //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
-        struct ShootSolution CompensateShootSolutionForRobotVelocity(degree_t angle, meters_per_second_t speed);
+        ShootSolution CompensateShootSolutionForRobotVelocity(degree_t angle, meters_per_second_t speed, meters_per_second_t robotRadialSpeed);
 
         void SetTargetAngle(units::turn_t angle);
 
