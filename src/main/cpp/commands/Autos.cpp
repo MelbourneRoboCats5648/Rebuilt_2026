@@ -40,6 +40,14 @@ frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem*
     );
 }
 
+frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, HoodSubsystem* hood) {
+    return frc2::cmd::Parallel(
+        shooter->ShootCommand(),
+        hood->GoToAngleCommand(),
+        frc2::cmd::Wait(ShooterConstants::kRampTime).AndThen(feeder->FeedCommand())
+    );
+}
+
 frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, units::second_t feedTime) {
     return ShootCommand(shooter, feeder).WithTimeout(ShooterConstants::kRampTime + feedTime);
 }
@@ -89,11 +97,11 @@ frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsy
     );
 }
 
-frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter, HoodSubsystem* hood) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             frc2::cmd::Wait(10_s),
-            shooter->RetractToLimitCommand()
+            hood->RetractToLimitCommand()
         ),
         ChoreoAuto(drive, Playoff_InitToShoot),
         intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit), // too risky to extend while moving out (risk of smashing intake)

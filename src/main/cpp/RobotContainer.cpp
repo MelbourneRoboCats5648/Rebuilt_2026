@@ -32,7 +32,7 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_feeder, &m_shooter);
     m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_feeder, &m_shooter);
-    m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_feeder, &m_shooter);
+    m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_feeder, &m_shooter, &m_hood);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
@@ -106,8 +106,8 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 
-    m_mechController.X().OnTrue(m_shooter.SetTargetAngleCommand(ShooterConstants::kMinAngle));
-    m_mechController.Y().OnTrue(m_shooter.SetTargetAngleCommand(ShooterConstants::kMaxAngle));
+    m_mechController.X().OnTrue(m_hood.SetTargetAngleCommand(HoodConstants::kMinAngle));
+    m_mechController.Y().OnTrue(m_hood.SetTargetAngleCommand(HoodConstants::kMaxAngle));
 
 
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
@@ -145,15 +145,15 @@ void RobotContainer::ConfigureBindings() {
     //     { &m_shooter }
     // ));
 
-    //m_mechController.X().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMinAngle).Repeatedly());
-    //m_mechController.Y().WhileTrue(m_shooter.GoToAngleCommand(ShooterConstants::kMaxAngle).Repeatedly());
+    //m_mechController.X().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMinAngle).Repeatedly());
+    //m_mechController.Y().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMaxAngle).Repeatedly());
 
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_driverController.RightTrigger().WhileTrue(autos::ShootCommand(&m_shooter, &m_feeder));
+    m_driverController.RightTrigger().WhileTrue(autos::ShootCommand(&m_shooter, &m_feeder, &m_hood));
 
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));
