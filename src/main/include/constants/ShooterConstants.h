@@ -24,7 +24,7 @@ namespace ShooterConstants {
 
     inline constexpr meter_t startHeight(0.3);
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
-    inline constexpr double kgearRatio = 2;
+    inline constexpr double kgearRatio = 1;
 
     inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::meter_t kFlyWheelRadius(2_in);
@@ -33,7 +33,7 @@ namespace ShooterConstants {
 
     //inline constexpr double kAngleGearRatio = 1.0/5.0;
 
-    inline constexpr units::turns_per_second_t kMaxAngularVelocity(50);
+    inline constexpr units::turns_per_second_t kMaxAngularVelocity(100);
     inline constexpr units::turns_per_second_t kMinAngularVelocity(37.5);
 
     inline constexpr double kFlywheelVelScalingIncrement(0.05); // 5% scaling of flywheel velocity
