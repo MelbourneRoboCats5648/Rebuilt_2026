@@ -82,6 +82,8 @@ public:
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
 
+    meters_per_second_t FindRobotRadialSpeed(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed);
+
 private:
     bool IsBlueAlliance();
     Pigeon2 m_gyro{HardwareConstants::kGyroID, HardwareConstants::kPhoenixCAN};
