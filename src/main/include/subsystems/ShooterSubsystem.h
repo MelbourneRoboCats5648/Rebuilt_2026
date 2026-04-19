@@ -37,6 +37,11 @@ struct ShootSolution{
     meters_per_second_t speed;
 };
 
+struct ShootOnTheMoveSolution{
+    ShootSolution shootSolution;
+    degree_t yawAngle;
+};
+
 class ShooterSubsystem : public frc2::SubsystemBase {
 
     public:
@@ -63,7 +68,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         
         frc2::CommandPtr ShootCommand();
 
-        units::degree_t CompensateForTangentialSpeed(units::meters_per_second_t requiredBallShootingSpeed, units::degree_t requiredHoodAngle, units::meter_t robotTangentialSpeed);
+        ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
