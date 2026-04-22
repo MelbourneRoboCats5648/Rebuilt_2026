@@ -328,7 +328,7 @@ units::meter_t DriveSubsystem::DistanceToTarget()
     return GetPose().Translation().Distance(m_targetPosition);
 }
 
-meters_per_second_t DriveSubsystem::FindRobotRadialSpeed(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed)
+SpeedComponents DriveSubsystem::FindSpeedComponents(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed)
 {
     frc::Translation2d vectorToTarget = targetPose.Translation() - robotPose.Translation();
 
@@ -341,4 +341,13 @@ meters_per_second_t DriveSubsystem::FindRobotRadialSpeed(frc::Pose2d robotPose, 
     meters_per_second_t radialSpeed = (unitVectorToTarget.X().value() * chassisSpeed.vx) +
                                       (unitVectorToTarget.Y().value() * chassisSpeed.vy);
 
+   frc::Translation2d unitVecTangential = unitVectorToTarget.RotateBy(90_deg);
+   units::meters_per_second_t tangentialSpeed = (unitVectorToTarget.X().value() * chassisSpeed.vx) +
+                                                (unitVectorToTarget.Y().value() * chassisSpeed.vy);
+
+   SpeedComponents speedComponents;
+   speedComponents.radialSpeed = radialSpeed;
+   speedComponents.tangentialSpeed = tangentialSpeed;
+
+return speedComponents;
 }
