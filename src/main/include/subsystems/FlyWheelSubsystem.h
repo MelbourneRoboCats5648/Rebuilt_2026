@@ -76,8 +76,8 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_motorCurrentPub;
         nt::DoublePublisher m_followerMotorCurrentPub;
 
-        nt::DoublePublisher m_m_flyWheelVoltagePub;
-        nt::DoublePublisher m_m_flyWheelTargetVelPub;
+        nt::DoublePublisher m_flyWheelVoltagePub;
+        nt::DoublePublisher m_flyWheelTargetVelPub;
 
         // shooter speed debugging
         nt::DoublePublisher m_requiredSpedPub;

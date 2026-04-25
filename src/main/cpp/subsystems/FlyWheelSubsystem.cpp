@@ -37,9 +37,9 @@ FlyWheelSubsystem::FlyWheelSubsystem(DriveSubsystem& drive)
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
 
 
-    m_m_flyWheelVoltagePub = nt::NetworkTableInstance::GetDefault()
+    m_flyWheelVoltagePub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/Voltage").Publish();
-    m_m_flyWheelTargetVelPub = nt::NetworkTableInstance::GetDefault()
+    m_flyWheelTargetVelPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/TargetVelocity").Publish();
 
     m_adjustedSpeedPub= nt::NetworkTableInstance::GetDefault()
@@ -90,7 +90,7 @@ void FlyWheelSubsystem::Periodic() {
         m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
         m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
-        m_m_flyWheelVoltagePub.Set(m_motor.GetMotorVoltage().GetValueAsDouble());
+        m_flyWheelVoltagePub.Set(m_motor.GetMotorVoltage().GetValueAsDouble());
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
@@ -105,7 +105,7 @@ void FlyWheelSubsystem::Shoot(units::volt_t volts){
 void FlyWheelSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
-    m_m_flyWheelTargetVelPub.Set(angularVelocity.value());
+    m_flyWheelTargetVelPub.Set(angularVelocity.value());
 }
 
 void FlyWheelSubsystem::SetTargetVelocity(units::turns_per_second_t velocity)
