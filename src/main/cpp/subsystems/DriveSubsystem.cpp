@@ -328,17 +328,25 @@ units::meter_t DriveSubsystem::DistanceToTarget()
     return GetPose().Translation().Distance(m_targetPosition);
 }
 
-meters_per_second_t DriveSubsystem::FindRobotRadialSpeed(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed)
+SpeedComponents DriveSubsystem::FindSpeedComponents(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed)
 {
-    frc::Translation2d vectorToTarget = targetPose.Translation() - robotPose.Translation();
+    frc::Translation2d vectorRadial = targetPose.Translation() - robotPose.Translation();
 
-    units::meter_t magVecToTarget = vectorToTarget.Norm();
-
-    frc::Translation2d unitVectorToTarget = vectorToTarget / magVecToTarget.value();
+    units::meter_t magVecToTarget = vectorRadial.Norm();
+    frc::Translation2d unitVecRadial = vectorRadial / magVecToTarget.value();
      
     //we need to dot product the unitVector to target with the chassisSpeed vector
+    meters_per_second_t radialSpeed = (unitVecRadial.X().value() * chassisSpeed.vx) +
+                                      (unitVecRadial.Y().value() * chassisSpeed.vy);
 
-    meters_per_second_t radialSpeed = (unitVectorToTarget.X().value() * chassisSpeed.vx) +
-                                      (unitVectorToTarget.Y().value() * chassisSpeed.vy);
+   //rotating radial vector to form tangential vector. using dot product to find the tangentialSpeed
+   frc::Translation2d unitVecTangential = unitVecRadial.RotateBy(90_deg);
+   units::meters_per_second_t tangentialSpeed = (unitVecTangential.X().value() * chassisSpeed.vx) +
+                                                (unitVecTangential.Y().value() * chassisSpeed.vy);
 
+   SpeedComponents speedComponents;
+   speedComponents.radialSpeed = radialSpeed;
+   speedComponents.tangentialSpeed = tangentialSpeed;
+
+return speedComponents;
 }
