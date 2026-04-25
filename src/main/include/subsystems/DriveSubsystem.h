@@ -30,6 +30,12 @@ using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
 using namespace DrivetrainConstants;
 
+//this stores the radial and tangential speeds
+struct SpeedComponents {
+    meters_per_second_t radialSpeed;
+    meters_per_second_t tangentialSpeed;
+};
+
 class DriveSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
@@ -82,7 +88,7 @@ public:
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
 
-    meters_per_second_t FindRobotRadialSpeed(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed);
+    SpeedComponents FindSpeedComponents(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed);
 
 private:
     bool IsBlueAlliance();

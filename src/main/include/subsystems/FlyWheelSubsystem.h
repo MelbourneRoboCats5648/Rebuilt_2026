@@ -32,6 +32,16 @@ using namespace units::angular_velocity;
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
 
+struct ShootSolution{
+    degree_t angle;
+    meters_per_second_t speed;
+};
+
+struct ShootOnTheMoveSolution{
+    ShootSolution shootSolution;
+    degree_t yawAngle;
+};
+
 class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
@@ -46,6 +56,9 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
         //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
+        ShootSolution CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
+
+        void SetTargetAngle(units::turn_t angle);
 
         void Periodic() override;
 
@@ -54,6 +67,8 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr ResetFlywheelVelocity();
         
         frc2::CommandPtr ShootCommand();
+
+        ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
