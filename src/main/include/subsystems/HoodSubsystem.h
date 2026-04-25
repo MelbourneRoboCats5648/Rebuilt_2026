@@ -34,10 +34,10 @@ class HoodSubsystem : public frc2::SubsystemBase {
     rev::spark::SparkClosedLoopController m_angleController = m_angleMotor.GetClosedLoopController();
     rev::spark::SparkRelativeEncoder m_angleEncoder = m_angleMotor.GetEncoder();
 
-    nt::DoublePublisher m_shooterAnglePub;
+    nt::DoublePublisher m_hoodAnglePub;
     nt::DoublePublisher m_angleMotorVoltagePub;
     nt::DoublePublisher m_angleMotorCurrentPub;
-    nt::DoublePublisher m_shooterAngleVelocityPub;
+    nt::DoublePublisher m_hoodAngleVelocityPub;
 
     bool m_isCalibrated = false;
 

@@ -12,7 +12,7 @@
 using namespace units::length;
 using namespace units::angle;
 
-namespace ShooterConstants {
+namespace FlyWheelConstants {
     namespace motor {
         inline constexpr double kP = 0.2;
         inline constexpr double kI = 0;
@@ -23,7 +23,7 @@ namespace ShooterConstants {
     }
 
     inline constexpr meter_t startHeight(0.3);
-    inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - ShooterConstants::startHeight;
+    inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - FlyWheelConstants::startHeight;
     inline constexpr double kgearRatio = 2;
 
     inline constexpr units::volt_t kMaxVoltage(12);
