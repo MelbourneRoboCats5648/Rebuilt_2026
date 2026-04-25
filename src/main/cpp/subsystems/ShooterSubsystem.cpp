@@ -236,23 +236,20 @@ meters_per_second_t ShooterSubsystem::AdjustedBallSpeed(meters_per_second_t actu
     return adjustedSpeed;
 }
 
-ShootSolution ShooterSubsystem::CompensateShootSolutionForRobotVelocity(degree_t ballAngle, meters_per_second_t ballSpeed, meters_per_second_t robotRadialSpeed) {
+ShootSolution ShooterSubsystem::CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
 
     meters_per_second_t horizontalBallSpeed =
-        ballSpeed * units::math::cos(ballAngle);
+        ballSolution.speed * units::math::cos(ballSolution.angle);
 
     meters_per_second_t verticalBallSpeed = 
-        ballSpeed * units::math::sin(ballAngle);
+        ballSolution.speed * units::math::sin(ballSolution.angle);
 
     meters_per_second_t compensatedHorizontalSpeed = 
         horizontalBallSpeed - robotRadialSpeed;
 
     meters_per_second_t compensatedVerticalSpeed = verticalBallSpeed;
 
-    meters_per_second_t compensatedBallSpeed =
-        sqrt(
-            pow<2>(compensatedHorizontalSpeed) + pow<2>(compensatedVerticalSpeed)
-            );
+    meters_per_second_t compensatedBallSpeed = units::math::hypot(compensatedHorizontalSpeed, compensatedVerticalSpeed);
 
     degree_t compensatedBallAngle =
         atan2( 
