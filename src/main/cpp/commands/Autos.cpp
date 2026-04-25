@@ -33,71 +33,71 @@ frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
                              ExampleCommand(subsystem).ToPtr());
 }
 
-frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder) {
+frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder) {
     return frc2::cmd::Parallel(
-        shooter->ShootCommand(),
-        frc2::cmd::Wait(ShooterConstants::kRampTime).AndThen(feeder->FeedCommand())
+        flyWheel->ShootCommand(),
+        frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(feeder->FeedCommand())
     );
 }
 
-frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, HoodSubsystem* hood) {
+frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, HoodSubsystem* hood) {
     return frc2::cmd::Parallel(
-        shooter->ShootCommand(),
+        flyWheel->ShootCommand(),
         hood->GoToAngleCommand(),
-        frc2::cmd::Wait(ShooterConstants::kRampTime).AndThen(feeder->FeedCommand())
+        frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(feeder->FeedCommand())
     );
 }
 
-frc2::CommandPtr autos::ShootCommand(ShooterSubsystem* shooter, FeederSubsystem* feeder, units::second_t feedTime) {
-    return ShootCommand(shooter, feeder).WithTimeout(ShooterConstants::kRampTime + feedTime);
+frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, units::second_t feedTime) {
+    return ShootCommand(flyWheel, feeder).WithTimeout(FlyWheelConstants::kRampTime + feedTime);
 }
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj) {
     return drive->FollowTrajectoryCommand(choreoTraj);
 }
 
-frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+frc2::CommandPtr autos::ChoreoShootTrench(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, FlyWheelSubsystem* flyWheel) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             ChoreoAuto(drive, ShootTrench_Shoot),
             intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
-        ShootCommand(shooter, feeder, 5_s),
+        ShootCommand(flyWheel, feeder, 5_s),
         ChoreoAuto(drive, ShootTrench_UnderTrench)
     );
 }
 
-frc2::CommandPtr autos::ChoreoShootFromLeft(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+frc2::CommandPtr autos::ChoreoShootFromLeft(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, FlyWheelSubsystem* flyWheel) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             ChoreoAuto(drive, Shoot_fromLeft),
             intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
-        ShootCommand(shooter, feeder, 7_s)
+        ShootCommand(flyWheel, feeder, 7_s)
     );
 }
 
-frc2::CommandPtr autos::ChoreoShootFromRight(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+frc2::CommandPtr autos::ChoreoShootFromRight(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, FlyWheelSubsystem* flyWheel) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             ChoreoAuto(drive, Shoot_fromRight),
             intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
-        ShootCommand(shooter, feeder, 7_s)
+        ShootCommand(flyWheel, feeder, 7_s)
     );
 }
 
-frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter) {
+frc2::CommandPtr autos::ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, FlyWheelSubsystem* flyWheel) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             ChoreoAuto(drive, Shoot_fromMiddle),
             intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
         ),
-        ShootCommand(shooter, feeder, 7_s)
+        ShootCommand(flyWheel, feeder, 7_s)
     );
 }
 
-frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, ShooterSubsystem* shooter, HoodSubsystem* hood) {
+frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, FeederSubsystem* feeder, FlyWheelSubsystem* flyWheel, HoodSubsystem* hood) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
             frc2::cmd::Wait(10_s),
@@ -105,7 +105,7 @@ frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* inta
         ),
         ChoreoAuto(drive, Playoff_InitToShoot),
         intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit), // too risky to extend while moving out (risk of smashing intake)
-        ShootCommand(shooter, feeder, 5_s),
+        ShootCommand(flyWheel, feeder, 5_s),
         ChoreoAuto(drive, Playoff_ShootToTower)
     );
 }

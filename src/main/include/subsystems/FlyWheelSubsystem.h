@@ -22,7 +22,7 @@
 #include <frc/geometry/Translation2d.h>
 
 #include <subsystems/DriveSubsystem.h>
-#include <constants/ShooterConstants.h>
+#include <constants/FlyWheelConstants.h>
 
 using namespace units::velocity;
 using namespace units::angle;
@@ -32,10 +32,10 @@ using namespace units::angular_velocity;
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
 
-class ShooterSubsystem : public frc2::SubsystemBase {
+class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
-        ShooterSubsystem(DriveSubsystem& drive);
+        FlyWheelSubsystem(DriveSubsystem& drive);
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
@@ -59,7 +59,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
 
-        double m_scaleFlywheelVelocity = ShooterConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
+        double m_scaleFlywheelVelocity = FlyWheelConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
 
         TalonFXConfiguration createMotorConfig();
 
@@ -76,8 +76,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_motorCurrentPub;
         nt::DoublePublisher m_followerMotorCurrentPub;
 
-        nt::DoublePublisher m_shooterVoltagePub;
-        nt::DoublePublisher m_shooterTargetVelPub;
+        nt::DoublePublisher m_m_flyWheelVoltagePub;
+        nt::DoublePublisher m_m_flyWheelTargetVelPub;
 
         // shooter speed debugging
         nt::DoublePublisher m_requiredSpedPub;

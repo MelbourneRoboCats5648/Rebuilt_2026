@@ -50,9 +50,9 @@ m_drive(drive)
         ).Repeatedly() // if calibration finishes, re-run this command (which will take us to default shoot command)
     );
 
-    m_shooterAnglePub= nt::NetworkTableInstance::GetDefault()
+    m_hoodAnglePub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Hood/AngleOfShooter").Publish();
-    m_shooterAngleVelocityPub = nt::NetworkTableInstance::GetDefault()
+    m_hoodAngleVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Hood/AngleMotorVelocity").Publish();
     m_angleMotorVoltagePub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Hood/AngleMotorVoltage").Publish();
@@ -61,10 +61,10 @@ m_drive(drive)
 }
 
 void HoodSubsystem::Periodic() {
-    m_shooterAnglePub.Set(m_angleEncoder.GetPosition());
+    m_hoodAnglePub.Set(m_angleEncoder.GetPosition());
     m_angleMotorVoltagePub.Set(m_angleMotor.GetAppliedOutput());
     m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
-    m_shooterAngleVelocityPub.Set(GetAngleVelocity().value());
+    m_hoodAngleVelocityPub.Set(GetAngleVelocity().value());
 
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
     units::turn_t targetAngle = (distanceToTarget > HoodConstants::kRangeThreshold) ? HoodConstants::kMinAngle : HoodConstants::kMaxAngle;
