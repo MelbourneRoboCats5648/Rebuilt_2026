@@ -153,7 +153,7 @@ void RobotContainer::ConfigureBindings() {
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_driverController.RightTrigger().WhileTrue(autos::ShootCommand(&m_flyWheel, &m_feeder, &m_hood));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));

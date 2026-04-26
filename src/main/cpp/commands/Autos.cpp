@@ -40,6 +40,10 @@ frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsyste
     );
 }
 
+frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, units::second_t feedTime) {
+    return ShootCommand(flyWheel, feeder).WithTimeout(FlyWheelConstants::kRampTime + feedTime);
+}
+
 frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, HoodSubsystem* hood) {
     return frc2::cmd::Parallel(
         flyWheel->ShootCommand(),
@@ -48,9 +52,7 @@ frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsyste
     );
 }
 
-frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, units::second_t feedTime) {
-    return ShootCommand(flyWheel, feeder).WithTimeout(FlyWheelConstants::kRampTime + feedTime);
-}
+
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj) {
     return drive->FollowTrajectoryCommand(choreoTraj);
