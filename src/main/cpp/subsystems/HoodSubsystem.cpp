@@ -66,9 +66,11 @@ void HoodSubsystem::Periodic() {
     m_angleMotorCurrentPub.Set(m_angleMotor.GetOutputCurrent());
     m_hoodAngleVelocityPub.Set(GetAngleVelocity().value());
 
+    /* now being done in the shooter subsystem
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
     units::turn_t targetAngle = (distanceToTarget > HoodConstants::kRangeThreshold) ? HoodConstants::kMinAngle : HoodConstants::kMaxAngle;
     SetTargetAngle(targetAngle);
+    */
 }
 
 void HoodSubsystem::GoToAngle(units::degree_t angle) {

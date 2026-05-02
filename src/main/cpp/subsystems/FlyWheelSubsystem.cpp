@@ -76,11 +76,13 @@ void FlyWheelSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
+        /* now being done in shooter subsystem
         units::meter_t distanceToTarget = m_drive.DistanceToTarget();
         units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
         
         units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
         SetTargetVelocity(flywheelVelocity); 
+        */
 
         //SetFlywheelVelocityAndAngle(distanceToTarget);
         //SetTargetVelocity(ShooterConstants::kMaxAngularVelocity);

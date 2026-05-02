@@ -6,6 +6,7 @@
 #include <subsystems/HoodSubsystem.h>
 #include <subsystems/FeederSubsystem.h>
 #include <subsystems/IntakeSubsystem.h>
+#include <subsystems/DriveSubsystem.h>
 
 class ShooterSubsystem : public frc2::SubsystemBase {
     public:

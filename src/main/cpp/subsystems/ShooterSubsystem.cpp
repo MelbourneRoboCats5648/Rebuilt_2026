@@ -31,8 +31,10 @@ frc2::CommandPtr ShooterSubsystem::ShootCommandWithFeeder(units::second_t feedTi
 
 void ShooterSubsystem::Periodic(){
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
+
     units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
-    
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
+    
+    m_flyWheel.SetTargetVelocity(flywheelVelocity);
     m_hood.SetTargetAngle(targetAngle);
 }
