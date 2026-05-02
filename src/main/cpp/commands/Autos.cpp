@@ -35,7 +35,7 @@ frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
 
 frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder) {
     return frc2::cmd::Parallel(
-        flyWheel->ShootCommand(),
+        flyWheel->SpinFlyWheelCommand(),
         frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(feeder->FeedCommand())
     );
 }
@@ -46,7 +46,7 @@ frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsyste
 
 frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, HoodSubsystem* hood) {
     return frc2::cmd::Parallel(
-        flyWheel->ShootCommand(),
+        flyWheel->SpinFlyWheelCommand(),
         hood->GoToAngleCommand(),
         frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(feeder->FeedCommand())
     );

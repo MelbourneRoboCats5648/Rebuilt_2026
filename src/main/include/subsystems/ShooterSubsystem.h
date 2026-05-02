@@ -8,6 +8,16 @@
 #include <subsystems/IntakeSubsystem.h>
 #include <subsystems/DriveSubsystem.h>
 
+struct ShootSolution{
+    degree_t angle;
+    meters_per_second_t speed;
+};
+
+struct ShootOnTheMoveSolution{
+    ShootSolution shootSolution;
+    degree_t yawAngle;
+};
+
 class ShooterSubsystem : public frc2::SubsystemBase {
     public:
     ShooterSubsystem(DriveSubsystem& drive, FlyWheelSubsystem& flyWheel, HoodSubsystem& hood, FeederSubsystem& feeder, IntakeSubsystem& intake);
@@ -15,6 +25,9 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr ShootCommand();
     frc2::CommandPtr ShootCommandWithHood();
     frc2::CommandPtr ShootCommandWithFeeder(units::second_t feedTime);
+
+    ShootSolution CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
+    ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:
     FlyWheelSubsystem& m_flyWheel;

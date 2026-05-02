@@ -92,11 +92,11 @@ void FlyWheelSubsystem::Periodic() {
 
 }
 
-void FlyWheelSubsystem::Shoot(units::volt_t volts){
+void FlyWheelSubsystem::SpinFlyWheel(units::volt_t volts){
     m_motor.SetVoltage(volts);
 }
 
-void FlyWheelSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
+void FlyWheelSubsystem::SpinAtAngularVelocity(units::turns_per_second_t angularVelocity) {
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
     m_flyWheelTargetVelPub.Set(angularVelocity.value());
@@ -115,9 +115,9 @@ units::turns_per_second_t FlyWheelSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
 }
 
-frc2::CommandPtr FlyWheelSubsystem::ShootCommand() {
+frc2::CommandPtr FlyWheelSubsystem::SpinFlyWheelCommand() {
     return Run([this]{
-                ShootAngularVelocity(m_targetVelocity);
+                SpinAtAngularVelocity(m_targetVelocity);
             }).FinallyDo([this] { m_motor.StopMotor(); });
 }
 
@@ -228,61 +228,4 @@ meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t act
 
     meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
     return adjustedSpeed;
-}
-
-ShootSolution FlyWheelSubsystem::CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
-
-    meters_per_second_t horizontalBallSpeed =
-        ballSolution.speed * units::math::cos(ballSolution.angle);
-
-    meters_per_second_t verticalBallSpeed = 
-        ballSolution.speed * units::math::sin(ballSolution.angle);
-
-    meters_per_second_t compensatedHorizontalSpeed = 
-        horizontalBallSpeed - robotRadialSpeed;
-
-    meters_per_second_t compensatedVerticalSpeed = verticalBallSpeed;
-
-    meters_per_second_t compensatedBallSpeed = units::math::hypot(compensatedHorizontalSpeed, compensatedVerticalSpeed);
-
-    degree_t compensatedBallAngle =
-        atan2( 
-            compensatedVerticalSpeed, compensatedHorizontalSpeed
-        );
-
-    ShootSolution solution;
-    solution.angle = compensatedBallAngle;
-    solution.speed = compensatedBallSpeed; 
-
-    return solution;
-}
-
-ShootOnTheMoveSolution FlyWheelSubsystem::CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed) {
-    
-       units::meters_per_second_t requiredBallShootingSpeed = solution.speed;
-       units::degree_t requiredHoodAngle = solution.angle;
-    
-    
-    units::meters_per_second_t horizontalRadialBallSpeed = requiredBallShootingSpeed * cos(requiredHoodAngle);
-    
-    units::degree_t ballYawAngle = units::degree_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
-    units::degree_t compensatedYawAngle = -ballYawAngle;
-
-    meters_per_second_t verticalBallSpeed = horizontalRadialBallSpeed * sin(solution.angle);
-
-    // the horizontal component is the projection of the compensated ball vector onto the horizontal plane
-    meters_per_second_t horizontalComponent = units::math::hypot(horizontalRadialBallSpeed, robotTangentialSpeed);
-
-    meters_per_second_t compensatedSpeed = units::math::hypot(horizontalComponent, verticalBallSpeed);
-    degree_t compensatedAngle = degree_t(atan2(verticalBallSpeed.value(), horizontalComponent.value()));
-
-    ShootSolution shootSolution;
-    shootSolution.angle = compensatedAngle;
-    shootSolution.speed = compensatedSpeed;
-
-    ShootOnTheMoveSolution movingSolution;
-    movingSolution.shootSolution = shootSolution;
-    movingSolution.yawAngle = compensatedYawAngle;
-
-    return movingSolution;
 }

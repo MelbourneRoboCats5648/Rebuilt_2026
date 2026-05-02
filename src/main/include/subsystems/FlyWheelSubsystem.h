@@ -32,43 +32,27 @@ using namespace units::angular_velocity;
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
 
-struct ShootSolution{
-    degree_t angle;
-    meters_per_second_t speed;
-};
-
-struct ShootOnTheMoveSolution{
-    ShootSolution shootSolution;
-    degree_t yawAngle;
-};
-
 class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
         FlyWheelSubsystem(DriveSubsystem& drive);
-        units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
+        units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle); //fixme - might need to refactor
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 
-        void Shoot(units::volt_t volts);
-        void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
+        void SpinFlyWheel(units::volt_t volts);
+        void SpinAtAngularVelocity(units::turns_per_second_t angularVelocity);
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
-        //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
-        ShootSolution CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
-
-        void SetTargetAngle(units::turn_t angle);
-
+        
         void Periodic() override;
 
         frc2::CommandPtr IncreaseFlywheelVelocity();
         frc2::CommandPtr DecreaseFlywheelVelocity();
         frc2::CommandPtr ResetFlywheelVelocity();
         
-        frc2::CommandPtr ShootCommand();
-
-        ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
+        frc2::CommandPtr SpinFlyWheelCommand();
 
     private:
         meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
