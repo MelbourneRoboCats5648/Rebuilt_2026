@@ -35,6 +35,6 @@ void ShooterSubsystem::Periodic(){
     units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
     
-    m_flyWheel.SetTargetVelocity(flywheelVelocity);
     m_hood.SetTargetAngle(targetAngle);
+    m_flyWheel.SetTargetVelocity(flywheelVelocity);
 }
