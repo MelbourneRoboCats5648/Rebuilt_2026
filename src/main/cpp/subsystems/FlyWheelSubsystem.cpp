@@ -188,11 +188,10 @@ void ShooterSubsystem::SetFlywheelVelocityAndAngle(meter_t distanceToTarget)
 
 */
 
-units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
-    meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
-    meters_per_second_t adjustedSpeed = AdjustedBallSpeed(requiredSpeed);
+units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_second_t ballSpeed) {
+    meters_per_second_t adjustedSpeed = AdjustedBallSpeed(ballSpeed);
 
-    m_requiredSpeed = requiredSpeed.value();
+    m_requiredSpeed = ballSpeed.value();
     m_adjustedSpeed = adjustedSpeed.value();
 
     double metresPerTurn = 2 * std::numbers::pi * FlyWheelConstants::kFlyWheelRadius.value();
@@ -202,20 +201,6 @@ units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meter_t dist
 // derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
 // done by rearranging the formula to find the speed for a given distance and angle 
 
-meters_per_second_t FlyWheelSubsystem::CalculateBallSpeed(meter_t distance, degree_t angle) {
-        auto cosine = cos(angle);
-        auto tangent = tan(angle);
-
-        meter_t adjustedHeight = FieldConstants::HubHeight - FlyWheelConstants::startHeight;
-
-        meters_per_second_t speed = 
-            sqrt(
-                (FieldConstants::gravity * pow<2>(distance)) /
-                (2 * pow<2>(cosine) * (distance * tangent - adjustedHeight))
-            );
-
-        return speed;
-}
 
 meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
     // coefficients found from curve fitting

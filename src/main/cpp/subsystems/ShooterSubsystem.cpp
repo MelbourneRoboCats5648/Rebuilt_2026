@@ -31,11 +31,27 @@ frc2::CommandPtr ShooterSubsystem::ShootCommandWithFeeder(units::second_t feedTi
     return ShootCommand().WithTimeout(FlyWheelConstants::kRampTime + feedTime);
 }
 
+meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degree_t angle) {
+        auto cosine = cos(angle);
+        auto tangent = tan(angle);
+
+        meter_t adjustedHeight = FieldConstants::HubHeight - FlyWheelConstants::startHeight;
+
+        meters_per_second_t speed = 
+            sqrt(
+                (FieldConstants::gravity * pow<2>(distance)) /
+                (2 * pow<2>(cosine) * (distance * tangent - adjustedHeight))
+            );
+
+        return speed;
+}
+
 void ShooterSubsystem::Periodic(){
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
 
     units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
-    units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
+    units::meters_per_second_t ballSpeed = CalculateBallSpeed(distanceToTarget, targetAngle);
+    units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(ballSpeed);
     
     m_hood.SetTargetAngle(targetAngle);
     m_flyWheel.SetTargetVelocity(flywheelVelocity);

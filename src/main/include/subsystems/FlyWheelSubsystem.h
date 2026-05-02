@@ -36,7 +36,7 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
         FlyWheelSubsystem();
-        units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle); //fixme - might need to refactor
+        units::turns_per_second_t CalculateFlyWheelSpeed(meters_per_second_t ballSpeed); //fixme - might need to refactor
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 
@@ -55,7 +55,6 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         frc2::CommandPtr SpinFlyWheelCommand();
 
     private:
-        meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
 
         double m_scaleFlywheelVelocity = FlyWheelConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
