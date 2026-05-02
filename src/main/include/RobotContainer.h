@@ -48,8 +48,8 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
-    FlyWheelSubsystem m_flyWheel{m_drive};
-    HoodSubsystem m_hood{m_drive};
+    FlyWheelSubsystem m_flyWheel;
+    HoodSubsystem m_hood;
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder; 
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};

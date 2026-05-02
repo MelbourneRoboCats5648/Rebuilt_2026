@@ -14,7 +14,7 @@
 
 class HoodSubsystem : public frc2::SubsystemBase {
     public:
-    HoodSubsystem(DriveSubsystem& drive);
+    HoodSubsystem();
     void GoToAngle(units::degree_t angle);
     frc2::CommandPtr GoToAngleCommand(units::degree_t angle); // fixme - might need t remove later
     frc2::CommandPtr GoToAngleCommand();
@@ -40,6 +40,4 @@ class HoodSubsystem : public frc2::SubsystemBase {
     nt::DoublePublisher m_hoodAngleVelocityPub;
 
     bool m_isCalibrated = false;
-
-    DriveSubsystem& m_drive;
 };

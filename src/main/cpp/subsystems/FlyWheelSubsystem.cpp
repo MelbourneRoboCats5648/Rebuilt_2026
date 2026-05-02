@@ -14,10 +14,9 @@ using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
 
-FlyWheelSubsystem::FlyWheelSubsystem(DriveSubsystem& drive)
+FlyWheelSubsystem::FlyWheelSubsystem()
 : m_motor(HardwareConstants::kShooterFlywheelID, HardwareConstants::kPhoenixCAN),
-  m_follower(HardwareConstants::kShooterFlywheelFollowerID, HardwareConstants::kPhoenixCAN),
-  m_drive(drive)
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, HardwareConstants::kPhoenixCAN)
   {
     TalonFXConfiguration flyWheelMotorConfig = createMotorConfig();
     m_motor.GetConfigurator().Apply(flyWheelMotorConfig);

@@ -35,7 +35,7 @@ using namespace ctre::phoenix6::hardware;
 class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
-        FlyWheelSubsystem(DriveSubsystem& drive);
+        FlyWheelSubsystem();
         units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle); //fixme - might need to refactor
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
@@ -64,8 +64,6 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
 
         TalonFX m_motor;
         TalonFX m_follower;
-
-        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
 
         units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
 

@@ -1,8 +1,7 @@
 #include "subsystems/HoodSubsystem.h"
 #include "rev/config/SparkMaxConfig.h"
 
-HoodSubsystem::HoodSubsystem(DriveSubsystem& drive):
-m_drive(drive)
+HoodSubsystem::HoodSubsystem()
 {
     rev::spark::SparkMaxConfig angleMotorConfig;
     
