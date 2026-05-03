@@ -17,6 +17,7 @@
 #include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
 #include "subsystems/HoodSubsystem.h"
+#include <subsystems/ShooterSubsystem.h>
 
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -47,11 +48,12 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
-    FlyWheelSubsystem m_flyWheel{m_drive};
-    HoodSubsystem m_hood{m_drive};
+    FlyWheelSubsystem m_flyWheel;
+    HoodSubsystem m_hood;
     IntakeSubsystem m_intake{m_drive};
     FeederSubsystem m_feeder; 
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
+    ShooterSubsystem m_shooter{m_drive, m_flyWheel, m_hood, m_feeder, m_intake};
 
     void ConfigureBindings();
 

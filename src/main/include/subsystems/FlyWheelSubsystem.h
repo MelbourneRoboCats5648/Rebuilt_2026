@@ -21,7 +21,6 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 
-#include <subsystems/DriveSubsystem.h>
 #include <constants/FlyWheelConstants.h>
 
 using namespace units::velocity;
@@ -32,46 +31,29 @@ using namespace units::angular_velocity;
 using namespace ctre::phoenix6::configs;
 using namespace ctre::phoenix6::hardware;
 
-struct ShootSolution{
-    degree_t angle;
-    meters_per_second_t speed;
-};
-
-struct ShootOnTheMoveSolution{
-    ShootSolution shootSolution;
-    degree_t yawAngle;
-};
-
 class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
-        FlyWheelSubsystem(DriveSubsystem& drive);
-        units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
+        FlyWheelSubsystem();
+        units::turns_per_second_t CalculateFlyWheelSpeed(meters_per_second_t ballSpeed); //fixme - might need to refactor
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 
-        void Shoot(units::volt_t volts);
-        void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
+        void SpinFlyWheel(units::volt_t volts);
+        void SpinAtAngularVelocity(units::turns_per_second_t angularVelocity);
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
         units::turns_per_second_t GetTargetVelocity() const;
-        //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
-        ShootSolution CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
-
-        void SetTargetAngle(units::turn_t angle);
-
+        
         void Periodic() override;
 
         frc2::CommandPtr IncreaseFlywheelVelocity();
         frc2::CommandPtr DecreaseFlywheelVelocity();
         frc2::CommandPtr ResetFlywheelVelocity();
         
-        frc2::CommandPtr ShootCommand();
-
-        ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
+        frc2::CommandPtr SpinFlyWheelCommand();
 
     private:
-        meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
         meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
 
         double m_scaleFlywheelVelocity = FlyWheelConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
@@ -80,8 +62,6 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
 
         TalonFX m_motor;
         TalonFX m_follower;
-
-        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
 
         units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
 

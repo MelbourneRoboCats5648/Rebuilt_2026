@@ -14,10 +14,9 @@ using namespace units::math;
 using namespace ctre::phoenix6::controls;
 using namespace ctre::phoenix6::signals;
 
-FlyWheelSubsystem::FlyWheelSubsystem(DriveSubsystem& drive)
+FlyWheelSubsystem::FlyWheelSubsystem()
 : m_motor(HardwareConstants::kShooterFlywheelID, HardwareConstants::kPhoenixCAN),
-  m_follower(HardwareConstants::kShooterFlywheelFollowerID, HardwareConstants::kPhoenixCAN),
-  m_drive(drive)
+  m_follower(HardwareConstants::kShooterFlywheelFollowerID, HardwareConstants::kPhoenixCAN)
   {
     TalonFXConfiguration flyWheelMotorConfig = createMotorConfig();
     m_motor.GetConfigurator().Apply(flyWheelMotorConfig);
@@ -76,12 +75,6 @@ void FlyWheelSubsystem::Periodic() {
         // uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
-        units::meter_t distanceToTarget = m_drive.DistanceToTarget();
-        units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
-        
-        units::turns_per_second_t flywheelVelocity = CalculateFlyWheelSpeed(distanceToTarget, targetAngle);
-        SetTargetVelocity(flywheelVelocity); 
-
         //SetFlywheelVelocityAndAngle(distanceToTarget);
         //SetTargetVelocity(ShooterConstants::kMaxAngularVelocity);
 
@@ -98,11 +91,11 @@ void FlyWheelSubsystem::Periodic() {
 
 }
 
-void FlyWheelSubsystem::Shoot(units::volt_t volts){
+void FlyWheelSubsystem::SpinFlyWheel(units::volt_t volts){
     m_motor.SetVoltage(volts);
 }
 
-void FlyWheelSubsystem::ShootAngularVelocity(units::turns_per_second_t angularVelocity) {
+void FlyWheelSubsystem::SpinAtAngularVelocity(units::turns_per_second_t angularVelocity) {
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
     m_flyWheelTargetVelPub.Set(angularVelocity.value());
@@ -121,9 +114,9 @@ units::turns_per_second_t FlyWheelSubsystem::GetTargetVelocity() const{
     return m_targetVelocity;
 }
 
-frc2::CommandPtr FlyWheelSubsystem::ShootCommand() {
+frc2::CommandPtr FlyWheelSubsystem::SpinFlyWheelCommand() {
     return Run([this]{
-                ShootAngularVelocity(m_targetVelocity);
+                SpinAtAngularVelocity(m_targetVelocity);
             }).FinallyDo([this] { m_motor.StopMotor(); });
 }
 
@@ -195,11 +188,10 @@ void ShooterSubsystem::SetFlywheelVelocityAndAngle(meter_t distanceToTarget)
 
 */
 
-units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meter_t distance, degree_t angle) {
-    meters_per_second_t requiredSpeed = CalculateBallSpeed(distance, angle);
-    meters_per_second_t adjustedSpeed = AdjustedBallSpeed(requiredSpeed);
+units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_second_t ballSpeed) {
+    meters_per_second_t adjustedSpeed = AdjustedBallSpeed(ballSpeed);
 
-    m_requiredSpeed = requiredSpeed.value();
+    m_requiredSpeed = ballSpeed.value();
     m_adjustedSpeed = adjustedSpeed.value();
 
     double metresPerTurn = 2 * std::numbers::pi * FlyWheelConstants::kFlyWheelRadius.value();
@@ -209,20 +201,6 @@ units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meter_t dist
 // derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
 // done by rearranging the formula to find the speed for a given distance and angle 
 
-meters_per_second_t FlyWheelSubsystem::CalculateBallSpeed(meter_t distance, degree_t angle) {
-        auto cosine = cos(angle);
-        auto tangent = tan(angle);
-
-        meter_t adjustedHeight = FieldConstants::HubHeight - FlyWheelConstants::startHeight;
-
-        meters_per_second_t speed = 
-            sqrt(
-                (FieldConstants::gravity * pow<2>(distance)) /
-                (2 * pow<2>(cosine) * (distance * tangent - adjustedHeight))
-            );
-
-        return speed;
-}
 
 meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
     // coefficients found from curve fitting
@@ -234,61 +212,4 @@ meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t act
 
     meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
     return adjustedSpeed;
-}
-
-ShootSolution FlyWheelSubsystem::CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
-
-    meters_per_second_t horizontalBallSpeed =
-        ballSolution.speed * units::math::cos(ballSolution.angle);
-
-    meters_per_second_t verticalBallSpeed = 
-        ballSolution.speed * units::math::sin(ballSolution.angle);
-
-    meters_per_second_t compensatedHorizontalSpeed = 
-        horizontalBallSpeed - robotRadialSpeed;
-
-    meters_per_second_t compensatedVerticalSpeed = verticalBallSpeed;
-
-    meters_per_second_t compensatedBallSpeed = units::math::hypot(compensatedHorizontalSpeed, compensatedVerticalSpeed);
-
-    degree_t compensatedBallAngle =
-        atan2( 
-            compensatedVerticalSpeed, compensatedHorizontalSpeed
-        );
-
-    ShootSolution solution;
-    solution.angle = compensatedBallAngle;
-    solution.speed = compensatedBallSpeed; 
-
-    return solution;
-}
-
-ShootOnTheMoveSolution FlyWheelSubsystem::CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed) {
-    
-       units::meters_per_second_t requiredBallShootingSpeed = solution.speed;
-       units::degree_t requiredHoodAngle = solution.angle;
-    
-    
-    units::meters_per_second_t horizontalRadialBallSpeed = requiredBallShootingSpeed * cos(requiredHoodAngle);
-    
-    units::degree_t ballYawAngle = units::degree_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
-    units::degree_t compensatedYawAngle = -ballYawAngle;
-
-    meters_per_second_t verticalBallSpeed = horizontalRadialBallSpeed * sin(solution.angle);
-
-    // the horizontal component is the projection of the compensated ball vector onto the horizontal plane
-    meters_per_second_t horizontalComponent = units::math::hypot(horizontalRadialBallSpeed, robotTangentialSpeed);
-
-    meters_per_second_t compensatedSpeed = units::math::hypot(horizontalComponent, verticalBallSpeed);
-    degree_t compensatedAngle = degree_t(atan2(verticalBallSpeed.value(), horizontalComponent.value()));
-
-    ShootSolution shootSolution;
-    shootSolution.angle = compensatedAngle;
-    shootSolution.speed = compensatedSpeed;
-
-    ShootOnTheMoveSolution movingSolution;
-    movingSolution.shootSolution = shootSolution;
-    movingSolution.yawAngle = compensatedYawAngle;
-
-    return movingSolution;
 }

@@ -182,6 +182,21 @@ frc::Pose2d DriveSubsystem::GetPose()
     return m_poseEstimator.GetEstimatedPosition();
 }
 
+frc::Translation2d DriveSubsystem::GetTargetPosition()
+{
+    return m_targetPosition;
+}
+
+SpeedComponents DriveSubsystem::GetSpeedComponents()
+{
+    return FindSpeedComponents(GetPose(), GetTargetPosition(), GetVelocity());
+}
+
+void DriveSubsystem::SetYawAngle(degree_t shootingYawAngle)
+{
+    m_shootingYawAngle = shootingYawAngle;
+};
+
 void DriveSubsystem::ResetPose(frc::Pose2d pose)
 {
     m_poseEstimator.ResetPosition(frc::Rotation2d{GetGyroHeading()},
@@ -328,9 +343,9 @@ units::meter_t DriveSubsystem::DistanceToTarget()
     return GetPose().Translation().Distance(m_targetPosition);
 }
 
-SpeedComponents DriveSubsystem::FindSpeedComponents(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed)
+SpeedComponents DriveSubsystem::FindSpeedComponents(frc::Pose2d robotPose, frc::Translation2d targetPosition, frc::ChassisSpeeds chassisSpeed)
 {
-    frc::Translation2d vectorRadial = targetPose.Translation() - robotPose.Translation();
+    frc::Translation2d vectorRadial = targetPosition - robotPose.Translation();
 
     units::meter_t magVecToTarget = vectorRadial.Norm();
     frc::Translation2d unitVecRadial = vectorRadial / magVecToTarget.value();
