@@ -21,7 +21,6 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 
-#include <subsystems/DriveSubsystem.h>
 #include <constants/FlyWheelConstants.h>
 
 using namespace units::velocity;

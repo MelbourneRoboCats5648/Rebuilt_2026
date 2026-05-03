@@ -4,12 +4,14 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 
-#include <subsystems/DriveSubsystem.h>
+#include <constants/HardwareConstants.h>
 #include <constants/HoodConstants.h>
 
 #include <rev/SparkMax.h>
 
 #include <networktables/DoubleTopic.h>
+#include <networktables/StructArrayTopic.h>
+#include <networktables/StructTopic.h>
 
 
 class HoodSubsystem : public frc2::SubsystemBase {
@@ -27,7 +29,7 @@ class HoodSubsystem : public frc2::SubsystemBase {
     void Periodic() override;
 
     private:
-    degrees_per_second_t GetAngleVelocity();
+    units::degrees_per_second_t GetAngleVelocity();
     units::degree_t m_targetAngle{HoodConstants::kMaxAngle};
 
     rev::spark::SparkMax m_angleMotor{HardwareConstants::kShooterHoodID, rev::spark::SparkMax::MotorType::kBrushless};

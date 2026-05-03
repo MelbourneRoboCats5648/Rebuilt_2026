@@ -91,8 +91,8 @@ frc2::CommandPtr HoodSubsystem::SetTargetAngleCommand(units::degree_t angle) {
             });
 }
 
-degrees_per_second_t HoodSubsystem::GetAngleVelocity() {
-    return degrees_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
+units::degrees_per_second_t HoodSubsystem::GetAngleVelocity() {
+    return units::degrees_per_second_t{m_angleEncoder.GetVelocity() / 60}; // convert from RPM to turns per second
 }
 
 frc2::CommandPtr HoodSubsystem::RetractToLimitCommand() {
