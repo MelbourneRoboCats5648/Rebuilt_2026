@@ -192,6 +192,11 @@ SpeedComponents DriveSubsystem::GetSpeedComponents()
     return FindSpeedComponents(GetPose(), GetTargetPosition(), GetVelocity());
 }
 
+void DriveSubsystem::SetYawAngle(degree_t shootingYawAngle)
+{
+    m_shootingYawAngle = shootingYawAngle;
+};
+
 void DriveSubsystem::ResetPose(frc::Pose2d pose)
 {
     m_poseEstimator.ResetPosition(frc::Rotation2d{GetGyroHeading()},

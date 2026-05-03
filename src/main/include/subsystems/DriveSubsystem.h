@@ -92,6 +92,8 @@ public:
 
     SpeedComponents GetSpeedComponents();
 
+    void SetYawAngle(degree_t shootingYawAngle);
+
 
 private:
     bool IsBlueAlliance();
@@ -166,5 +168,5 @@ private:
     bool m_isFieldRelative = true;
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
-
+    units::degree_t m_shootingYawAngle = 0_deg;
 };

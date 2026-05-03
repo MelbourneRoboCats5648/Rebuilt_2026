@@ -26,7 +26,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr ShootCommandWithHood();
     frc2::CommandPtr ShootCommandWithFeeder(units::second_t feedTime);
 
-    ShootSolution CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
+    ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:

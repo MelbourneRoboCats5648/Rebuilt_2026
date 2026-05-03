@@ -56,20 +56,21 @@ void ShooterSubsystem::Periodic(){
     shootSolution.angle = targetAngle;
     shootSolution.speed = ballSpeed;
 
-
     SpeedComponents speedComponents = m_drive.GetSpeedComponents();
 
-    shootSolution = CompensateShootSolutionForRobotVelocity(shootSolution,speedComponents.radialSpeed);
+    shootSolution = CompensateForRadialSpeed(shootSolution,speedComponents.radialSpeed);
     ShootOnTheMoveSolution movingShootSolution = CompensateYawForTangentialSpeed(shootSolution, speedComponents.tangentialSpeed);
     
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(movingShootSolution.shootSolution.speed);
     units::turn_t compensatedAngle = movingShootSolution.shootSolution.angle;
+    units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
     
     m_hood.SetTargetAngle(compensatedAngle);
     m_flyWheel.SetTargetVelocity(flywheelVelocity);
+    m_drive.SetYawAngle(compensatedYawAngle);
 }
 
-ShootSolution ShooterSubsystem::CompensateShootSolutionForRobotVelocity(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
+ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
 
     meters_per_second_t horizontalBallSpeed =
         ballSolution.speed * units::math::cos(ballSolution.angle);
