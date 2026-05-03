@@ -70,6 +70,8 @@ public:
     /* odometry/pose estimation */
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
+    frc::Translation2d GetTargetPosition();
+
     void ResetPose(frc::Pose2d pose);
     void ResetHeading(degree_t heading);
     void ResetHeadingWithAlliance();
@@ -88,10 +90,13 @@ public:
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
 
-    SpeedComponents FindSpeedComponents(frc::Pose2d robotPose, frc::Pose2d targetPose, frc::ChassisSpeeds chassisSpeed);
+    SpeedComponents GetSpeedComponents();
+
 
 private:
     bool IsBlueAlliance();
+    SpeedComponents FindSpeedComponents(frc::Pose2d robotPose, frc::Translation2d targetPosition, frc::ChassisSpeeds chassisSpeed);
+
     Pigeon2 m_gyro{HardwareConstants::kGyroID, HardwareConstants::kPhoenixCAN};
 
     DriveModule m_frontLeftModule{
