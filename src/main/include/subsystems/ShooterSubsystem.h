@@ -20,19 +20,23 @@ struct ShootOnTheMoveSolution{
 
 class ShooterSubsystem : public frc2::SubsystemBase {
     public:
-    ShooterSubsystem(DriveSubsystem& drive, FlyWheelSubsystem& flyWheel, HoodSubsystem& hood, FeederSubsystem& feeder, IntakeSubsystem& intake);
+    ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intake);
     void Periodic() override;
     frc2::CommandPtr ShootCommand();
     frc2::CommandPtr ShootCommandWithHood();
     frc2::CommandPtr ShootCommandWithFeeder(units::second_t feedTime);
 
+    frc2::CommandPtr RetractHoodToLimitCommand();
+    frc2::CommandPtr SetHoodTargetAngleCommand(units::degree_t angle);
+
     ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:
-    FlyWheelSubsystem& m_flyWheel;
-    HoodSubsystem& m_hood;
-    FeederSubsystem& m_feeder;
+    FlyWheelSubsystem m_flyWheel;
+    HoodSubsystem m_hood;
+    FeederSubsystem m_feeder;
+
     IntakeSubsystem& m_intake;
     DriveSubsystem& m_drive;
 

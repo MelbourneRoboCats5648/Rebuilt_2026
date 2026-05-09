@@ -48,12 +48,9 @@ private:
 
     // The robot's subsystems are defined here...
     DriveSubsystem m_drive;
-    FlyWheelSubsystem m_flyWheel;
-    HoodSubsystem m_hood;
     IntakeSubsystem m_intake{m_drive};
-    FeederSubsystem m_feeder; 
     VisionSubsystem m_vision{m_drive.GetPoseEstimator()};
-    ShooterSubsystem m_shooter{m_drive, m_flyWheel, m_hood, m_feeder, m_intake};
+    ShooterSubsystem m_shooter{m_drive, m_intake};
 
     void ConfigureBindings();
 
