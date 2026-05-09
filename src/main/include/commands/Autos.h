@@ -8,11 +8,8 @@
 
 #include "subsystems/ExampleSubsystem.h"
 #include <subsystems/DriveSubsystem.h>
-#include <subsystems/FeederSubsystem.h>
 #include <subsystems/IntakeSubsystem.h>
-#include <subsystems/FlyWheelSubsystem.h>//fix me - might need to remove 
 #include <subsystems/ShooterSubsystem.h>
-#include <subsystems/HoodSubsystem.h>
 
 namespace autos {
 
