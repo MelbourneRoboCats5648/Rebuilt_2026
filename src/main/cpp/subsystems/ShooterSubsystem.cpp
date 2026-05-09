@@ -127,3 +127,7 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
 frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
     return m_hood.RetractToLimitCommand();
 }
+
+frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t angle) {
+    return m_hood.SetTargetAngleCommand(angle);
+}

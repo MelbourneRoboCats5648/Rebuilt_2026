@@ -106,8 +106,8 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 
-    //m_mechController.X().OnTrue(m_hood.SetTargetAngleCommand(HoodConstants::kMinAngle));
-    //_mechController.Y().OnTrue(m_hood.SetTargetAngleCommand(HoodConstants::kMaxAngle));
+    m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
+    m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
 
 
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
