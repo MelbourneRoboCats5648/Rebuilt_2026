@@ -2,11 +2,8 @@
 
 using namespace units::math;
 
-ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive, FlyWheelSubsystem& flyWheel, HoodSubsystem& hood, FeederSubsystem& feeder, IntakeSubsystem& intake)
-: m_flyWheel(flyWheel),
-  m_hood(hood),
-  m_feeder(feeder),
-  m_intake (intake),
+ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intake)
+: m_intake (intake),
   m_drive(drive)
 {
 
@@ -125,4 +122,8 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     movingSolution.yawAngle = compensatedYawAngle;
 
     return movingSolution;
+}
+
+frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
+    return m_hood.RetractToLimitCommand();
 }
