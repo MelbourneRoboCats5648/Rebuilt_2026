@@ -1,88 +1,44 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <frc2/command/CommandPtr.h>
 
-#include "units/velocity.h"
-#include "units/angle.h"
-#include "units/length.h"
-#include "units/angular_velocity.h"
-
-#include <ctre/phoenix6/TalonFX.hpp>
-#include <rev/SparkMax.h>
-
-#include <constants/HardwareConstants.h>
-
-#include <networktables/StructArrayTopic.h>
-#include <networktables/StructTopic.h>
-
-#include <networktables/NetworkTableInstance.h>
-#include <networktables/DoubleTopic.h>
-#include <frc/geometry/Pose2d.h>
-#include <frc/geometry/Translation2d.h>
-
+#include <subsystems/FlyWheelSubsystem.h>
+#include <subsystems/HoodSubsystem.h>
+#include <subsystems/FeederSubsystem.h>
+#include <subsystems/IntakeSubsystem.h>
 #include <subsystems/DriveSubsystem.h>
-#include <constants/ShooterConstants.h>
 
-using namespace units::velocity;
-using namespace units::angle;
-using namespace units::length;
-using namespace units::angular_velocity;
+struct ShootSolution{
+    degree_t angle;
+    meters_per_second_t speed;
+};
 
-using namespace ctre::phoenix6::configs;
-using namespace ctre::phoenix6::hardware;
+struct ShootOnTheMoveSolution{
+    ShootSolution shootSolution;
+    degree_t yawAngle;
+};
 
 class ShooterSubsystem : public frc2::SubsystemBase {
-
     public:
-        ShooterSubsystem(DriveSubsystem& drive);
-        units::turns_per_second_t CalculateFlyWheelSpeed(meter_t distance, degree_t angle);
+    ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intake);
+    void Periodic() override;
+    frc2::CommandPtr ShootCommand();
+    frc2::CommandPtr ShootCommandWithHood();
+    frc2::CommandPtr ShootCommandWithFeeder(units::second_t feedTime);
 
-        frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
+    frc2::CommandPtr RetractHoodToLimitCommand();
+    frc2::CommandPtr SetHoodTargetAngleCommand(units::degree_t angle);
 
-        void Shoot(units::volt_t volts);
-        void ShootAngularVelocity(units::turns_per_second_t angularVelocity);
-
-        void SetTargetVelocity(units::turns_per_second_t velocity);
-        units::turns_per_second_t GetTargetVelocity() const;
-        //void SetFlywheelVelocityAndAngle(meter_t distanceToTarget);
-
-        void Periodic() override;
-
-        frc2::CommandPtr IncreaseFlywheelVelocity();
-        frc2::CommandPtr DecreaseFlywheelVelocity();
-        frc2::CommandPtr ResetFlywheelVelocity();
-        
-        frc2::CommandPtr ShootCommand();
+    ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
+    ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
     private:
-        meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
-        meters_per_second_t AdjustedBallSpeed(meters_per_second_t actualSpeed); // based on measurement of the 'theoretical ball speed' found in function above
+    FlyWheelSubsystem m_flyWheel;
+    HoodSubsystem m_hood;
+    FeederSubsystem m_feeder;
 
-        double m_scaleFlywheelVelocity = ShooterConstants::kDefaultFlywheelVelocityScaling; // default is scaling by unity (no change in speed)
+    IntakeSubsystem& m_intake;
+    DriveSubsystem& m_drive;
 
-        TalonFXConfiguration createMotorConfig();
-
-        TalonFX m_motor;
-        TalonFX m_follower;
-
-        DriveSubsystem& m_drive; // for retrieving pose only; not required in commands
-
-        units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
-
-        nt::DoublePublisher m_rotorVelPub;
-        nt::DoublePublisher m_motorWheelVelPub;
-        nt::DoublePublisher m_followerMotorWheelVelPub;
-        nt::DoublePublisher m_motorCurrentPub;
-        nt::DoublePublisher m_followerMotorCurrentPub;
-
-        nt::DoublePublisher m_shooterVoltagePub;
-        nt::DoublePublisher m_shooterTargetVelPub;
-
-        // shooter speed debugging
-        nt::DoublePublisher m_requiredSpedPub;
-        nt::DoublePublisher m_adjustedSpeedPub;
-        
-        double m_requiredSpeed;
-        double m_adjustedSpeed;        
+    meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
 };

@@ -30,6 +30,12 @@ using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
 using namespace DrivetrainConstants;
 
+//this stores the radial and tangential speeds
+struct SpeedComponents {
+    meters_per_second_t radialSpeed;
+    meters_per_second_t tangentialSpeed;
+};
+
 class DriveSubsystem : public frc2::SubsystemBase {
 public:
     /* constructor */
@@ -64,6 +70,8 @@ public:
     /* odometry/pose estimation */
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
+    frc::Translation2d GetTargetPosition();
+
     void ResetPose(frc::Pose2d pose);
     void ResetHeading(degree_t heading);
     void ResetHeadingWithAlliance();
@@ -82,8 +90,15 @@ public:
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
 
+    SpeedComponents GetSpeedComponents();
+
+    void SetYawAngle(degree_t shootingYawAngle);
+
+
 private:
     bool IsBlueAlliance();
+    SpeedComponents FindSpeedComponents(frc::Pose2d robotPose, frc::Translation2d targetPosition, frc::ChassisSpeeds chassisSpeed);
+
     Pigeon2 m_gyro{HardwareConstants::kGyroID, HardwareConstants::kPhoenixCAN};
 
     DriveModule m_frontLeftModule{
@@ -153,5 +168,5 @@ private:
     bool m_isFieldRelative = true;
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
-
+    units::degree_t m_shootingYawAngle = 0_deg;
 };

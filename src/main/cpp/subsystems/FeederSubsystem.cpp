@@ -2,7 +2,7 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-#include <constants/ShooterConstants.h>
+#include <constants/FlyWheelConstants.h>
 #include <constants/HardwareConstants.h>
 
 FeederSubsystem::FeederSubsystem()
@@ -13,7 +13,7 @@ FeederSubsystem::FeederSubsystem()
     rev::spark::SparkMaxConfig motorConfig;
 
     motorConfig
-    .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
+    .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
     .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
     .Inverted(true);
     
@@ -25,7 +25,7 @@ FeederSubsystem::FeederSubsystem()
 
     rev::spark::SparkMaxConfig leaderSideConfig;
     leaderSideConfig
-        .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
+        .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
         .Inverted(true);
     m_leaderSideMotor.Configure(
@@ -36,7 +36,7 @@ FeederSubsystem::FeederSubsystem()
 
     rev::spark::SparkMaxConfig followerSideConfig;
     followerSideConfig
-        .SmartCurrentLimit(ShooterConstants::kCurrentLimit)
+        .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
         // .Follow(m_leaderSideMotor, true); // inverted from leader
     m_followerSideMotor.Configure(
@@ -47,9 +47,9 @@ FeederSubsystem::FeederSubsystem()
 }
 
 void FeederSubsystem::Feed() {
-    m_motor.SetVoltage(ShooterConstants::kFeederVoltage);
-    m_leaderSideMotor.SetVoltage(ShooterConstants::kSideFeederVoltage);
-    m_followerSideMotor.SetVoltage(ShooterConstants::kSideFeederVoltage);
+    m_motor.SetVoltage(FlyWheelConstants::kFeederVoltage);
+    m_leaderSideMotor.SetVoltage(FlyWheelConstants::kSideFeederVoltage);
+    m_followerSideMotor.SetVoltage(FlyWheelConstants::kSideFeederVoltage);
 }
 
 void FeederSubsystem::Stop() {
