@@ -73,12 +73,20 @@ void RobotContainer::ConfigureBindings() {
                 ySpeed *= -1.0;
             }
 
-            radians_per_second_t rotSpeed = m_rotLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetRightX())
-                * DrivetrainConstants::kMaxAngularSpeed
-            );
+            radians_per_second_t rotSpeed;
+
+            if (m_alignToHeading) {
+                rotSpeed = radians_per_second_t{m_drive.GetThetaController().Calculate(m_drive.GetHeading())};
+
+            } else {
+                rotSpeed = m_rotLimiter.Calculate(
+                           PreprocessJoystickInput(-m_driverController.GetRightX())
+                           * DrivetrainConstants::kMaxAngularSpeed
+                           );
+            }
 
             m_drive.Drive(xSpeed, ySpeed, rotSpeed);
+
 
             if (m_drive.IsFieldCentric()) {
                 std::cout << "FIELD RELATIVE    ";
@@ -97,6 +105,11 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.B().OnTrue(frc2::cmd::RunOnce([this] {
         m_invertControls = !m_invertControls;
+    }));
+
+    m_driverController.A().OnTrue(frc2::cmd::RunOnce([this] {
+        m_drive.GetThetaController().Reset(m_drive.GetHeading());
+        m_alignToHeading = !m_alignToHeading;
     }));
 
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM

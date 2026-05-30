@@ -71,6 +71,7 @@ public:
     frc::SwerveDrivePoseEstimator<4>& GetPoseEstimator();
     frc::Pose2d GetPose();
     frc::Translation2d GetTargetPosition();
+    frc::ProfiledPIDController<units::radians>& GetThetaController();
 
     void ResetPose(frc::Pose2d pose);
     void ResetHeading(degree_t heading);
@@ -93,7 +94,7 @@ public:
     SpeedComponents GetSpeedComponents();
 
     void SetYawAngle(degree_t shootingYawAngle);
-
+    degree_t GetYawAngle();
 
 private:
     bool IsBlueAlliance();

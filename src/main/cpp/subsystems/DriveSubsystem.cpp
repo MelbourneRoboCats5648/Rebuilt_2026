@@ -112,6 +112,11 @@ degree_t DriveSubsystem::GetHeading()
     return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
+frc::ProfiledPIDController<units::radians>& DriveSubsystem::GetThetaController(){
+    return m_thetaController;
+}
+
+
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed, bool teleop)
 {
     Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative, teleop);
@@ -195,7 +200,12 @@ SpeedComponents DriveSubsystem::GetSpeedComponents()
 void DriveSubsystem::SetYawAngle(degree_t shootingYawAngle)
 {
     m_shootingYawAngle = shootingYawAngle;
-};
+}
+
+degree_t DriveSubsystem::GetYawAngle()
+{
+    return m_shootingYawAngle;
+}
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose)
 {
