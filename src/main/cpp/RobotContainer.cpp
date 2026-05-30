@@ -109,8 +109,16 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.A().OnTrue(frc2::cmd::RunOnce([this] {
         m_drive.GetThetaController().Reset(m_drive.GetHeading());
-        m_alignToHeading = !m_alignToHeading;
+        m_drive.GetThetaController().SetGoal(m_drive.GetYawAngle());
+        m_alignToHeading = true;
     }));
+
+    m_driverController.A().OnFalse(frc2::cmd::RunOnce([this] {
+        m_drive.GetThetaController().Reset(m_drive.GetHeading());
+        m_alignToHeading = false;
+    }));
+
+    
 
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
