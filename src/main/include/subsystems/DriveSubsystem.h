@@ -84,8 +84,10 @@ public:
     frc2::CommandPtr FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory);
 
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
+    frc2::CommandPtr DriveAlignHeadingCommand(std::function<radian_t()> headingLambda, std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda);
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
     frc2::CommandPtr AlignToTargetCommand();
+    frc2::CommandPtr DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda);
 
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();

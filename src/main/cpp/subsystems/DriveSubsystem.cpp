@@ -304,10 +304,33 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
                    });
 }
 
+frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommand(std::function<radian_t()> headingLambda, std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
+{
+    return RunOnce([this, headingLambda]
+                   {
+                       radian_t heading = headingLambda();
+                       m_thetaController.Reset(GetHeading());
+                       m_thetaController.SetGoal(heading); // velocity = 0 by default
+                   })
+        .AndThen(Run([this, xSpeedLambda, ySpeedLambda]
+                     {
+            meters_per_second_t x = xSpeedLambda();
+            meters_per_second_t y = ySpeedLambda();            
+            radians_per_second_t angularRate{m_thetaController.Calculate(GetHeading())};
+            Drive(x, y, angularRate, false, false); })
+                     .Until([this]
+                            { return m_thetaController.AtGoal(); }))
+        .FinallyDo([this]
+                   {
+                       Stop();
+                       m_thetaController.Reset(GetHeading()); // optional, but just to be safe here
+                   });
+}
+
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading)
 {
-    return AlignHeadingCommand([heading]
-                               { return heading; });
+    std::function<radian_t()> headingLambda = [heading] { return heading; };
+    return AlignHeadingCommand(headingLambda);
 }
 
 units::radian_t DriveSubsystem::HeadingToTarget()
@@ -321,6 +344,12 @@ frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 {
     return AlignHeadingCommand([this]
                                { return HeadingToTarget(); });
+}
+
+frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
+{
+    std::function<radian_t()> headingLambda = [this] { return HeadingToTarget(); };
+    return DriveAlignHeadingCommand(headingLambda, xSpeedLambda, ySpeedLambda);
 }
 
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
