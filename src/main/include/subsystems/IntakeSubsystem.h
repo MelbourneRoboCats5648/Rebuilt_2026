@@ -52,32 +52,32 @@ private:
 
     void ConfigurePublishers();
 
-    rev::spark::SparkMax m_extendRetractMotor;
-    rev::spark::SparkRelativeEncoder m_extendRetractEncoder = m_extendRetractMotor.GetEncoder();
+    // rev::spark::SparkMax m_extendRetractMotor;
+    // rev::spark::SparkRelativeEncoder m_extendRetractEncoder = m_extendRetractMotor.GetEncoder();
 
-    rev::spark::SparkMax m_followerExtendRetractMotor;
+    // rev::spark::SparkMax m_followerExtendRetractMotor;
 
     rev::spark::SparkMax m_intakeMotor;
     rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
 
-    frc::ElevatorFeedforward m_extendRetractFeedforward;
-    frc::ProfiledPIDController<units::meter> m_extendPID;
-    frc::ProfiledPIDController<units::meter> m_retractPID;
-    bool m_isRetracting = false;
+    // frc::ElevatorFeedforward m_extendRetractFeedforward;
+    // frc::ProfiledPIDController<units::meter> m_extendPID;
+    // frc::ProfiledPIDController<units::meter> m_retractPID;
+    // bool m_isRetracting = false;
 
     frc::SimpleMotorFeedforward<units::turns> m_intakeFeedforward;
     frc::PIDController m_intakePID; // NOTE: do we need profiling (i.e. acceleration constraints) for intake?
 
-    // publishers
-    nt::DoublePublisher m_extendRetractPositionPub;
-    nt::DoublePublisher m_extendRetractVelocityPub;
-    nt::DoublePublisher m_extendRetractTargetPositionPub;
-    nt::DoublePublisher m_extendRetractTargetVelocityPub;
-    nt::DoublePublisher m_extendRetractMotorCurrentPub;
-    nt::DoublePublisher m_followerExtendRetractMotorCurrentPub;
+    //// publishers
+    // nt::DoublePublisher m_extendRetractPositionPub;
+    // nt::DoublePublisher m_extendRetractVelocityPub;
+    // nt::DoublePublisher m_extendRetractTargetPositionPub;
+    // nt::DoublePublisher m_extendRetractTargetVelocityPub;
+    // nt::DoublePublisher m_extendRetractMotorCurrentPub;
+    // nt::DoublePublisher m_followerExtendRetractMotorCurrentPub;
     nt::DoublePublisher m_intakeVelocityPub;
     nt::DoublePublisher m_intakeVoltagePub;
-    nt::DoublePublisher m_extendRetractVoltagePub;
+    //nt::DoublePublisher m_extendRetractVoltagePub;
 
     DriveSubsystem& m_drive; // for retrieving forward speed only; not required in commands
 };

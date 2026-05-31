@@ -28,19 +28,19 @@ RobotContainer::RobotContainer() {
     m_autoNone = frc2::cmd::RunOnce([this] {
         m_drive.ResetHeadingWithAlliance();
     });
-    m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_shooter);
-    m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_intake, &m_shooter);
-    m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_shooter);
-    m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_shooter);
-    m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_shooter);
+    // m_SCR_ShootTrench = autos::ChoreoShootTrench(&m_drive, &m_intake, &m_shooter);
+    // m_SCR_ShootFromLeft = autos::ChoreoShootFromLeft(&m_drive, &m_intake, &m_shooter);
+    // m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_shooter);
+    // m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_shooter);
+    // m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_shooter);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
-    m_chooser.AddOption("Playoff Auto", m_SCR_PlayoffAuto.value().get());
-    m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
-    m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
-    m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
-    m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
+    // m_chooser.AddOption("Playoff Auto", m_SCR_PlayoffAuto.value().get());
+    // m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
+    // m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
+    // m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
+    // m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
@@ -101,8 +101,8 @@ void RobotContainer::ConfigureBindings() {
 
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
-    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
-    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+    // m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+    // m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
     m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 

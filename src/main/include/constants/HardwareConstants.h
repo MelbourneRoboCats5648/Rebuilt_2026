@@ -36,8 +36,8 @@ namespace HardwareConstants {
     inline constexpr int kShooterHoodID = 18;
 
     // Intake Motors
-    inline constexpr int kExtendRetractMotorID = 19; 
-    inline constexpr int kFollowerExtendRetractMotorID = 35; // changed to random number
+    //inline constexpr int kExtendRetractMotorID = 19; 
+    //inline constexpr int kFollowerExtendRetractMotorID = 35; // changed to random number
     inline constexpr int kIntakeMotorID = 21;
 
 };
