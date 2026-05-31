@@ -348,7 +348,7 @@ frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 
 frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
 {
-    std::function<radian_t()> headingLambda = [this] { return HeadingToTarget(); };
+    std::function<radian_t()> headingLambda = [this] { return HeadingToTarget() + m_shootingYawAngle; }; //fixme - should get yaw angle through getter
     return DriveAlignHeadingCommand(headingLambda, xSpeedLambda, ySpeedLambda);
 }
 
