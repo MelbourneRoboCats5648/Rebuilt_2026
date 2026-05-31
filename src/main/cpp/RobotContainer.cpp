@@ -106,8 +106,8 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 
-    m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
-    m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
+    // m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
+    // m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
 
 
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
@@ -153,7 +153,7 @@ void RobotContainer::ConfigureBindings() {
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
+    //m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));

@@ -1,9 +1,11 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/CommandPtr.h>
+#include <frc2/command/Commands.h>
 
 #include <subsystems/FlyWheelSubsystem.h>
-#include <subsystems/HoodSubsystem.h>
+//#include <subsystems/HoodSubsystem.h>
 #include <subsystems/FeederSubsystem.h>
 #include <subsystems/IntakeSubsystem.h>
 #include <subsystems/DriveSubsystem.h>
@@ -34,7 +36,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
     private:
     FlyWheelSubsystem m_flyWheel;
-    HoodSubsystem m_hood;
+    //HoodSubsystem m_hood;
     FeederSubsystem m_feeder;
 
     IntakeSubsystem& m_intake;

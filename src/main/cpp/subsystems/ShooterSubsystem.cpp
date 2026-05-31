@@ -16,13 +16,13 @@ frc2::CommandPtr ShooterSubsystem::ShootCommand() {
     );
 }
 
-frc2::CommandPtr ShooterSubsystem::ShootCommandWithHood() {
-    return frc2::cmd::Parallel(
-        m_flyWheel.SpinFlyWheelCommand(),
-        m_hood.GoToAngleCommand(),
-        frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(m_feeder.FeedCommand())
-    );
-}
+// frc2::CommandPtr ShooterSubsystem::ShootCommandWithHood() {
+//     return frc2::cmd::Parallel(
+//         m_flyWheel.SpinFlyWheelCommand(),
+//         m_hood.GoToAngleCommand(),
+//         frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(m_feeder.FeedCommand())
+//     );
+// }
 
 frc2::CommandPtr ShooterSubsystem::ShootCommandWithFeeder(units::second_t feedTime) {
     return ShootCommand().WithTimeout(FlyWheelConstants::kRampTime + feedTime);
@@ -62,7 +62,7 @@ void ShooterSubsystem::Periodic(){
     units::turn_t compensatedAngle = movingShootSolution.shootSolution.angle;
     units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
     
-    m_hood.SetTargetAngle(compensatedAngle);
+    //m_hood.SetTargetAngle(compensatedAngle);
     m_flyWheel.SetTargetVelocity(flywheelVelocity);
     m_drive.SetYawAngle(compensatedYawAngle);
 }
@@ -124,10 +124,10 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     return movingSolution;
 }
 
-frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
-    return m_hood.RetractToLimitCommand();
-}
+// frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
+//     return m_hood.RetractToLimitCommand();
+// }
 
-frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t angle) {
-    return m_hood.SetTargetAngleCommand(angle);
-}
+// frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t angle) {
+//     return m_hood.SetTargetAngleCommand(angle);
+// }

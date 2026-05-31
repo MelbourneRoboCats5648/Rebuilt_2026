@@ -16,7 +16,7 @@
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
 #include "subsystems/FeederSubsystem.h"
-#include "subsystems/HoodSubsystem.h"
+//#include "subsystems/HoodSubsystem.h"
 #include <subsystems/ShooterSubsystem.h>
 
 #include <frc/filter/SlewRateLimiter.h>

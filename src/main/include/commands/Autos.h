@@ -21,7 +21,7 @@ void LoadTrajectories(); // to be called during RobotContainer init BEFORE using
 frc2::CommandPtr ExampleAuto(ExampleSubsystem* subsystem);
 
 frc2::CommandPtr ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder);
-frc2::CommandPtr ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, HoodSubsystem* hood);
+//frc2::CommandPtr ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, HoodSubsystem* hood);
 frc2::CommandPtr ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsystem* feeder, units::second_t feedTime);
 
 frc2::CommandPtr ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj);

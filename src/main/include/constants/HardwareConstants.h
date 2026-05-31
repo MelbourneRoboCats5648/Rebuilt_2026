@@ -33,7 +33,7 @@ namespace HardwareConstants {
     inline constexpr int kShooterLeaderSideFeederID = 22; // should be 22, leader side right 
     inline constexpr int kShooterFollowerSideFeederID = 25; //follower side left 
 
-    inline constexpr int kShooterHoodID = 18;
+    //inline constexpr int kShooterHoodID = 18;
 
     // Intake Motors
     //inline constexpr int kExtendRetractMotorID = 19; 
