@@ -105,8 +105,8 @@ void RobotContainer::ConfigureBindings() {
     // m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
     //units::turns_per_second_t velocity
-    //m_mechController.A().WhileTrue(m_intake.IntakeCommand(10_tps));
-    m_mechController.A().WhileTrue(m_intake.IntakeVoltageCommand(8_V));
+    m_mechController.A().WhileTrue(m_intake.IntakeCommand(19_tps));
+    //m_mechController.A().WhileTrue(m_intake.IntakeVoltageCommand(10_V));
 
     // m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     // m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
@@ -156,6 +156,9 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
     //m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
+    //m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithFeeder(3_s));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommand());
+
 
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));
