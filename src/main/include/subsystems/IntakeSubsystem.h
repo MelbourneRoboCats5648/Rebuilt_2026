@@ -40,6 +40,7 @@ public:
     void SetIntakeVoltage(units::volt_t voltage);
     void SetExtendRetractVoltage(units::volt_t voltage);
 
+    frc2::CommandPtr IntakeVoltageCommand(units::volt_t voltage);
     frc2::CommandPtr IntakeCommand(units::turns_per_second_t velocity);
     frc2::CommandPtr IntakeCommand(); // maintain desired speed, calculaed by CalculateIntakeSpeed
 

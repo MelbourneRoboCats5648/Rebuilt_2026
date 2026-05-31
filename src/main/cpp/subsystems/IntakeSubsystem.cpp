@@ -214,6 +214,12 @@ void IntakeSubsystem::StopIntake() {
     m_intakeMotor.SetVoltage(0.0_V); // should set the motor to coast
 }
 
+frc2::CommandPtr IntakeSubsystem::IntakeVoltageCommand(units::volt_t voltage) {
+    return Run(
+        [this, voltage] { m_intakeMotor.SetVoltage(voltage); }
+        ).FinallyDo([this] { StopIntake(); });
+}
+
 frc2::CommandPtr IntakeSubsystem::IntakeCommand(units::turns_per_second_t velocity) {
     return StartRun(
         [this, velocity] { SetIntakeVelocity(velocity); },

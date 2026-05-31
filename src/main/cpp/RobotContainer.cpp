@@ -104,7 +104,9 @@ void RobotContainer::ConfigureBindings() {
     // m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     // m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
+    //units::turns_per_second_t velocity
+    //m_mechController.A().WhileTrue(m_intake.IntakeCommand(10_tps));
+    m_mechController.A().WhileTrue(m_intake.IntakeVoltageCommand(8_V));
 
     // m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     // m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
