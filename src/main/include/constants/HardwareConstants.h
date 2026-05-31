@@ -29,15 +29,15 @@ namespace HardwareConstants {
     inline constexpr int kShooterFlywheelFollowerID = 16;
 
     // feeder
-    inline constexpr int kShooterFeederID = 17;
-    inline constexpr int kShooterLeaderSideFeederID = 24;
-    inline constexpr int kShooterFollowerSideFeederID = 25;
+    inline constexpr int kShooterFeederID = 20; //should be 20
+    inline constexpr int kShooterLeaderSideFeederID = 22; // should be 22, leader side right 
+    inline constexpr int kShooterFollowerSideFeederID = 25; //follower side left 
 
     inline constexpr int kShooterHoodID = 18;
 
     // Intake Motors
     inline constexpr int kExtendRetractMotorID = 19; 
-    inline constexpr int kFollowerExtendRetractMotorID = 20; 
-    inline constexpr int kIntakeMotorID = 23;
+    inline constexpr int kFollowerExtendRetractMotorID = 35; // changed to random number
+    inline constexpr int kIntakeMotorID = 21;
 
 };
