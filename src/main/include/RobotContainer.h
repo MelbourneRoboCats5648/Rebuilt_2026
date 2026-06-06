@@ -80,4 +80,6 @@ private:
     frc::SendableChooser<frc2::Command*> m_chooser;
 
     bool m_invertControls = false;
+
+    frc2::CommandPtr RumbleControllerCommand();
 };

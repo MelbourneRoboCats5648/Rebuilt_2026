@@ -99,8 +99,7 @@ void RobotContainer::ConfigureBindings() {
         m_invertControls = !m_invertControls;
     }));
 
-    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
-    
+    frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
     m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
@@ -109,6 +108,7 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
 
+    FuelStuckInFeederTrigger.Debounce(2_s).OnTrue(RumbleControllerCommand());
 
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
@@ -149,6 +149,7 @@ void RobotContainer::ConfigureBindings() {
     //m_mechController.Y().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMaxAngle).Repeatedly());
 
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
+    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
@@ -162,3 +163,14 @@ void RobotContainer::ConfigureBindings() {
 frc2::Command* RobotContainer::GetAutonomousCommand() {
     return m_chooser.GetSelected();
 }
+
+frc2::CommandPtr RobotContainer::RumbleControllerCommand() {
+    return frc2::cmd::RunOnce([this]
+                   {m_mechController.SetRumble(frc::GenericHID::kBothRumble, 1.0);})
+
+            .AndThen(frc2::cmd::Wait(0.5_s))
+
+            .AndThen(frc2::cmd::RunOnce([this] {
+            m_mechController.SetRumble(frc::GenericHID::kBothRumble, 0.0);
+            }));
+};

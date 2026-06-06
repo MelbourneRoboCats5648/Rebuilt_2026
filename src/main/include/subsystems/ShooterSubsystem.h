@@ -32,6 +32,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
+    bool IsStalling();
+    
     private:
     FlyWheelSubsystem m_flyWheel;
     HoodSubsystem m_hood;

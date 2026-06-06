@@ -131,3 +131,7 @@ frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
 frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t angle) {
     return m_hood.SetTargetAngleCommand(angle);
 }
+
+bool ShooterSubsystem::IsStalling() {
+    return m_feeder.IsStalling();
+}

@@ -62,3 +62,21 @@ frc2::CommandPtr FeederSubsystem::FeedCommand() {
     return Run([this] { Feed(); })
         .FinallyDo([this] { Stop(); });
 }
+
+// frc2::CommandPtr FeederSubsystem::IsStalling() {
+//     return RunOnce([this]{if(m_leaderSideMotor.GetOutputCurrent() > 20.0 && m_followerSideMotor.GetOutputCurrent() > 20.0){
+//         timer.Reset();
+//     }
+//     } { else (return false;)})
+
+//     .AndThen(frc2::cmd::WaitUntil([this]{return timer.Get() > 2_s;}))
+//     .AndThen(RunOnce([this]{
+//             if(m_leaderSideMotor.GetOutputCurrent() > 20.0 && m_followerSideMotor.GetOutputCurrent() > 20.0){
+//                 return true;
+//             }
+//     }));
+// }
+
+bool FeederSubsystem::IsStalling(){
+     return m_leaderSideMotor.GetOutputCurrent() > 20.0 && m_followerSideMotor.GetOutputCurrent() > 20.0;
+}
