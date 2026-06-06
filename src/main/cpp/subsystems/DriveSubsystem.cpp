@@ -197,6 +197,11 @@ void DriveSubsystem::SetYawAngle(degree_t shootingYawAngle)
     m_shootingYawAngle = shootingYawAngle;
 };
 
+degree_t DriveSubsystem::GetYawAngle()
+{
+    return m_shootingYawAngle;
+};
+
 void DriveSubsystem::ResetPose(frc::Pose2d pose)
 {
     m_poseEstimator.ResetPosition(frc::Rotation2d{GetGyroHeading()},
@@ -348,7 +353,7 @@ frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 
 frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
 {
-    std::function<radian_t()> headingLambda = [this] { return HeadingToTarget() + m_shootingYawAngle; }; //fixme - should get yaw angle through getter
+    std::function<radian_t()> headingLambda = [this] { return HeadingToTarget() + GetYawAngle(); };
     return DriveAlignHeadingCommand(headingLambda, xSpeedLambda, ySpeedLambda);
 }
 

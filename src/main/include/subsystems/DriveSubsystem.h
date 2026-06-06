@@ -96,7 +96,6 @@ public:
 
     void SetYawAngle(degree_t shootingYawAngle);
 
-
 private:
     bool IsBlueAlliance();
     SpeedComponents FindSpeedComponents(frc::Pose2d robotPose, frc::Translation2d targetPosition, frc::ChassisSpeeds chassisSpeed);
@@ -171,4 +170,6 @@ private:
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
     units::degree_t m_shootingYawAngle = 0_deg;
+
+    degree_t GetYawAngle();
 };
