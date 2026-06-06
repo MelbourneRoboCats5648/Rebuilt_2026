@@ -128,6 +128,15 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
 //     return m_hood.RetractToLimitCommand();
 // }
 
+
 // frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t angle) {
 //     return m_hood.SetTargetAngleCommand(angle);
 // }
+
+frc2::CommandPtr ShooterSubsystem::IncreaseFeederVoltageDifference() {
+    return m_feeder.IncreaseFeederVoltageDifference();
+}
+
+frc2::CommandPtr ShooterSubsystem::DecreaseFeederVoltageDifference() {
+    return m_feeder.DecreaseFeederVoltageDifference();
+}
