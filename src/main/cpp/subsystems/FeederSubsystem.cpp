@@ -3,6 +3,7 @@
 #include <rev/config/SparkMaxConfig.h>
 
 #include <constants/FlyWheelConstants.h>
+#include <constants/FeederConstants.h>
 #include <constants/HardwareConstants.h>
 
 FeederSubsystem::FeederSubsystem()
@@ -13,7 +14,7 @@ FeederSubsystem::FeederSubsystem()
     rev::spark::SparkMaxConfig motorConfig;
 
     motorConfig
-    .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
+    .SmartCurrentLimit(FeederConstants::kCurrentLimit)
     .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
     .Inverted(true);
     
@@ -25,7 +26,7 @@ FeederSubsystem::FeederSubsystem()
 
     rev::spark::SparkMaxConfig leaderSideConfig;
     leaderSideConfig
-        .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
+        .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
         .Inverted(true);
     m_leaderSideMotor.Configure(
@@ -36,7 +37,7 @@ FeederSubsystem::FeederSubsystem()
 
     rev::spark::SparkMaxConfig followerSideConfig;
     followerSideConfig
-        .SmartCurrentLimit(FlyWheelConstants::kCurrentLimit)
+        .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
         // .Follow(m_leaderSideMotor, true); // inverted from leader
     m_followerSideMotor.Configure(
@@ -47,9 +48,11 @@ FeederSubsystem::FeederSubsystem()
 }
 
 void FeederSubsystem::Feed() {
-    m_motor.SetVoltage(FlyWheelConstants::kFeederVoltage);
-    m_leaderSideMotor.SetVoltage(FlyWheelConstants::kSideFeederVoltage);
-    m_followerSideMotor.SetVoltage(FlyWheelConstants::kSideFeederVoltage);
+    m_motor.SetVoltage(FeederConstants::kFeederVoltage);
+
+
+    m_leaderSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage + m_sideFeederVoltageDifference);
+    m_followerSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage - m_sideFeederVoltageDifference);
 }
 
 void FeederSubsystem::Stop() {
@@ -61,4 +64,16 @@ void FeederSubsystem::Stop() {
 frc2::CommandPtr FeederSubsystem::FeedCommand() {
     return Run([this] { Feed(); })
         .FinallyDo([this] { Stop(); });
+}
+
+frc2::CommandPtr FeederSubsystem::IncreaseFeederVoltageDifference() {
+    return RunOnce([this] {
+        m_sideFeederVoltageDifference += FeederConstants::kSideFeederVoltageDifferenceIncrement;
+    });
+}
+
+frc2::CommandPtr FeederSubsystem::DecreaseFeederVoltageDifference() {
+    return RunOnce([this] {
+        m_sideFeederVoltageDifference -= FeederConstants::kSideFeederVoltageDifferenceIncrement;
+    });
 }
