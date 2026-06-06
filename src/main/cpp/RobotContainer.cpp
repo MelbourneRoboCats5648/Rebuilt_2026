@@ -109,7 +109,7 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.A().OnTrue(frc2::cmd::RunOnce([this] {
         m_drive.GetThetaController().Reset(m_drive.GetHeading());
-        m_drive.GetThetaController().SetGoal(m_drive.GetYawAngle());
+        m_drive.GetThetaController().SetGoal(m_drive.HeadingToTarget() + m_drive.GetYawAngle());
         m_alignToHeading = true;
     }));
 
