@@ -108,7 +108,7 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
 
-    FuelStuckInFeederTrigger.Debounce(2_s).OnTrue(RumbleControllerCommand());
+    FuelStuckInFeederTrigger.Debounce(2_s, frc::Debouncer::DebounceType::kRising).OnTrue(RumbleControllerCommand());
 
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
