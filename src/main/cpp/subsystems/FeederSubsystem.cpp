@@ -78,5 +78,5 @@ frc2::CommandPtr FeederSubsystem::FeedCommand() {
 // }
 
 bool FeederSubsystem::IsStalling(){
-     return m_leaderSideMotor.GetOutputCurrent() > 20.0 && m_followerSideMotor.GetOutputCurrent() > 20.0;
+     return m_motor.GetOutputCurrent() > 20.0;
 }
