@@ -4,12 +4,6 @@
 HoodSubsystem::HoodSubsystem()
 {
     rev::spark::SparkMaxConfig angleMotorConfig;
-    
-    m_angleMotor.Configure(
-      angleMotorConfig,
-      rev::ResetMode::kResetSafeParameters,
-      rev::PersistMode::kPersistParameters
-    );
 
     angleMotorConfig.closedLoop
       .SetFeedbackSensor(rev::spark::FeedbackSensor::kPrimaryEncoder)
