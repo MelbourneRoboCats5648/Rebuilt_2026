@@ -101,6 +101,8 @@ void IntakeSubsystem::ConfigurePublishers()
         .GetDoubleTopic("Intake/ExtendRetract/FollowerCurrent").Publish();
     m_extendRetractVoltagePub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Voltage").Publish();
+    m_followerVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerVoltage").Publish();
     m_intakeVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/Motor/Velocity").Publish();
     m_intakeVoltagePub = nt::NetworkTableInstance::GetDefault()
@@ -115,6 +117,9 @@ void IntakeSubsystem::Periodic()
     m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
     m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
     m_intakeVelocityPub.Set(GetIntakeVelocity().value());
+
+    m_extendRetractVoltagePub.Set(m_extendRetractMotor.GetAppliedOutput());
+    m_followerVoltagePub.Set(m_followerExtendRetractMotor.GetAppliedOutput());
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
@@ -240,6 +245,17 @@ void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
 void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
     m_extendRetractMotor.SetVoltage(voltage);
     m_extendRetractVoltagePub.Set(voltage.value());
+}
+
+// fixme - this was temporarily added to test direct voltage control of the extend/retract
+frc2::CommandPtr IntakeSubsystem::SetExtendRetractVoltageCommand(units::volt_t voltage){
+    return
+        Run([this, voltage] {
+            SetExtendRetractVoltage(voltage);
+        })
+        .FinallyDo([this] {
+            StopExtendRetract();
+        });
 }
 
 frc2::CommandPtr IntakeSubsystem::RetractToLimitCommand() {

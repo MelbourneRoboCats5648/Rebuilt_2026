@@ -99,18 +99,28 @@ void RobotContainer::ConfigureBindings() {
         m_invertControls = !m_invertControls;
     }));
 
+    // fixme - temporarily testing hood calibration function
+    m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
+
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
     
-    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
-    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+//    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+ //   m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
+    // fixme - temporarily used to test intake with direct voltage command
+    //m_mechController.LeftBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(5_V));
+    //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
+
+
+    // fixme - need to uncomment the intake command
+//    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
 
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
 
     m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
+
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
     // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());

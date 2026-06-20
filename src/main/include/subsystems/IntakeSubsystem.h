@@ -45,6 +45,9 @@ public:
 
     frc2::CommandPtr RetractToLimitCommand();
 
+    frc2::CommandPtr SetExtendRetractVoltageCommand(units::volt_t voltage);
+
+
     void Periodic() override;
 
 private:
@@ -78,6 +81,7 @@ private:
     nt::DoublePublisher m_intakeVelocityPub;
     nt::DoublePublisher m_intakeVoltagePub;
     nt::DoublePublisher m_extendRetractVoltagePub;
+    nt::DoublePublisher m_followerVoltagePub;
 
     DriveSubsystem& m_drive; // for retrieving forward speed only; not required in commands
 };
