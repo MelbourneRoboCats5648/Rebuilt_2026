@@ -91,6 +91,10 @@ void IntakeSubsystem::ConfigurePublishers()
         .GetDoubleTopic("Intake/ExtendRetract/Position").Publish();
     m_extendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Velocity").Publish();
+    m_followerExtendRetractPositionPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerPosition").Publish();
+    m_followerExtendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerVelocity").Publish();
     m_extendRetractTargetPositionPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/TargetPosition").Publish();
     m_extendRetractTargetVelocityPub = nt::NetworkTableInstance::GetDefault()
@@ -114,6 +118,8 @@ void IntakeSubsystem::Periodic()
     /* publish current state */
     m_extendRetractPositionPub.Set(GetPosition().value());
     m_extendRetractVelocityPub.Set(GetExtendRetractVelocity().value());
+    m_followerExtendRetractPositionPub.Set(m_followerExtendRetractEncoder.GetPosition());
+    m_followerExtendRetractVelocityPub.Set(m_followerExtendRetractEncoder.GetVelocity());
     m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
     m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
     m_intakeVelocityPub.Set(GetIntakeVelocity().value());
