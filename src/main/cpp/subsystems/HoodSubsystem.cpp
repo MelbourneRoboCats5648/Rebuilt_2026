@@ -101,17 +101,20 @@ frc2::CommandPtr HoodSubsystem::RetractToLimitCommand() {
         .AndThen(frc2::cmd::Wait(HoodConstants::kCalibrationPreTime))
         .AndThen(
             RunOnce([this] {
-                // initially set encoder position to min angle
-                m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
                 // then pull the hood in at a slow speed
                 m_angleMotor.SetVoltage(HoodConstants::kCalibrationVoltage);
             })
-            .AndThen(frc2::cmd::Sequence(
-                // 1. we speed up past the threshold
-                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > HoodConstants::kCalibrationVelocityThreshold; }),
-                // 2. then we slow down past it again - indicating that we've reached the end
-                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < HoodConstants::kCalibrationVelocityThreshold; })
-            ))
+            .AndThen(
+                frc2::cmd::Sequence(
+                    // 1. we speed up past the threshold
+                    frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > HoodConstants::kCalibrationVelocityThreshold; }),
+                    // 2. then we slow down past it again - indicating that we've reached the end
+                    frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < HoodConstants::kCalibrationVelocityThreshold; })
+                ).AlongWith(Run([this] {
+                    // This is to fool the encoder into thinking it hasn't hit the limit prematurely
+                    m_angleEncoder.SetPosition(HoodConstants::kMinAngle.value());
+                }))
+            )
             .WithTimeout(HoodConstants::kCalibrationTimeout)
             .FinallyDo([this] {
                 m_angleMotor.StopMotor();
@@ -120,6 +123,7 @@ frc2::CommandPtr HoodSubsystem::RetractToLimitCommand() {
         );
 }
 
+// fixme - remove this function
 frc2::CommandPtr HoodSubsystem::ExtendToLimitCommand() {
     return
         /* retract for a bit to ensure we'll be able to extend the hood over a distance */
