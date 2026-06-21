@@ -7,15 +7,15 @@
 #include <units/time.h>
 
 namespace HoodConstants {
-    inline constexpr units::degree_t kMinAngleSoftLimit = 55_deg;
-    inline constexpr units::degree_t kMaxAngleSoftLimit = 67_deg;
+    inline constexpr units::degree_t kMinAngleSoftLimit = 38.0470_deg;
+    inline constexpr units::degree_t kMaxAngleSoftLimit = 68.1986_deg;
 
     inline constexpr units::degree_t kMinAngle = kMinAngleSoftLimit + 0.5_deg; // actual testing shows that the min angle achievable with PID is 55.13 deg due to stiction
     inline constexpr units::degree_t kMaxAngle = kMaxAngleSoftLimit; // max angle achievable with PID is very close to 67 deg
     inline constexpr units::meter_t kRangeThreshold = 2.0_m;
 
     inline const units::degree_t kMaxAngleRange = kMaxAngleSoftLimit - kMinAngleSoftLimit;
-    inline const double kAngleDegreesPerTurn = kMaxAngleRange.value() / 4.2619; // corresponding to an angle range of 12 degrees for 4.2619 turns of the motor shaft
+    inline const double kAngleDegreesPerTurn = kMaxAngleRange.value() / (18.016512 - 5.683217);
 
     inline constexpr units::volt_t kCalibrationVoltage = 2.0_V;
     inline constexpr units::degrees_per_second_t kCalibrationVelocityThreshold = 1.5_deg_per_s;
