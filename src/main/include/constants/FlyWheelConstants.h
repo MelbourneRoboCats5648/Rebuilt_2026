@@ -41,9 +41,6 @@ namespace FlyWheelConstants {
     inline constexpr double kMinFlywheelVelocityScaling(0.5); // allow flywheel speed to be reduced to 50% of nominal
     inline constexpr double kMaxFlywheelVelocityScaling(1.5); // allow flywheel velocity to be increased to 150% of nominal
 
-    inline constexpr units::volt_t kFeederVoltage(10_V);
-    inline constexpr units::volt_t kSideFeederVoltage(5_V); // fixme
-
     inline constexpr units::meter_t kRangeThreshold = 2.0_m; // threshold for changing between min (high range) and max (low range) angle
 
     inline constexpr units::second_t kRampTime = 0.3_s; // time from stopped to ready for shooting
