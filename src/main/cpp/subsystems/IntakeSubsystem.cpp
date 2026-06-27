@@ -48,7 +48,7 @@ m_drive(drive)
       .ForwardSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
       .ReverseSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
-    const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio;
+    const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio * IntakeConstants::kExtendRetractPulleyRatio;
 
     ExtendRetractMotorConfig.encoder
       .PositionConversionFactor(metresPerTurn)

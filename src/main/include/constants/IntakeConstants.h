@@ -34,14 +34,14 @@ namespace IntakeConstants {
         inline constexpr units::turns_per_second_t kTolerance = 0.1_tps;
     }
 
-    namespace extendRetract { //fixme - tune PID constants
-        inline constexpr double kP = 12.5;
+    namespace extendRetract {
+        inline constexpr double kP = 0.0; // fixme - only using feedforward. Might need to add kP if required
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         
-        inline constexpr units::volt_t kS = 0.08967_V;
-        inline constexpr units::volt_t kG = -0.00663_V;
-        inline constexpr auto kV = 31.58_V / 1.0_mps; // avg of extend and retract slopes
+        inline constexpr units::volt_t kS = 0.13109_V;
+        inline constexpr units::volt_t kG = 0.02394_V;
+        inline constexpr auto kV = 29.904_V / 1.0_mps; // avg of extend and retract slopes
         inline constexpr auto kA = 0.0_V / 1.0_mps_sq;
         
         inline constexpr units::meters_per_second_t kMaxExtendVelocity = 0.30_mps;
@@ -59,11 +59,13 @@ namespace IntakeConstants {
     inline constexpr int kCurrentLimit(50);
 
     // Assume initial encoder position is 0 when fully retracted
-    inline constexpr meter_t kExtendSoftLimit = 0.3_m;
+    inline constexpr meter_t kExtendSoftLimit = 0.23_m;
     inline constexpr meter_t kRetractSoftLimit = 0.0_m;
 
     inline constexpr double kExtendRetractGearRatio(1.0 / 20.0); // 20 to 1 reduction gear
     inline constexpr double kExtendRetractSprocketDia(0.0254);   // 25.4 mm pitch diameter
+    inline constexpr double kExtendRetractPulleyRatio(46.0 / 44.0); // 46 to 44 pulley ratio (46 output, 44 input)
+    
 
     inline constexpr volt_t kMaxVoltage = 2_V;
 };
