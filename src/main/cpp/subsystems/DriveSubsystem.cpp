@@ -22,6 +22,9 @@ DriveSubsystem::DriveSubsystem()
     m_posePublisher = nt::NetworkTableInstance::GetDefault()
                           .GetStructTopic<frc::Pose2d>("DriveTrain/Pose")
                           .Publish();
+    m_alignedPosePublisher = nt::NetworkTableInstance::GetDefault()
+                          .GetStructTopic<frc::Pose2d>("DriveTrain/ALignedPose")
+                          .Publish();
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
                                 .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory")
                                 .Publish();
@@ -47,6 +50,10 @@ DriveSubsystem::DriveSubsystem()
 bool DriveSubsystem::IsBlueAlliance()
 {
     return (frc::DriverStation::GetAlliance().value_or(frc::DriverStation::Alliance::kBlue) == frc::DriverStation::Alliance::kBlue);
+}
+
+units::radian_t DriveSubsystem::GetShootOnTheMoveHeading() {
+    return HeadingToTarget() + GetYawAngle();
 }
 
 void DriveSubsystem::Periodic()
@@ -88,7 +95,12 @@ void DriveSubsystem::Periodic()
             m_frontRightModule.GetState(),
             m_backLeftModule.GetState(),
             m_backRightModule.GetState()});
-    m_posePublisher.Set(m_poseEstimator.GetEstimatedPosition());
+    frc::Pose2d pose = m_poseEstimator.GetEstimatedPosition();
+    m_posePublisher.Set(pose);
+
+    /* publish aligned pose */
+    frc::Pose2d alignedPose(pose.Translation(), frc::Rotation2d(GetShootOnTheMoveHeading()));
+    m_alignedPosePublisher.Set(alignedPose);
 }
 
 void DriveSubsystem::SimulationPeriodic()
@@ -114,7 +126,7 @@ degree_t DriveSubsystem::GetHeading()
 
 void DriveSubsystem::Drive(meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed, bool teleop)
 {
-    Drive(xSpeed, ySpeed, rotSpeed, m_isFieldRelative, teleop);
+    Drive(xSpeed, ySpeed, rotSpeed, teleop, m_isFieldRelative);
 }
 
 bool DriveSubsystem::IsFieldCentric()
@@ -125,7 +137,7 @@ bool DriveSubsystem::IsFieldCentric()
 /* kinematics/"set speed" */
 void DriveSubsystem::Drive(
     meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-    bool fieldRelative, bool teleop)
+    bool teleop, bool fieldRelative)
 {
     frc::ChassisSpeeds speeds;
     if (fieldRelative)
@@ -195,6 +207,11 @@ SpeedComponents DriveSubsystem::GetSpeedComponents()
 void DriveSubsystem::SetYawAngle(degree_t shootingYawAngle)
 {
     m_shootingYawAngle = shootingYawAngle;
+};
+
+degree_t DriveSubsystem::GetYawAngle()
+{
+    return m_shootingYawAngle;
 };
 
 void DriveSubsystem::ResetPose(frc::Pose2d pose)
@@ -304,10 +321,29 @@ frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(std::function<radian_t()> h
                    });
 }
 
+frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommand(std::function<radian_t()> headingLambda, std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
+{
+    return RunOnce([this]
+                   {
+                       m_thetaController.Reset(GetHeading());
+                   })
+        .AndThen(Run([this, xSpeedLambda, ySpeedLambda, headingLambda] {
+            meters_per_second_t x = xSpeedLambda();
+            meters_per_second_t y = ySpeedLambda(); 
+            m_thetaController.SetGoal(headingLambda());           
+            radians_per_second_t angularRate{m_thetaController.Calculate(GetHeading())};
+            Drive(x, y, angularRate, true); // true since we're in teleop when we're calling this
+        }))
+        .FinallyDo([this]
+                   {
+                       m_thetaController.Reset(GetHeading()); // optional, but just to be safe here
+                   });
+}
+
 frc2::CommandPtr DriveSubsystem::AlignHeadingCommand(radian_t heading)
 {
-    return AlignHeadingCommand([heading]
-                               { return heading; });
+    std::function<radian_t()> headingLambda = [heading] { return heading; };
+    return AlignHeadingCommand(headingLambda);
 }
 
 units::radian_t DriveSubsystem::HeadingToTarget()
@@ -321,6 +357,12 @@ frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 {
     return AlignHeadingCommand([this]
                                { return HeadingToTarget(); });
+}
+
+frc2::CommandPtr DriveSubsystem::DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda)
+{
+    std::function<radian_t()> headingLambda = [this] { return GetShootOnTheMoveHeading(); };
+    return DriveAlignHeadingCommand(headingLambda, xSpeedLambda, ySpeedLambda);
 }
 
 frc2::CommandPtr DriveSubsystem::ToggleFieldRelativeCommand()
