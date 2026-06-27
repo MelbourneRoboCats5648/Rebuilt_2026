@@ -29,6 +29,9 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr RetractHoodToLimitCommand();
     frc2::CommandPtr SetHoodTargetAngleCommand(units::degree_t angle);
 
+    frc2::CommandPtr IncreaseFeederVoltageDifference();
+    frc2::CommandPtr DecreaseFeederVoltageDifference();
+
     ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
