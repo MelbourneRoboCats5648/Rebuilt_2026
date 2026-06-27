@@ -58,7 +58,7 @@ public:
 
     void Drive(
         meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-        bool isfieldRelative, bool teleop
+        bool teleop, bool isfieldRelative
     );
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
@@ -91,6 +91,7 @@ public:
 
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
+    units::radian_t GetShootOnTheMoveHeading();
 
     SpeedComponents GetSpeedComponents();
 
@@ -164,6 +165,7 @@ private:
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
+    nt::StructPublisher<frc::Pose2d> m_alignedPosePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
 
     bool m_isFieldRelative = true;
