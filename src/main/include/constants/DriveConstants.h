@@ -22,16 +22,17 @@ using namespace units::acceleration;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        inline constexpr double kP = 6.0; // equivalent to 0.9 V/(t/s)
+        inline constexpr double kP = 12.25; // equivalent to 0.9 V/(t/s)
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         inline constexpr radians_per_second_t kMaxVel = (2 * M_PI) * 2_rad_per_s;
-        inline constexpr radians_per_second_squared_t kMaxAcc = (2 * M_PI) * 4_rad_per_s_sq;
+        inline constexpr radians_per_second_squared_t kMaxAcc = (2 * M_PI) * 6_rad_per_s_sq;
 
         inline constexpr ampere_t kMaxCurrent = 40_A;
         inline constexpr ampere_t kLowerCurrentLimit = 30_A;
         inline constexpr second_t kLowerLimitTime = 0.1_s;
     };
+
 
     namespace SpeedMotor {
         inline constexpr double kGearRatio = 6.75;
