@@ -184,6 +184,31 @@ void RobotContainer::ConfigureBindings() {
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
     m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
+    std::function<meters_per_second_t()> xSpeedLambda = [this] {
+        meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+        
+            if (m_invertControls) {
+                xSpeed *= -1.0;
+            }
+            return xSpeed;
+        };
+
+    std::function<meters_per_second_t()> ySpeedLambda = [this] {
+        meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                 * DrivetrainConstants::kMaxSpeed
+            );
+            if (m_invertControls) {
+                ySpeed *= -1.0;
+            }
+            return ySpeed;
+        };
+
+    m_driverController.A().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
+
     //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
     //                                AndThen(m_feeder.FeedCommand()));
 }
