@@ -39,7 +39,7 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 
-        void SpinFlyWheel(units::volt_t volts);
+        void SpinFlyWheelVoltage(units::volt_t volts);
         void SpinAtAngularVelocity(units::turns_per_second_t angularVelocity);
 
         void SetTargetVelocity(units::turns_per_second_t velocity);
@@ -63,7 +63,7 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         TalonFX m_motor;
         TalonFX m_follower;
 
-        units::turns_per_second_t m_targetVelocity{0_tps}; // flywheel velocity
+        units::turns_per_second_t m_targetVelocity{40_tps}; // flywheel velocity
 
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;

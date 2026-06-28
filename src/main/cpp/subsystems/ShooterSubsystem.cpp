@@ -6,7 +6,6 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intak
 : m_intake (intake),
   m_drive(drive)
 {
-
 }
 
 frc2::CommandPtr ShooterSubsystem::ShootCommand() {
@@ -53,6 +52,7 @@ void ShooterSubsystem::Periodic(){
     shootSolution.angle = targetAngle;
     shootSolution.speed = ballSpeed;
 
+    // finding robot's radial and tangential speeds
     SpeedComponents speedComponents = m_drive.GetSpeedComponents();
 
     shootSolution = CompensateForRadialSpeed(shootSolution,speedComponents.radialSpeed);
@@ -62,8 +62,9 @@ void ShooterSubsystem::Periodic(){
     units::turn_t compensatedAngle = movingShootSolution.shootSolution.angle;
     units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
     
+    // fixme(MRT) - uncomment below after testing
     //m_hood.SetTargetAngle(compensatedAngle);
-    m_flyWheel.SetTargetVelocity(flywheelVelocity);
+    //m_flyWheel.SetTargetVelocity(flywheelVelocity);
     m_drive.SetYawAngle(compensatedYawAngle);
 }
 

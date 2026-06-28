@@ -7,8 +7,6 @@
 #include "FieldConstants.h"
 #include <units/current.h>
 
-
-
 using namespace units::length;
 using namespace units::angle;
 
@@ -22,19 +20,21 @@ namespace FlyWheelConstants {
         inline constexpr double kA = 0;
     }
 
+    // fixme(MRT) - rename startHeight to hood height. Check this is still 0.3 metres
     inline constexpr meter_t startHeight(0.3);
+    // fixme(MRT) - below variable isn't being used. Could be deleted
     inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - startHeight;
-    inline constexpr double kgearRatio = 1;
+    inline constexpr double kgearRatio = 1.0;
 
-    inline constexpr units::volt_t kMaxVoltage(12);
     inline constexpr units::meter_t kFlyWheelRadius(2_in);
 
-    inline constexpr int kCurrentLimit(50);
+    inline constexpr int kCurrentLimit(50);  // fixme(MRT) - check if max angular velocity goes above 70 if this current limit is increased
 
-    //inline constexpr double kAngleGearRatio = 1.0/5.0;
-
-    inline constexpr units::turns_per_second_t kMaxAngularVelocity(100);
-    inline constexpr units::turns_per_second_t kMinAngularVelocity(37.5);
+    inline constexpr units::turns_per_second_t kMaxAngularVelocity(100); // fixme(MRT) - looks like max velocity practically 70 tps
+    // fixme(MRT) - update min angular velocity after tuning 
+    //            - (this needs to be lower than actual min angular velocity to give SOTM some margin to vary velocity)
+    //inline constexpr units::turns_per_second_t kMinAngularVelocity(37.5);
+    inline constexpr units::turns_per_second_t kMinAngularVelocity(20);
 
     inline constexpr double kFlywheelVelScalingIncrement(0.05); // 5% scaling of flywheel velocity
     inline constexpr double kDefaultFlywheelVelocityScaling(1.0); // tested on practice field, works with min angle (fixme - properly tune robot)

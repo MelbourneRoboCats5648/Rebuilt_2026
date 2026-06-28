@@ -46,6 +46,7 @@ FlyWheelSubsystem::FlyWheelSubsystem()
     m_requiredSpedPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/requiredSpeed").Publish();
 
+    // fixme(MRT) - try uncommenting this for smart dashboard update for shooter velocity
     // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
     // frc::SmartDashboard::PutNumber("ShooterVelocity", 0.0); // initialise shooter target velocity with default of 0.0
 }
@@ -60,7 +61,7 @@ TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
     motorConfig.Slot0.kV = FlyWheelConstants::motor::kV;
     motorConfig.Slot0.kS = FlyWheelConstants::motor::kS;
     motorConfig.Slot0.kA = FlyWheelConstants::motor::kA;
-    motorConfig.CurrentLimits.SupplyCurrentLimit = 50_A; // fixme - these values will have to be changed
+    motorConfig.CurrentLimits.SupplyCurrentLimit = 60_A;
     motorConfig.CurrentLimits.SupplyCurrentLowerLimit = 60_A;
     motorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.1_s;
     motorConfig.MotorOutput.Inverted = true;
@@ -72,7 +73,7 @@ TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
 void FlyWheelSubsystem::Periodic() {
         /* publish current state */
 
-        // uncomment below to allow target velocity to be set via smart dashboard
+        // fixme(MRT) - uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
         //SetFlywheelVelocityAndAngle(distanceToTarget);
@@ -91,11 +92,12 @@ void FlyWheelSubsystem::Periodic() {
 
 }
 
-void FlyWheelSubsystem::SpinFlyWheel(units::volt_t volts){
+void FlyWheelSubsystem::SpinFlyWheelVoltage(units::volt_t volts){
     m_motor.SetVoltage(volts);
 }
 
 void FlyWheelSubsystem::SpinAtAngularVelocity(units::turns_per_second_t angularVelocity) {
+    m_scaleFlywheelVelocity = 1.0; // fixme(MRT) - fixing for no scaling
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
     m_flyWheelTargetVelPub.Set(angularVelocity.value());

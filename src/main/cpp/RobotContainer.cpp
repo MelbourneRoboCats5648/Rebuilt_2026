@@ -100,21 +100,19 @@ void RobotContainer::ConfigureBindings() {
         m_invertControls = !m_invertControls;
     }));
 
-    // fixme - temporarily testing hood calibration function
+    // fixme(MRT) - temporarily testing hood calibration function. Can remove
     m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
 
-    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
-    
    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    // fixme - temporarily used to test intake with direct voltage command
+    // fixme(MRT) - temporarily used to test intake with direct voltage command. Delete after testing
     //m_mechController.LeftBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(5_V));
     //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
 
-
-    // fixme - need to uncomment the intake command
+    // fixme(MRT) - need to uncomment the intake command
 //    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
+    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
@@ -123,22 +121,13 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
 
+    // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
     // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
 
-   
-    m_shooter.SetDefaultCommand(frc2::RunCommand(
-        [this] {
-            units::turns_per_second_t angularVelocity;
-            angularVelocity = PreprocessJoystickInput(-m_mechController.GetRightY())
-                            * FlyWheelConstants::kMaxAngularVelocity;
-            angularVelocity = units::math::abs(angularVelocity);
-            m_shooter.SetFlywheelVelocityCommand(angularVelocity);
-        },
-        { &m_shooter }
-    ));
-
+    // fixme(MRT) - modify some version of this default command to check that static shoot solution works for various input angles
+    //            - will be good to test this with April tags so that robot knows accurate distance to hub
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
     //         units::degree_t angle;
@@ -153,12 +142,14 @@ void RobotContainer::ConfigureBindings() {
     //     { &m_shooter }
     // ));
 
+    // fixme(MRT) - Feed command unlikely to be used alone and could be removed
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
     m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
 
+    // fixme(MRT) - remove static AlignToTargetCommand and change LeftTrigger binding to DriveAlignHeadingCommandWrapper
     m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
+    m_mechController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
     std::function<meters_per_second_t()> xSpeedLambda = [this] {
         meters_per_second_t xSpeed = m_xLimiter.Calculate(
@@ -185,8 +176,6 @@ void RobotContainer::ConfigureBindings() {
 
     m_driverController.A().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
 
-    //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
-    //                                AndThen(m_feeder.FeedCommand()));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

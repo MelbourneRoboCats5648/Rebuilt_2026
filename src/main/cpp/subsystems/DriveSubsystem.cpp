@@ -235,6 +235,7 @@ void DriveSubsystem::ResetHeadingWithAlliance()
             : DrivetrainConstants::kInitialRedHeading);
 }
 
+// fixme(MRT) - can remove this frc trajectory function
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
 {
     return CreateTrajectory(
@@ -242,6 +243,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
         std::move(targetPose));
 }
 
+// fixme(MRT) - can remove this frc trajectory generator
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose)
 {
     frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
@@ -259,6 +261,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     return traj;
 }
 
+// fixme(MRT) - can remove this frc trajectory command
 // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory)
 {
