@@ -46,7 +46,7 @@ meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degre
 void ShooterSubsystem::Periodic(){
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
 
-    units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? FlyWheelConstants::kMinAngle : FlyWheelConstants::kMaxAngle;
+    units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? HoodConstants::kMinAngle : HoodConstants::kMaxAngle;
     units::meters_per_second_t ballSpeed = CalculateBallSpeed(distanceToTarget, targetAngle);
     
     ShootSolution shootSolution;
@@ -62,7 +62,7 @@ void ShooterSubsystem::Periodic(){
     units::turn_t compensatedAngle = movingShootSolution.shootSolution.angle;
     units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
     
-    m_hood.SetTargetAngle(compensatedAngle);
+    //m_hood.SetTargetAngle(compensatedAngle);
     m_flyWheel.SetTargetVelocity(flywheelVelocity);
     m_drive.SetYawAngle(compensatedYawAngle);
 }
@@ -123,6 +123,12 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
 
     return movingSolution;
 }
+
+frc2::CommandPtr ShooterSubsystem::SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity)
+{
+    return m_flyWheel.SetTargetVelocityCommand(angularVelocity);
+}
+
 
 frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
     return m_hood.RetractToLimitCommand();

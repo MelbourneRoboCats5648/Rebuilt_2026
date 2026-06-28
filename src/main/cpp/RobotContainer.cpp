@@ -58,6 +58,7 @@ void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
     m_drive.SetDefaultCommand(frc2::RunCommand(
+
         [this] {
             meters_per_second_t xSpeed = m_xLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetLeftY())
@@ -117,6 +118,7 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
+    m_mechController.A().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 
     m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
     m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
@@ -126,21 +128,16 @@ void RobotContainer::ConfigureBindings() {
     // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
 
    
-    // m_shooter.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         units::degree_t angle;
-    //         angle = (PreprocessJoystickInput(-m_mechController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
-    //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
-    //         m_shooter.GoToAngle(angle);
-
-    //         units::turns_per_second_t angularVelocity;
-    //         angularVelocity = PreprocessJoystickInput(-m_mechController.GetRightY())
-    //                         * ShooterConstants::kMaxAngularVelocity;
-    //         angularVelocity = units::math::abs(angularVelocity);
-    //         m_shooter.ShootAngularVelocity(angularVelocity);
-    //     },
-    //     { &m_shooter }
-    // ));
+    m_shooter.SetDefaultCommand(frc2::RunCommand(
+        [this] {
+            units::turns_per_second_t angularVelocity;
+            angularVelocity = PreprocessJoystickInput(-m_mechController.GetRightY())
+                            * FlyWheelConstants::kMaxAngularVelocity;
+            angularVelocity = units::math::abs(angularVelocity);
+            m_shooter.SetFlywheelVelocityCommand(angularVelocity);
+        },
+        { &m_shooter }
+    ));
 
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
@@ -155,9 +152,6 @@ void RobotContainer::ConfigureBindings() {
     //     },
     //     { &m_shooter }
     // ));
-
-    //m_mechController.X().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMinAngle).Repeatedly());
-    //m_mechController.Y().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMaxAngle).Repeatedly());
 
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 

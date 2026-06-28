@@ -46,10 +46,4 @@ namespace FlyWheelConstants {
     inline constexpr units::second_t kRampTime = 0.3_s; // time from stopped to ready for shooting
 
     
-    //hood - for the purpose of calculating flywheel velocity
-    inline constexpr units::degree_t kMinAngleSoftLimit = 55_deg;
-    inline constexpr units::degree_t kMaxAngleSoftLimit = 67_deg;
-
-    inline constexpr units::degree_t kMinAngle = kMinAngleSoftLimit + 0.5_deg; // actual testing shows that the min angle achievable with PID is 55.13 deg due to stiction
-    inline constexpr units::degree_t kMaxAngle = kMaxAngleSoftLimit; // max angle achievable with PID is very close to 67 deg
 };

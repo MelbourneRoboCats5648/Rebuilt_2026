@@ -29,6 +29,8 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr RetractHoodToLimitCommand();
     frc2::CommandPtr SetHoodTargetAngleCommand(units::degree_t angle);
 
+    frc2::CommandPtr SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity);
+
     frc2::CommandPtr IncreaseFeederVoltageDifference();
     frc2::CommandPtr DecreaseFeederVoltageDifference();
 
