@@ -35,7 +35,6 @@ FlyWheelSubsystem::FlyWheelSubsystem()
     m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
 
-
     m_flyWheelVoltagePub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/Voltage").Publish();
     m_flyWheelTargetVelPub = nt::NetworkTableInstance::GetDefault()
@@ -76,9 +75,6 @@ void FlyWheelSubsystem::Periodic() {
         // fixme(MRT) - uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
-        //SetFlywheelVelocityAndAngle(distanceToTarget);
-        //SetTargetVelocity(ShooterConstants::kMaxAngularVelocity);
-
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
         m_followerMotorWheelVelPub.Set(m_follower.GetVelocity().GetValueAsDouble());
@@ -88,8 +84,6 @@ void FlyWheelSubsystem::Periodic() {
 
         m_requiredSpedPub.Set(m_requiredSpeed);
         m_adjustedSpeedPub.Set(m_adjustedSpeed);
-
-
 }
 
 void FlyWheelSubsystem::SpinFlyWheelVoltage(units::volt_t volts){
@@ -151,44 +145,6 @@ frc2::CommandPtr FlyWheelSubsystem::ResetFlywheelVelocity()
         m_scaleFlywheelVelocity = FlyWheelConstants::kDefaultFlywheelVelocityScaling;
     });
 }
-
-/* old look up table
-void ShooterSubsystem::SetFlywheelVelocityAndAngle(meter_t distanceToTarget)
-{
-    units::degree_t angle;
-    units::turns_per_second_t velocity;
-
-    if (distanceToTarget > 3.3_m)
-    {
-        angle = ShooterConstants::kMinAngle;
-        velocity = 45_tps;
-    }
-    else if(distanceToTarget > 2.8_m)
-    {
-        angle = ShooterConstants::kMinAngle; // max angle could also work
-        velocity = 50_tps;
-    }
-    else if (distanceToTarget > 2.5_m)
-    {
-        angle = ShooterConstants::kMaxAngle;
-        velocity = 45_tps;
-    }
-    else if (distanceToTarget > 2.0_m)
-    {
-        angle = ShooterConstants::kMaxAngle;
-        velocity = 43_tps;
-    }
-    else
-    {
-        angle = ShooterConstants::kMaxAngle;
-        velocity = 40_tps;
-    }
-
-    SetTargetAngle(angle);
-    SetTargetVelocity(velocity);
-}
-
-*/
 
 units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_second_t ballSpeed) {
     meters_per_second_t adjustedSpeed = AdjustedBallSpeed(ballSpeed);

@@ -27,7 +27,7 @@ frc2::CommandPtr ShooterSubsystem::ShootCommandWithFeeder(units::second_t feedTi
     return ShootCommand().WithTimeout(FlyWheelConstants::kRampTime + feedTime);
 }
 
-meters_per_second_t ShooterSubsystem::CalculateBallSpeed(meter_t distance, degree_t angle) {
+meters_per_second_t ShooterSubsystem::CalculateRequiredBallSpeed(meter_t distance, degree_t angle) {
         auto cosine = cos(angle);
         auto tangent = tan(angle);
 
@@ -46,8 +46,12 @@ void ShooterSubsystem::Periodic(){
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
 
     units::turn_t targetAngle = (distanceToTarget > FlyWheelConstants::kRangeThreshold) ? HoodConstants::kMinAngle : HoodConstants::kMaxAngle;
-    units::meters_per_second_t ballSpeed = CalculateBallSpeed(distanceToTarget, targetAngle);
+    // fixme(MRT) - could use a lookup table like in SCR instead of simple implementation above
+    //              targetAngle = GetBestAngleForDistance(distanceToTarget);
+
+    units::meters_per_second_t ballSpeed = CalculateRequiredBallSpeed(distanceToTarget, targetAngle);
     
+    // the static shoot solution (before compensation for robot movement)
     ShootSolution shootSolution;
     shootSolution.angle = targetAngle;
     shootSolution.speed = ballSpeed;
@@ -55,7 +59,7 @@ void ShooterSubsystem::Periodic(){
     // finding robot's radial and tangential speeds
     SpeedComponents speedComponents = m_drive.GetSpeedComponents();
 
-    shootSolution = CompensateForRadialSpeed(shootSolution,speedComponents.radialSpeed);
+    shootSolution = CompensateForRadialSpeed(shootSolution, speedComponents.radialSpeed);
     ShootOnTheMoveSolution movingShootSolution = CompensateYawForTangentialSpeed(shootSolution, speedComponents.tangentialSpeed);
     
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(movingShootSolution.shootSolution.speed);
@@ -97,9 +101,8 @@ ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolut
 
 ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed) {
     
-       units::meters_per_second_t requiredBallShootingSpeed = solution.speed;
-       units::degree_t requiredHoodAngle = solution.angle;
-    
+    units::meters_per_second_t requiredBallShootingSpeed = solution.speed;
+    units::degree_t requiredHoodAngle = solution.angle;
     
     units::meters_per_second_t horizontalRadialBallSpeed = requiredBallShootingSpeed * cos(requiredHoodAngle);
     
@@ -125,11 +128,40 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     return movingSolution;
 }
 
+/* Similar to old look up table from SCR to choose best angle for given distance break points (need to find this from tuning)
+units::degree_t angle ShooterSubsystem::GetBestAngleForDistance(meter_t distanceToTarget)
+{
+    units::degree_t angle;
+
+    if (distanceToTarget > 3.3_m)
+    {
+        angle = ShooterConstants::kMinAngle;
+    }
+    else if(distanceToTarget > 2.8_m)
+    {
+        angle = ShooterConstants::kMinAngle; // max angle could also work
+    }
+    else if (distanceToTarget > 2.5_m)
+    {
+        angle = ShooterConstants::kMaxAngle;
+    }
+    else if (distanceToTarget > 2.0_m)
+    {
+        angle = ShooterConstants::kMaxAngle;
+    }
+    else
+    {
+        angle = ShooterConstants::kMaxAngle;
+    }
+
+    return angle;
+}
+*/
+
 frc2::CommandPtr ShooterSubsystem::SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity)
 {
     return m_flyWheel.SetTargetVelocityCommand(angularVelocity);
 }
-
 
 frc2::CommandPtr ShooterSubsystem::RetractHoodToLimitCommand() {
     return m_hood.RetractToLimitCommand();

@@ -45,5 +45,5 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     IntakeSubsystem& m_intake;
     DriveSubsystem& m_drive;
 
-    meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
+    meters_per_second_t CalculateRequiredBallSpeed(meter_t distance, degree_t angle);
 };
