@@ -115,6 +115,7 @@ void RobotContainer::ConfigureBindings() {
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
     m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
+    m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
     m_mechController.A().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 

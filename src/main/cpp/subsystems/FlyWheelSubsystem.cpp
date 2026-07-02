@@ -47,7 +47,7 @@ FlyWheelSubsystem::FlyWheelSubsystem()
 
     // fixme(MRT) - try uncommenting this for smart dashboard update for shooter velocity
     // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
-    // frc::SmartDashboard::PutNumber("ShooterVelocity", 0.0); // initialise shooter target velocity with default of 0.0
+    frc::SmartDashboard::PutNumber("ShooterVelocity", 42.0); // initialise shooter target velocity with default of 0.0
 }
 
 TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
@@ -73,7 +73,7 @@ void FlyWheelSubsystem::Periodic() {
         /* publish current state */
 
         // fixme(MRT) - uncomment below to allow target velocity to be set via smart dashboard
-        //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
+        m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
