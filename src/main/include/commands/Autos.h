@@ -40,6 +40,8 @@ frc2::CommandPtr ChoreoShootFromMiddle(DriveSubsystem* drive, IntakeSubsystem* i
 
 frc2::CommandPtr PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* intake, ShooterSubsystem* shooter);
 
+frc2::CommandPtr MRTStartNeutralStart(DriveSubsystem* drive);
+
 }  // namespace autos
 
 
