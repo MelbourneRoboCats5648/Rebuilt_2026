@@ -1,8 +1,6 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
-#include <frc/trajectory/TrajectoryConfig.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
 #include <frc2/command/SwerveControllerCommand.h>
 
 #include <commands/ChoreoTrajectoryCommand.h>
@@ -233,69 +231,6 @@ void DriveSubsystem::ResetHeadingWithAlliance()
         (IsBlueAlliance())
             ? DrivetrainConstants::kInitialBlueHeading
             : DrivetrainConstants::kInitialRedHeading);
-}
-
-// fixme(MRT) - can remove this frc trajectory function
-frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
-{
-    return CreateTrajectory(
-        m_poseEstimator.GetEstimatedPosition(),
-        std::move(targetPose));
-}
-
-// fixme(MRT) - can remove this frc trajectory generator
-frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose)
-{
-    frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
-                                 DrivetrainConstants::kMaxAcceleration};
-
-    config.SetKinematics(m_kinematics);
-
-    // A trajectory to follow.  All units in meters.
-    auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
-        std::move(currentPose), // current pose from pose estimatior
-        {},
-        std::move(targetPose),
-        config);
-
-    return traj;
-}
-
-// fixme(MRT) - can remove this frc trajectory command
-// Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
-frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory)
-{
-    return RunOnce([this, initialPose = trajectory.InitialPose(), trajectory]
-                   {
-        m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
-
-        /* publish trajectory */
-        std::vector<frc::Pose2d> poses;
-        std::vector<frc::Trajectory::State> states = trajectory.States();
-        for (frc::Trajectory::State& state : states) {
-            poses.push_back(state.pose);
-        }
-        m_trajectoryPublisher.Set(poses); })
-        .AndThen(
-            frc2::SwerveControllerCommand<4>(
-                trajectory,
-                [this]
-                { return GetPose(); },
-                m_kinematics,
-                m_holonomicController,
-                [this](std::array<frc::SwerveModuleState, 4> states)
-                { SetModuleStates(states); })
-                .ToPtr())
-        .AndThen( // keep running controller until we actually reach goal
-            Run([this, lastState = trajectory.States().back()]
-                {
-            auto desiredSpeed = m_holonomicController.Calculate(GetPose(), lastState, lastState.pose.Rotation());
-            auto desiredStates = m_kinematics.ToSwerveModuleStates(desiredSpeed);
-            SetModuleStates(desiredStates); })
-                .Until([this]
-                       { return m_holonomicController.AtReference(); }))
-        .FinallyDo([this]
-                   { this->Stop(); });
 }
 
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> &trajectory)
