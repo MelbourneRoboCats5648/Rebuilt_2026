@@ -15,8 +15,8 @@ namespace FlyWheelConstants {
         inline constexpr double kP = 0.2;
         inline constexpr double kI = 0;
         inline constexpr double kD = 0;
-        inline constexpr double kV = 0.22956;
-        inline constexpr double kS = 0.087569;
+        inline constexpr double kV = 0.11271;
+        inline constexpr double kS = 0.42933;
         inline constexpr double kA = 0;
     }
 
