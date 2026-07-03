@@ -77,7 +77,7 @@ void ShooterSubsystem::Periodic(){
     // fixme(MRT) - could use a lookup table like in SCR instead of simple implementation above
     //              targetAngle = GetBestAngleForDistance(distanceToTarget);
 
-    targetAngle = HoodConstants::kMidAngle;
+    targetAngle = HoodConstants::kMaxAngle;
 
     units::meters_per_second_t ballSpeed = CalculateRequiredBallSpeed(distanceToTarget, targetAngle);
     
@@ -114,11 +114,10 @@ void ShooterSubsystem::Periodic(){
     // m_hood.SetTargetAngle(compensatedAngle);
     // m_flyWheel.SetTargetVelocity(flywheelVelocity);
     // m_drive.SetYawAngle(compensatedYawAngle);
-
     
-    // NOTE: static only for now
-    m_hood.SetTargetAngle(targetAngle);
-    m_flyWheel.SetTargetVelocity(m_flyWheel.CalculateFlyWheelSpeed(ballSpeed));
+    // NOTE: radial-compensated only for now
+    m_hood.SetTargetAngle(shootSolution.angle);
+    m_flyWheel.SetTargetVelocity(m_flyWheel.CalculateFlyWheelSpeed(shootSolution.speed));
 }
 
 ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
