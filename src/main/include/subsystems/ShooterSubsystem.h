@@ -8,6 +8,9 @@
 #include <subsystems/IntakeSubsystem.h>
 #include <subsystems/DriveSubsystem.h>
 
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
+
 struct ShootSolution{
     degree_t angle;
     meters_per_second_t speed;
@@ -46,4 +49,18 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     DriveSubsystem& m_drive;
 
     meters_per_second_t CalculateRequiredBallSpeed(meter_t distance, degree_t angle);
+
+    nt::DoublePublisher m_staticAnglePub;
+    nt::DoublePublisher m_staticVelocityPub;
+
+    nt::DoublePublisher m_radialCompensatedAnglePub;
+    nt::DoublePublisher m_radialCompensatedVelocityPub;
+
+    nt::DoublePublisher m_moveAnglePub;
+    nt::DoublePublisher m_moveVelocityPub;
+    nt::DoublePublisher m_moveYawPub;
+
+    nt::DoublePublisher m_moveCompensatedAnglePub;
+    nt::DoublePublisher m_moveFlywheelVelocityPub;
+    nt::DoublePublisher m_moveCompensatedYawPub;
 };

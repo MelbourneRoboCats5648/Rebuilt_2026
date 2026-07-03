@@ -29,6 +29,11 @@ DriveSubsystem::DriveSubsystem()
                                 .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory")
                                 .Publish();
 
+    m_radialSpeedPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/SpeedComponents/Radial").Publish();
+    m_tangentSpeedPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/SpeedComponents/Tangent").Publish();
+
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
@@ -101,6 +106,11 @@ void DriveSubsystem::Periodic()
     /* publish aligned pose */
     frc::Pose2d alignedPose(pose.Translation(), frc::Rotation2d(GetShootOnTheMoveHeading()));
     m_alignedPosePublisher.Set(alignedPose);
+
+    /* publish speed components (NEW) */
+    SpeedComponents speedComponents = GetSpeedComponents();
+    m_radialSpeedPublisher.Set(speedComponents.radialSpeed.value());
+    m_tangentSpeedPublisher.Set(speedComponents.tangentialSpeed.value());
 }
 
 void DriveSubsystem::SimulationPeriodic()

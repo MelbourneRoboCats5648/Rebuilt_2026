@@ -20,6 +20,7 @@
 
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
+#include <networktables/DoubleTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
@@ -167,6 +168,9 @@ private:
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
     nt::StructPublisher<frc::Pose2d> m_alignedPosePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
+
+    nt::DoublePublisher m_radialSpeedPublisher;
+    nt::DoublePublisher m_tangentSpeedPublisher;
 
     bool m_isFieldRelative = true;
 

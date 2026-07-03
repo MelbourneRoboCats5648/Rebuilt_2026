@@ -6,6 +6,29 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intak
 : m_intake (intake),
   m_drive(drive)
 {
+    m_staticAnglePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/Static/Angle").Publish(); // degree
+    m_staticVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/Static/BallVelocity").Publish(); // m/s
+        
+    m_radialCompensatedAnglePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/RadialCompensated/Angle").Publish(); // degree
+    m_radialCompensatedVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/RadialCompensated/BallVelocity").Publish(); // m/s
+
+    m_moveAnglePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/Angle").Publish(); // degree
+    m_moveVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/BallVelocity").Publish(); // m/s
+    m_moveYawPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/Yaw").Publish(); // degree
+        
+    m_moveCompensatedAnglePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/CompensatedAngle").Publish(); // degree
+    m_moveFlywheelVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/FlywheelVelocity").Publish(); // turns/sec
+    m_moveCompensatedYawPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/ShootOnTheMove/CompensatedYaw").Publish(); // degree
 }
 
 frc2::CommandPtr ShooterSubsystem::ShootCommand() {
@@ -55,16 +78,27 @@ void ShooterSubsystem::Periodic(){
     ShootSolution shootSolution;
     shootSolution.angle = targetAngle;
     shootSolution.speed = ballSpeed;
+    m_staticAnglePub.Set(shootSolution.angle.value());
+    m_staticVelocityPub.Set(shootSolution.speed.value());
 
     // finding robot's radial and tangential speeds
     SpeedComponents speedComponents = m_drive.GetSpeedComponents();
 
     shootSolution = CompensateForRadialSpeed(shootSolution, speedComponents.radialSpeed);
+    m_radialCompensatedAnglePub.Set(shootSolution.angle.value());
+    m_radialCompensatedVelocityPub.Set(shootSolution.speed.value());
+
     ShootOnTheMoveSolution movingShootSolution = CompensateYawForTangentialSpeed(shootSolution, speedComponents.tangentialSpeed);
+    m_moveAnglePub.Set(movingShootSolution.shootSolution.angle.value());
+    m_moveVelocityPub.Set(movingShootSolution.shootSolution.speed.value());
+    m_moveYawPub.Set(movingShootSolution.yawAngle.value());
     
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(movingShootSolution.shootSolution.speed);
-    units::turn_t compensatedAngle = movingShootSolution.shootSolution.angle;
+    units::degree_t compensatedAngle = movingShootSolution.shootSolution.angle;
     units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
+    m_moveCompensatedAnglePub.Set(compensatedAngle.value());
+    m_moveFlywheelVelocityPub.Set(flywheelVelocity.value());
+    m_moveCompensatedYawPub.Set(compensatedYawAngle.value());
     
     // fixme(MRT) - uncomment below after testing
     //m_hood.SetTargetAngle(compensatedAngle);
