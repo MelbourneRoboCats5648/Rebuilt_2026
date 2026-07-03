@@ -168,9 +168,11 @@ private:
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
     nt::StructPublisher<frc::Pose2d> m_alignedPosePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
+    nt::StructPublisher<frc::Pose2d> m_targetPositionPublisher;
 
     nt::DoublePublisher m_radialSpeedPublisher;
     nt::DoublePublisher m_tangentSpeedPublisher;
+    nt::DoublePublisher m_targetDistancePublisher;
 
     bool m_isFieldRelative = true;
 

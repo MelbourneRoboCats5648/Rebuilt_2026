@@ -15,6 +15,11 @@ ShooterSubsystem::ShooterSubsystem(DriveSubsystem& drive, IntakeSubsystem& intak
         .GetDoubleTopic("Shooter/RadialCompensated/Angle").Publish(); // degree
     m_radialCompensatedVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/RadialCompensated/BallVelocity").Publish(); // m/s
+        
+    m_radialCompensatedAngleDeltaPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/RadialCompensated/Delta/Angle").Publish(); // degree
+    m_radialCompensatedVelocityDeltaPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Shooter/RadialCompensated/Delta/BallVelocity").Publish(); // m/s
 
     m_moveAnglePub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Shooter/ShootOnTheMove/Angle").Publish(); // degree
@@ -72,6 +77,8 @@ void ShooterSubsystem::Periodic(){
     // fixme(MRT) - could use a lookup table like in SCR instead of simple implementation above
     //              targetAngle = GetBestAngleForDistance(distanceToTarget);
 
+    targetAngle = HoodConstants::kMidAngle;
+
     units::meters_per_second_t ballSpeed = CalculateRequiredBallSpeed(distanceToTarget, targetAngle);
     
     // the static shoot solution (before compensation for robot movement)
@@ -88,6 +95,9 @@ void ShooterSubsystem::Periodic(){
     m_radialCompensatedAnglePub.Set(shootSolution.angle.value());
     m_radialCompensatedVelocityPub.Set(shootSolution.speed.value());
 
+    m_radialCompensatedAngleDeltaPub.Set((shootSolution.angle - targetAngle).value());
+    m_radialCompensatedVelocityDeltaPub.Set((shootSolution.speed - ballSpeed).value());
+
     ShootOnTheMoveSolution movingShootSolution = CompensateYawForTangentialSpeed(shootSolution, speedComponents.tangentialSpeed);
     m_moveAnglePub.Set(movingShootSolution.shootSolution.angle.value());
     m_moveVelocityPub.Set(movingShootSolution.shootSolution.speed.value());
@@ -101,9 +111,14 @@ void ShooterSubsystem::Periodic(){
     m_moveCompensatedYawPub.Set(compensatedYawAngle.value());
     
     // fixme(MRT) - uncomment below after testing
-    //m_hood.SetTargetAngle(compensatedAngle);
-    //m_flyWheel.SetTargetVelocity(flywheelVelocity);
-    m_drive.SetYawAngle(compensatedYawAngle);
+    // m_hood.SetTargetAngle(compensatedAngle);
+    // m_flyWheel.SetTargetVelocity(flywheelVelocity);
+    // m_drive.SetYawAngle(compensatedYawAngle);
+
+    
+    // NOTE: static only for now
+    m_hood.SetTargetAngle(targetAngle);
+    m_flyWheel.SetTargetVelocity(m_flyWheel.CalculateFlyWheelSpeed(ballSpeed));
 }
 
 ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
@@ -140,7 +155,7 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     
     units::meters_per_second_t horizontalRadialBallSpeed = requiredBallShootingSpeed * cos(requiredHoodAngle);
     
-    units::degree_t ballYawAngle = units::degree_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
+    units::degree_t ballYawAngle = units::radian_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
     units::degree_t compensatedYawAngle = -ballYawAngle;
 
     meters_per_second_t verticalBallSpeed = horizontalRadialBallSpeed * sin(solution.angle);
@@ -149,7 +164,7 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     meters_per_second_t horizontalComponent = units::math::hypot(horizontalRadialBallSpeed, robotTangentialSpeed);
 
     meters_per_second_t compensatedSpeed = units::math::hypot(horizontalComponent, verticalBallSpeed);
-    degree_t compensatedAngle = degree_t(atan2(verticalBallSpeed.value(), horizontalComponent.value()));
+    degree_t compensatedAngle = radian_t(atan2(verticalBallSpeed.value(), horizontalComponent.value()));
 
     ShootSolution shootSolution;
     shootSolution.angle = compensatedAngle;

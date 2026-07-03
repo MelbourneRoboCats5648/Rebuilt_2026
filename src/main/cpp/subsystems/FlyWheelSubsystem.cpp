@@ -47,7 +47,7 @@ FlyWheelSubsystem::FlyWheelSubsystem()
 
     // fixme(MRT) - try uncommenting this for smart dashboard update for shooter velocity
     // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
-    frc::SmartDashboard::PutNumber("ShooterVelocity", 42.0); // initialise shooter target velocity with default of 0.0
+    //frc::SmartDashboard::PutNumber("ShooterVelocity", 42.0); // initialise shooter target velocity with default of 0.0
 }
 
 TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
@@ -73,7 +73,7 @@ void FlyWheelSubsystem::Periodic() {
         /* publish current state */
 
         // fixme(MRT) - uncomment below to allow target velocity to be set via smart dashboard
-        m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
+        //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
         m_motorWheelVelPub.Set(m_motor.GetVelocity().GetValueAsDouble());
@@ -147,6 +147,9 @@ frc2::CommandPtr FlyWheelSubsystem::ResetFlywheelVelocity()
 }
 
 units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_second_t ballSpeed) {
+    // double c = 1.3636; // magic constant
+    // ballSpeed *= c;
+
     meters_per_second_t adjustedSpeed = AdjustedBallSpeed(ballSpeed);
 
     m_requiredSpeed = ballSpeed.value();
@@ -162,12 +165,16 @@ units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_s
 
 meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
     // coefficients found from curve fitting
-    double a = -0.8418;
-    double b = 14.6320;
-    double c = -46.5525;
+    // double a = -0.8418;
+    // double b = 14.6320;
+    // double c = -46.5525;
 
     double x = actualSpeed.value();
 
-    meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
+    // meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
+
+    double b = 2.35;
+    meters_per_second_t adjustedSpeed =  meters_per_second_t(b * x);
+
     return adjustedSpeed;
 }

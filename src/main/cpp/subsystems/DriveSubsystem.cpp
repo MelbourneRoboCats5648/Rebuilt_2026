@@ -33,6 +33,11 @@ DriveSubsystem::DriveSubsystem()
         .GetDoubleTopic("DriveTrain/SpeedComponents/Radial").Publish();
     m_tangentSpeedPublisher = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("DriveTrain/SpeedComponents/Tangent").Publish();
+    
+    m_targetPositionPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructTopic<frc::Pose2d>("DriveTrain/TargetPosition").Publish();
+    m_targetDistancePublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/DistanceToTarget").Publish();
 
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
@@ -93,6 +98,8 @@ void DriveSubsystem::Periodic()
         m_targetPosition = hubPosition;
     }
 
+    m_targetPositionPublisher.Set(frc::Pose2d{m_targetPosition, frc::Rotation2d{0_deg}});
+
     /* publish current state */
     m_statePublisher.Set(
         std::vector{
@@ -111,6 +118,8 @@ void DriveSubsystem::Periodic()
     SpeedComponents speedComponents = GetSpeedComponents();
     m_radialSpeedPublisher.Set(speedComponents.radialSpeed.value());
     m_tangentSpeedPublisher.Set(speedComponents.tangentialSpeed.value());
+
+    m_targetDistancePublisher.Set(DistanceToTarget().value());
 }
 
 void DriveSubsystem::SimulationPeriodic()
