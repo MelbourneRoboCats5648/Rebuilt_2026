@@ -100,8 +100,38 @@ void RobotContainer::ConfigureBindings() {
         m_invertControls = !m_invertControls;
     }));
 
+    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
+
+    
+    std::function<meters_per_second_t()> xSpeedLambda = [this] {
+        meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+        
+            if (m_invertControls) {
+                xSpeed *= -1.0;
+            }
+            return xSpeed;
+        };
+
+    std::function<meters_per_second_t()> ySpeedLambda = [this] {
+        meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                 * DrivetrainConstants::kMaxSpeed
+            );
+            if (m_invertControls) {
+                ySpeed *= -1.0;
+            }
+            return ySpeed;
+        };
+
+    m_driverController.LeftTrigger().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
+
+
     // fixme(MRT) - temporarily testing hood calibration function. Can remove
-    m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
+    //m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
 
    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
@@ -111,16 +141,16 @@ void RobotContainer::ConfigureBindings() {
     //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
 
     // fixme(MRT) - need to uncomment the intake command
-//    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
+    m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
-    m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
-    m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
+    //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
+    //m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
     m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
-    m_mechController.A().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
+    m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 
-    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
-    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
+//    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
+//    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
 
     // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
@@ -146,36 +176,8 @@ void RobotContainer::ConfigureBindings() {
     // fixme(MRT) - Feed command unlikely to be used alone and could be removed
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
 
-    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
-
     // fixme(MRT) - remove static AlignToTargetCommand and change LeftTrigger binding to DriveAlignHeadingCommandWrapper
-    m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_mechController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
-
-    std::function<meters_per_second_t()> xSpeedLambda = [this] {
-        meters_per_second_t xSpeed = m_xLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftY())
-                * DrivetrainConstants::kMaxSpeed
-            );
-        
-            if (m_invertControls) {
-                xSpeed *= -1.0;
-            }
-            return xSpeed;
-        };
-
-    std::function<meters_per_second_t()> ySpeedLambda = [this] {
-        meters_per_second_t ySpeed = m_yLimiter.Calculate(
-                PreprocessJoystickInput(-m_driverController.GetLeftX())
-                 * DrivetrainConstants::kMaxSpeed
-            );
-            if (m_invertControls) {
-                ySpeed *= -1.0;
-            }
-            return ySpeed;
-        };
-
-    m_driverController.A().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
+    //m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
 
 }
 
