@@ -59,11 +59,12 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     nt::DoublePublisher m_radialCompensatedAngleDeltaPub;
     nt::DoublePublisher m_radialCompensatedVelocityDeltaPub;
 
-    nt::DoublePublisher m_moveAnglePub;
-    nt::DoublePublisher m_moveVelocityPub;
-    nt::DoublePublisher m_moveYawPub;
+    nt::DoublePublisher m_sotmAnglePub;
+    nt::DoublePublisher m_sotmVelocityPub;
+    nt::DoublePublisher m_sotmYawPub;
 
-    nt::DoublePublisher m_moveCompensatedAnglePub;
-    nt::DoublePublisher m_moveFlywheelVelocityPub;
-    nt::DoublePublisher m_moveCompensatedYawPub;
+    nt::DoublePublisher m_tangentialCompensatedAngleDeltaPub;
+    nt::DoublePublisher m_tangentialCompensatedVelocityDeltaPub;
+
+    nt::DoublePublisher m_flywheelVelocityPub;
 };
