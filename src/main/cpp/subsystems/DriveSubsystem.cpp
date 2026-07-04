@@ -1,8 +1,6 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
-#include <frc2/command/SwerveControllerCommand.h>
-
 #include <commands/ChoreoTrajectoryCommand.h>
 
 #include <frc/DriverStation.h>
@@ -21,7 +19,7 @@ DriveSubsystem::DriveSubsystem()
                           .GetStructTopic<frc::Pose2d>("DriveTrain/Pose")
                           .Publish();
     m_alignedPosePublisher = nt::NetworkTableInstance::GetDefault()
-                          .GetStructTopic<frc::Pose2d>("DriveTrain/ALignedPose")
+                          .GetStructTopic<frc::Pose2d>("DriveTrain/AlignedPose")
                           .Publish();
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
                                 .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory")
@@ -29,20 +27,14 @@ DriveSubsystem::DriveSubsystem()
 
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
-
     m_gyro.GetConfigurator().Apply(toApply);
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ());
 
     ResetGyro();
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
-    m_holonomicController.SetTolerance(
-        frc::Pose2d(
-            Autonomous::XYController::kTolerance, Autonomous::XYController::kTolerance, // translation
-            Autonomous::ThetaController::kPositionTolerance                             // rotation
-            ));
     m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
-    // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
+    // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180!
 }
 
 bool DriveSubsystem::IsBlueAlliance()
@@ -118,7 +110,6 @@ degree_t DriveSubsystem::GetGyroHeading()
 
 degree_t DriveSubsystem::GetHeading()
 {
-    // return m_gyro.GetRotation2d().Degrees();
     return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
