@@ -157,7 +157,7 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     units::degree_t ballYawAngle = units::radian_t(atan2(robotTangentialSpeed.value(), horizontalRadialBallSpeed.value()));
     units::degree_t compensatedYawAngle = -ballYawAngle;
 
-    meters_per_second_t verticalBallSpeed = horizontalRadialBallSpeed * sin(solution.angle);
+    meters_per_second_t verticalBallSpeed = requiredBallShootingSpeed * sin(solution.angle);
 
     // the horizontal component is the projection of the compensated ball vector onto the horizontal plane
     meters_per_second_t horizontalComponent = units::math::hypot(horizontalRadialBallSpeed, robotTangentialSpeed);
