@@ -59,7 +59,7 @@ meters_per_second_t ShooterSubsystem::CalculateRequiredBallSpeed(meter_t distanc
         auto cosine = cos(angle);
         auto tangent = tan(angle);
 
-        meter_t adjustedHeight = FieldConstants::HubHeight - FlyWheelConstants::startHeight;
+        meter_t adjustedHeight = FieldConstants::HubHeight - HoodConstants::hoodHeight;
 
         meters_per_second_t speed = 
             sqrt(

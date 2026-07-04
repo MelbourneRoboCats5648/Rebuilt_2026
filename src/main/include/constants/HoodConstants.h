@@ -7,6 +7,8 @@
 #include <units/time.h>
 
 namespace HoodConstants {
+    inline constexpr units::meter_t hoodHeight(0.39);
+
     inline constexpr units::degree_t kMinAngleSoftLimit = 38.0470_deg;
     inline constexpr units::degree_t kMaxAngleSoftLimit = 68.1986_deg;
 
