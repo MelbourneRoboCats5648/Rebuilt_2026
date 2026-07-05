@@ -29,6 +29,16 @@ DriveSubsystem::DriveSubsystem()
                                 .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory")
                                 .Publish();
 
+    m_radialSpeedPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/SpeedComponents/Radial").Publish();
+    m_tangentSpeedPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/SpeedComponents/Tangent").Publish();
+    
+    m_targetPositionPublisher = nt::NetworkTableInstance::GetDefault()
+        .GetStructTopic<frc::Pose2d>("DriveTrain/TargetPosition").Publish();
+    m_targetDistancePublisher = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("DriveTrain/DistanceToTarget").Publish();
+
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
 
@@ -88,6 +98,8 @@ void DriveSubsystem::Periodic()
         m_targetPosition = hubPosition;
     }
 
+    m_targetPositionPublisher.Set(frc::Pose2d{m_targetPosition, frc::Rotation2d{0_deg}});
+
     /* publish current state */
     m_statePublisher.Set(
         std::vector{
@@ -101,6 +113,13 @@ void DriveSubsystem::Periodic()
     /* publish aligned pose */
     frc::Pose2d alignedPose(pose.Translation(), frc::Rotation2d(GetShootOnTheMoveHeading()));
     m_alignedPosePublisher.Set(alignedPose);
+
+    /* publish speed components (NEW) */
+    SpeedComponents speedComponents = GetSpeedComponents();
+    m_radialSpeedPublisher.Set(speedComponents.radialSpeed.value());
+    m_tangentSpeedPublisher.Set(speedComponents.tangentialSpeed.value());
+
+    m_targetDistancePublisher.Set(DistanceToTarget().value());
 }
 
 void DriveSubsystem::SimulationPeriodic()
@@ -235,6 +254,7 @@ void DriveSubsystem::ResetHeadingWithAlliance()
             : DrivetrainConstants::kInitialRedHeading);
 }
 
+// fixme(MRT) - can remove this frc trajectory function
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
 {
     return CreateTrajectory(
@@ -242,6 +262,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
         std::move(targetPose));
 }
 
+// fixme(MRT) - can remove this frc trajectory generator
 frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose)
 {
     frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
@@ -259,6 +280,7 @@ frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::P
     return traj;
 }
 
+// fixme(MRT) - can remove this frc trajectory command
 // Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory)
 {
