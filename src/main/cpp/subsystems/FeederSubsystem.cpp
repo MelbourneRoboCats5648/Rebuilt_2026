@@ -49,8 +49,6 @@ FeederSubsystem::FeederSubsystem()
 
 void FeederSubsystem::Feed() {
     m_motor.SetVoltage(FeederConstants::kFeederVoltage);
-
-
     m_leaderSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage + m_sideFeederVoltageDifference);
     m_followerSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage - m_sideFeederVoltageDifference);
 }
