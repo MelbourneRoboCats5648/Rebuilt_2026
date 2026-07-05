@@ -115,11 +115,7 @@ void ShooterSubsystem::Periodic(){
 
     m_hood.SetTargetAngle(AdjustAngle(compensatedHoodAngle));
     m_flyWheel.SetTargetVelocity(flywheelVelocity);
-    m_drive.SetYawAngle(compensatedYawAngle);
-    m_moveCompensatedAnglePub.Set(compensatedAngle.value());
-    m_moveFlywheelVelocityPub.Set(flywheelVelocity.value());
-    m_moveCompensatedYawPub.Set(compensatedYawAngle.value());
-    
+    m_drive.SetYawAngle(compensatedYawAngle);    
 }
 
 // this compensates the required hood angle based on tuning 
