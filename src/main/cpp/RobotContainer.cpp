@@ -190,11 +190,11 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
 frc2::CommandPtr RobotContainer::RumbleControllerCommand() {
     return frc2::cmd::RunOnce([this]
-                   {m_driverController.SetRumble(frc::GenericHID::kBothRumble, 0.5);})
+                   {m_mechController.SetRumble(frc::GenericHID::kBothRumble, 0.5);})
 
             .AndThen(frc2::cmd::Wait(0.5_s))
 
             .FinallyDo([this] {
-            m_driverController.SetRumble(frc::GenericHID::kBothRumble, 0.0);
+            m_mechController.SetRumble(frc::GenericHID::kBothRumble, 0.0);
             });
 };
