@@ -127,7 +127,7 @@ void RobotContainer::ConfigureBindings() {
         };
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood().AlongWith(m_intake.IntakeCommand()));
 
 
     // fixme(MRT) - temporarily testing hood calibration function. Can remove
