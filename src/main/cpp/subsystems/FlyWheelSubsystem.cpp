@@ -167,8 +167,8 @@ meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t act
 
     // meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
 
-    double b = 2.35;
-    meters_per_second_t adjustedSpeed =  b * x;
+    double b = 2.3046;
+    meters_per_second_t adjustedSpeed = (b * x);
 
     return adjustedSpeed;
 }

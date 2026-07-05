@@ -40,6 +40,10 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
 
+    units::degree_t GetBestAngleForDistance(meter_t distanceToTarget);
+
+    units::degree_t AdjustAngle(units::degree_t angle);
+
     private:
     FlyWheelSubsystem m_flyWheel;
     HoodSubsystem m_hood;
