@@ -22,16 +22,17 @@ using namespace units::acceleration;
 
 namespace DriveModuleConstants {
     namespace DirectionMotor {
-        inline constexpr double kP = 6.0; // equivalent to 0.9 V/(t/s)
+        inline constexpr double kP = 12.25; // equivalent to 0.9 V/(t/s)
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         inline constexpr radians_per_second_t kMaxVel = (2 * M_PI) * 2_rad_per_s;
-        inline constexpr radians_per_second_squared_t kMaxAcc = (2 * M_PI) * 4_rad_per_s_sq;
+        inline constexpr radians_per_second_squared_t kMaxAcc = (2 * M_PI) * 6_rad_per_s_sq;
 
         inline constexpr ampere_t kMaxCurrent = 40_A;
         inline constexpr ampere_t kLowerCurrentLimit = 30_A;
         inline constexpr second_t kLowerLimitTime = 0.1_s;
     };
+
 
     namespace SpeedMotor {
         inline constexpr double kGearRatio = 6.75;
@@ -53,10 +54,10 @@ namespace DriveModuleConstants {
 
     namespace DirectionEncoder {
         // mag offset zero position requies all swerve module bolts pointing towards the right (negative Y axis of robot) 
-        inline constexpr turn_t kFrontLeftOffset = 0.07568359375_tr;
-        inline constexpr turn_t kFrontRightOffset = 0.325927734375_tr;
-        inline constexpr turn_t kBackLeftOffset = -0.055419921875_tr;
-        inline constexpr turn_t kBackRightOffset = 0.26953125_tr;
+        inline constexpr turn_t kBackRightOffset = 0.07568359375_tr - 0.5_tr;
+        inline constexpr turn_t kBackLeftOffset = 0.325927734375_tr - 0.5_tr;
+        inline constexpr turn_t kFrontRightOffset = -0.055419921875_tr + 0.5_tr;
+        inline constexpr turn_t kFrontLeftOffset = 0.26953125_tr - 0.5_tr;
     }; // fixme - mag offsets are 180 deg off - make sure we are at the right direction before taking measurements
 };
 
@@ -72,7 +73,7 @@ namespace DrivetrainConstants {
     inline constexpr meters_per_second_squared_t kMaxAcceleration = 3.0_mps_sq;
 
     inline constexpr radians_per_second_t kMaxAngularSpeed = (2 * M_PI) * 1_rad_per_s;
-    inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = (2 * M_PI) * 1_rad_per_s_sq;
+    inline constexpr radians_per_second_squared_t kMaxAngularAcceleration = (2 * M_PI) * 2_rad_per_s_sq;
 
     inline constexpr degree_t kInitialGyroAngle = 0_deg;
 
@@ -88,7 +89,7 @@ namespace DrivetrainConstants {
             inline constexpr meter_t kTolerance = 0.05_m;
         };
         namespace ThetaController {
-            inline constexpr double kP = 3.0;
+            inline constexpr double kP = 9.0;
             inline constexpr double kI = 0.0;
             inline constexpr double kD = 0.0;
             inline constexpr radian_t kPositionTolerance = 1_deg;

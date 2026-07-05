@@ -48,7 +48,7 @@ m_drive(drive)
       .ForwardSoftLimit(IntakeConstants::kExtendSoftLimit.value()).ForwardSoftLimitEnabled(true)
       .ReverseSoftLimit(IntakeConstants::kRetractSoftLimit.value()).ReverseSoftLimitEnabled(true);
 
-    const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio;
+    const double metresPerTurn = IntakeConstants::kExtendRetractSprocketDia * std::numbers::pi * IntakeConstants::kExtendRetractGearRatio * IntakeConstants::kExtendRetractPulleyRatio;
 
     ExtendRetractMotorConfig.encoder
       .PositionConversionFactor(metresPerTurn)
@@ -91,6 +91,10 @@ void IntakeSubsystem::ConfigurePublishers()
         .GetDoubleTopic("Intake/ExtendRetract/Position").Publish();
     m_extendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Velocity").Publish();
+    m_followerExtendRetractPositionPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerPosition").Publish();
+    m_followerExtendRetractVelocityPub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerVelocity").Publish();
     m_extendRetractTargetPositionPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/TargetPosition").Publish();
     m_extendRetractTargetVelocityPub = nt::NetworkTableInstance::GetDefault()
@@ -101,6 +105,8 @@ void IntakeSubsystem::ConfigurePublishers()
         .GetDoubleTopic("Intake/ExtendRetract/FollowerCurrent").Publish();
     m_extendRetractVoltagePub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/ExtendRetract/Voltage").Publish();
+    m_followerVoltagePub = nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Intake/ExtendRetract/FollowerVoltage").Publish();
     m_intakeVelocityPub = nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Intake/Motor/Velocity").Publish();
     m_intakeVoltagePub = nt::NetworkTableInstance::GetDefault()
@@ -112,9 +118,14 @@ void IntakeSubsystem::Periodic()
     /* publish current state */
     m_extendRetractPositionPub.Set(GetPosition().value());
     m_extendRetractVelocityPub.Set(GetExtendRetractVelocity().value());
+    m_followerExtendRetractPositionPub.Set(m_followerExtendRetractEncoder.GetPosition());
+    m_followerExtendRetractVelocityPub.Set(m_followerExtendRetractEncoder.GetVelocity());
     m_extendRetractMotorCurrentPub.Set(m_extendRetractMotor.GetOutputCurrent());
     m_followerExtendRetractMotorCurrentPub.Set(m_followerExtendRetractMotor.GetOutputCurrent());
     m_intakeVelocityPub.Set(GetIntakeVelocity().value());
+
+    m_extendRetractVoltagePub.Set(m_extendRetractMotor.GetAppliedOutput());
+    m_followerVoltagePub.Set(m_followerExtendRetractMotor.GetAppliedOutput());
 }
 
 turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t forwardRobotSpeed)
@@ -240,6 +251,17 @@ void IntakeSubsystem::SetIntakeVoltage(units::volt_t voltage) {
 void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
     m_extendRetractMotor.SetVoltage(voltage);
     m_extendRetractVoltagePub.Set(voltage.value());
+}
+
+// fixme - this was temporarily added to test direct voltage control of the extend/retract
+frc2::CommandPtr IntakeSubsystem::SetExtendRetractVoltageCommand(units::volt_t voltage){
+    return
+        Run([this, voltage] {
+            SetExtendRetractVoltage(voltage);
+        })
+        .FinallyDo([this] {
+            StopExtendRetract();
+        });
 }
 
 frc2::CommandPtr IntakeSubsystem::RetractToLimitCommand() {

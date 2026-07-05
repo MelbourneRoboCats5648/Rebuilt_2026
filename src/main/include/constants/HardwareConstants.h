@@ -8,36 +8,36 @@ namespace HardwareConstants {
     inline constexpr int kGyroID = 14;
 
     // Swerve Motors
-    inline constexpr int kFrontLeftSpeedID = 3;
-    inline constexpr int kFrontLeftDirectionID = 4;
-    inline constexpr int kFrontLeftEncoderID = 11;
+    inline constexpr int kFrontLeftSpeedID = 7;
+    inline constexpr int kFrontLeftDirectionID = 8;
+    inline constexpr int kFrontLeftEncoderID = 13;
 
-    inline constexpr int kFrontRightSpeedID = 1;
-    inline constexpr int kFrontRightDirectionID = 2;
-    inline constexpr int kFrontRightEncoderID = 10;
+    inline constexpr int kFrontRightSpeedID = 5;
+    inline constexpr int kFrontRightDirectionID = 6;
+    inline constexpr int kFrontRightEncoderID = 12;
 
-    inline constexpr int kBackLeftSpeedID = 5;
-    inline constexpr int kBackLeftDirectionID = 6;
-    inline constexpr int kBackLeftEncoderID = 12;
+    inline constexpr int kBackLeftSpeedID = 1;
+    inline constexpr int kBackLeftDirectionID = 2;
+    inline constexpr int kBackLeftEncoderID = 10;
 
-    inline constexpr int kBackRightSpeedID = 7;
-    inline constexpr int kBackRightDirectionID = 8;
-    inline constexpr int kBackRightEncoderID = 13;
+    inline constexpr int kBackRightSpeedID = 3;
+    inline constexpr int kBackRightDirectionID = 4;
+    inline constexpr int kBackRightEncoderID = 11;
 
     // Shooter Motors
     inline constexpr int kShooterFlywheelID = 15;
     inline constexpr int kShooterFlywheelFollowerID = 16;
 
     // feeder
-    inline constexpr int kShooterFeederID = 17;
-    inline constexpr int kShooterLeaderSideFeederID = 24;
+    inline constexpr int kShooterFeederID = 20;
+    inline constexpr int kShooterLeaderSideFeederID = 22;
     inline constexpr int kShooterFollowerSideFeederID = 25;
 
-    inline constexpr int kShooterHoodID = 18;
+    inline constexpr int kShooterHoodID = 24;
 
     // Intake Motors
-    inline constexpr int kExtendRetractMotorID = 19; 
-    inline constexpr int kFollowerExtendRetractMotorID = 20; 
+    inline constexpr int kExtendRetractMotorID = 19;
+    inline constexpr int kFollowerExtendRetractMotorID = 17;
     inline constexpr int kIntakeMotorID = 23;
 
 };

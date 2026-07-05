@@ -20,6 +20,7 @@
 
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
+#include <networktables/DoubleTopic.h>
 #include <frc/geometry/Rotation2d.h>
 
 #include <frc/trajectory/Trajectory.h>
@@ -58,7 +59,7 @@ public:
 
     void Drive(
         meters_per_second_t xSpeed, meters_per_second_t ySpeed, radians_per_second_t rotSpeed,
-        bool isfieldRelative, bool teleop
+        bool teleop, bool isfieldRelative
     );
     void Stop();
     void SetModuleStates(wpi::array<frc::SwerveModuleState, 4> states);
@@ -84,16 +85,18 @@ public:
     frc2::CommandPtr FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory);
 
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
+    frc2::CommandPtr DriveAlignHeadingCommand(std::function<radian_t()> headingLambda, std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda);
     frc2::CommandPtr AlignHeadingCommand(radian_t heading);
     frc2::CommandPtr AlignToTargetCommand();
+    frc2::CommandPtr DriveAlignHeadingCommandWrapper(std::function<meters_per_second_t()> xSpeedLambda, std::function<meters_per_second_t()> ySpeedLambda);
 
     units::radian_t HeadingToTarget(); // could be made private, but seems like a useful public function
     units::meter_t DistanceToTarget();
+    units::radian_t GetShootOnTheMoveHeading();
 
     SpeedComponents GetSpeedComponents();
 
     void SetYawAngle(degree_t shootingYawAngle);
-
 
 private:
     bool IsBlueAlliance();
@@ -163,10 +166,18 @@ private:
     nt::StructArrayPublisher<frc::SwerveModuleState> m_statePublisher; 
     nt::StructArrayPublisher<frc::SwerveModuleState> m_commandPublisher; 
     nt::StructPublisher<frc::Pose2d> m_posePublisher;
+    nt::StructPublisher<frc::Pose2d> m_alignedPosePublisher;
     nt::StructArrayPublisher<frc::Pose2d> m_trajectoryPublisher;
+    nt::StructPublisher<frc::Pose2d> m_targetPositionPublisher;
+
+    nt::DoublePublisher m_radialSpeedPublisher;
+    nt::DoublePublisher m_tangentSpeedPublisher;
+    nt::DoublePublisher m_targetDistancePublisher;
 
     bool m_isFieldRelative = true;
 
     frc::Translation2d m_targetPosition = FieldConstants::kBlueHubPosition;
     units::degree_t m_shootingYawAngle = 0_deg;
+
+    degree_t GetYawAngle();
 };

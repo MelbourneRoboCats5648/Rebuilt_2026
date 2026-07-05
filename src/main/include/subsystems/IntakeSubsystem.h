@@ -45,6 +45,9 @@ public:
 
     frc2::CommandPtr RetractToLimitCommand();
 
+    frc2::CommandPtr SetExtendRetractVoltageCommand(units::volt_t voltage);
+
+
     void Periodic() override;
 
 private:
@@ -56,6 +59,7 @@ private:
     rev::spark::SparkRelativeEncoder m_extendRetractEncoder = m_extendRetractMotor.GetEncoder();
 
     rev::spark::SparkMax m_followerExtendRetractMotor;
+    rev::spark::SparkRelativeEncoder m_followerExtendRetractEncoder = m_followerExtendRetractMotor.GetEncoder();    
 
     rev::spark::SparkMax m_intakeMotor;
     rev::spark::SparkRelativeEncoder m_intakeEncoder = m_intakeMotor.GetEncoder();
@@ -71,6 +75,8 @@ private:
     // publishers
     nt::DoublePublisher m_extendRetractPositionPub;
     nt::DoublePublisher m_extendRetractVelocityPub;
+    nt::DoublePublisher m_followerExtendRetractPositionPub;
+    nt::DoublePublisher m_followerExtendRetractVelocityPub;
     nt::DoublePublisher m_extendRetractTargetPositionPub;
     nt::DoublePublisher m_extendRetractTargetVelocityPub;
     nt::DoublePublisher m_extendRetractMotorCurrentPub;
@@ -78,6 +84,7 @@ private:
     nt::DoublePublisher m_intakeVelocityPub;
     nt::DoublePublisher m_intakeVoltagePub;
     nt::DoublePublisher m_extendRetractVoltagePub;
+    nt::DoublePublisher m_followerVoltagePub;
 
     DriveSubsystem& m_drive; // for retrieving forward speed only; not required in commands
 };

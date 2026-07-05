@@ -58,6 +58,7 @@ void RobotContainer::ConfigureBindings() {
     // Configure your trigger bindings here
 
     m_drive.SetDefaultCommand(frc2::RunCommand(
+
         [this] {
             meters_per_second_t xSpeed = m_xLimiter.Calculate(
                 PreprocessJoystickInput(-m_driverController.GetLeftY())
@@ -99,38 +100,67 @@ void RobotContainer::ConfigureBindings() {
         m_invertControls = !m_invertControls;
     }));
 
+    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
+ 
+    std::function<meters_per_second_t()> xSpeedLambda = [this] {
+        meters_per_second_t xSpeed = m_xLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftY())
+                * DrivetrainConstants::kMaxSpeed
+            );
+        
+            if (m_invertControls) {
+                xSpeed *= -1.0;
+            }
+            return xSpeed;
+        };
+
+    std::function<meters_per_second_t()> ySpeedLambda = [this] {
+        meters_per_second_t ySpeed = m_yLimiter.Calculate(
+                PreprocessJoystickInput(-m_driverController.GetLeftX())
+                 * DrivetrainConstants::kMaxSpeed
+            );
+            if (m_invertControls) {
+                ySpeed *= -1.0;
+            }
+            return ySpeed;
+        };
+
+    m_driverController.LeftTrigger().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood().AlongWith(m_intake.IntakeCommand()));
+
+    // rumble if feeder is stalling 
     frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
-    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
-    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
-
-    m_mechController.A().WhileTrue(m_intake.IntakeCommand());
-
-    m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
-    m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
-
     FuelStuckInFeederTrigger.Debounce(2_s, frc::Debouncer::DebounceType::kRising).OnTrue(RumbleControllerCommand());
 
+    // fixme(MRT) - temporarily testing hood calibration function. Can remove
+    //m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
+
+   m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+   m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+
+    // fixme(MRT) - temporarily used to test intake with direct voltage command. Delete after testing
+    //m_mechController.LeftBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(5_V));
+    //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
+
+    // fixme(MRT) - need to uncomment the intake command
+    m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
+    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
+
+    //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
+    //m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
+    //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
+    //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
+
+//    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
+//    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
+
+    // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
     // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
 
-   
-    // m_shooter.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         units::degree_t angle;
-    //         angle = (PreprocessJoystickInput(-m_mechController.GetLeftY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
-    //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
-    //         m_shooter.GoToAngle(angle);
-
-    //         units::turns_per_second_t angularVelocity;
-    //         angularVelocity = PreprocessJoystickInput(-m_mechController.GetRightY())
-    //                         * ShooterConstants::kMaxAngularVelocity;
-    //         angularVelocity = units::math::abs(angularVelocity);
-    //         m_shooter.ShootAngularVelocity(angularVelocity);
-    //     },
-    //     { &m_shooter }
-    // ));
-
+    // fixme(MRT) - modify some version of this default command to check that static shoot solution works for various input angles
+    //            - will be good to test this with April tags so that robot knows accurate distance to hub
     // m_shooter.SetDefaultCommand(frc2::RunCommand(
     //     [this] {
     //         units::degree_t angle;
@@ -145,19 +175,13 @@ void RobotContainer::ConfigureBindings() {
     //     { &m_shooter }
     // ));
 
-    //m_mechController.X().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMinAngle).Repeatedly());
-    //m_mechController.Y().WhileTrue(m_hood.GoToAngleCommand(HoodConstants::kMaxAngle).Repeatedly());
-
+    // fixme(MRT) - Feed command unlikely to be used alone and could be removed
     //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
     // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
-    m_driverController.Y().OnTrue(m_drive.ToggleFieldRelativeCommand());
+    // fixme(MRT) - remove static AlignToTargetCommand and change LeftTrigger binding to DriveAlignHeadingCommandWrapper
+    //m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
 
-    m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
-
-    //m_driverController.RightTrigger().WhileTrue(m_drive.AlignToTargetCommand().
-    //                                AndThen(m_feeder.FeedCommand()));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
