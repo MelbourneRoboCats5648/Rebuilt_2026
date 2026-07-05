@@ -65,7 +65,7 @@ frc2::CommandPtr FeederSubsystem::FeedCommand() {
 }
 
 bool FeederSubsystem::IsStalling(){
-     return m_motor.GetOutputCurrent() > 20.0;
+    return m_motor.GetOutputCurrent() > 15.0; // fixme 
 }
 
 frc2::CommandPtr FeederSubsystem::IncreaseFeederVoltageDifference() {

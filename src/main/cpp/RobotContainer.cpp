@@ -130,7 +130,7 @@ void RobotContainer::ConfigureBindings() {
 
     // rumble if feeder is stalling 
     frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
-    FuelStuckInFeederTrigger.Debounce(2_s, frc::Debouncer::DebounceType::kRising).OnTrue(RumbleControllerCommand());
+    FuelStuckInFeederTrigger.Debounce(1_s, frc::Debouncer::DebounceType::kRising).OnTrue(RumbleControllerCommand());
 
     // fixme(MRT) - temporarily testing hood calibration function. Can remove
     //m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
@@ -189,12 +189,12 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 }
 
 frc2::CommandPtr RobotContainer::RumbleControllerCommand() {
-    return frc2::cmd::RunOnce([this]
-                   {m_mechController.SetRumble(frc::GenericHID::kBothRumble, 1.0);})
+    return frc2::cmd::Run([this]
+                   {m_driverController.SetRumble(frc::GenericHID::kBothRumble, 0.5);})
 
             .AndThen(frc2::cmd::Wait(0.5_s))
 
-            .AndThen(frc2::cmd::RunOnce([this] {
-            m_mechController.SetRumble(frc::GenericHID::kBothRumble, 0.0);
-            }));
+            .FinallyDo([this] {
+            m_driverController.SetRumble(frc::GenericHID::kBothRumble, 0.0);
+            });
 };
