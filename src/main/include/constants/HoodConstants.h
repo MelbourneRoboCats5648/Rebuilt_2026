@@ -15,10 +15,13 @@ namespace HoodConstants {
     inline constexpr units::degree_t kMinAngle = kMinAngleSoftLimit + 0.5_deg; // actual testing shows that the min angle achievable with PID is 55.13 deg due to stiction
     inline constexpr units::degree_t kMaxAngle = kMaxAngleSoftLimit - 0.5_deg; // max angle achievable with PID is very close to 67 deg
     inline constexpr units::degree_t kMidAngle = (kMinAngle + kMaxAngle) / 2;
-    inline constexpr units::meter_t kRangeThreshold = 2.0_m;
+    inline constexpr units::meter_t kLowerRangeThreshold = 2.0_m;
+    inline constexpr units::meter_t kUpperRangeThreshold = 6.0_m;
 
-    inline const units::degree_t kMaxAngleRange = kMaxAngleSoftLimit - kMinAngleSoftLimit;
-    inline const double kAngleDegreesPerTurn = kMaxAngleRange.value() / (18.016512 - 5.683217);
+    inline constexpr double kAngleAdjustment = 0.9631;
+
+    inline constexpr units::degree_t kMaxAngleRange = kMaxAngleSoftLimit - kMinAngleSoftLimit;
+    inline constexpr double kAngleDegreesPerTurn = kMaxAngleRange.value() / (18.016512 - 5.683217);
 
     inline constexpr units::volt_t kCalibrationVoltage = 2.0_V;
     inline constexpr units::degrees_per_second_t kCalibrationVelocityThreshold = 1.5_deg_per_s;
