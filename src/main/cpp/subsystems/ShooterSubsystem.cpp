@@ -214,3 +214,7 @@ frc2::CommandPtr ShooterSubsystem::IncreaseFeederVoltageDifference() {
 frc2::CommandPtr ShooterSubsystem::DecreaseFeederVoltageDifference() {
     return m_feeder.DecreaseFeederVoltageDifference();
 }
+
+frc2::CommandPtr ShooterSubsystem::ReverseFeedCommand(){
+    return m_feeder.ReverseFeedCommand();
+}

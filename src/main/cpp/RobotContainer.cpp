@@ -132,19 +132,16 @@ void RobotContainer::ConfigureBindings() {
     frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
     FuelStuckInFeederTrigger.Debounce(1_s, frc::Debouncer::DebounceType::kRising).OnTrue(RumbleControllerCommand());
 
-    // fixme(MRT) - temporarily testing hood calibration function. Can remove
-    //m_driverController.A().WhileTrue(m_shooter.RetractHoodToLimitCommand());
+    m_mechController.A().WhileTrue(m_shooter.ReverseFeedCommand());
 
-   m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
-   m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
+    m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
+    m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
     // fixme(MRT) - temporarily used to test intake with direct voltage command. Delete after testing
     //m_mechController.LeftBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(5_V));
     //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
 
-    // fixme(MRT) - need to uncomment the intake command
     m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
-    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
 
     //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     //m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
