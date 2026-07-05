@@ -53,6 +53,12 @@ void FeederSubsystem::Feed() {
     m_followerSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage - m_sideFeederVoltageDifference);
 }
 
+void FeederSubsystem::ReverseFeed() {
+    m_motor.SetVoltage(-FeederConstants::kFeederVoltage);
+    m_leaderSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
+    m_followerSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
+}
+
 void FeederSubsystem::Stop() {
     m_motor.StopMotor();
     m_leaderSideMotor.StopMotor();
@@ -61,6 +67,11 @@ void FeederSubsystem::Stop() {
 
 frc2::CommandPtr FeederSubsystem::FeedCommand() {
     return Run([this] { Feed(); })
+        .FinallyDo([this] { Stop(); });
+}
+
+frc2::CommandPtr FeederSubsystem::ReverseFeedCommand() {
+    return Run([this] { ReverseFeed(); })
         .FinallyDo([this] { Stop(); });
 }
 
