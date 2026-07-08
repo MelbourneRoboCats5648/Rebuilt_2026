@@ -34,6 +34,7 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_shooter);
     m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_shooter);
     m_MRT_StartNeutralStart = autos::MRTStartNeutralStart(&m_drive);
+    m_MRT_ShootTrenchRight = autos::MRTShootTrenchRight(&m_drive, &m_intake, &m_shooter);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
@@ -43,6 +44,7 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
     m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
     m_chooser.AddOption("Choreo Start to Neutral to Start", m_MRT_StartNeutralStart.value().get());
+    m_chooser.AddOption("Choreo Shoot Trench from Right", m_MRT_ShootTrenchRight.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
