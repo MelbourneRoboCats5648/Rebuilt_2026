@@ -29,6 +29,11 @@ FeederSubsystem::FeederSubsystem()
         .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
         .Inverted(true);
+
+    leaderSideConfig.encoder
+    .PositionConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio)
+    .VelocityConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio / 60.0);
+
     m_leaderSideMotor.Configure(
         leaderSideConfig,
         rev::ResetMode::kResetSafeParameters,
@@ -36,10 +41,16 @@ FeederSubsystem::FeederSubsystem()
     );
 
     rev::spark::SparkMaxConfig followerSideConfig;
+
     followerSideConfig
         .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
         // .Follow(m_leaderSideMotor, true); // inverted from leader
+    
+    followerSideConfig.encoder
+    .PositionConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio)
+    .VelocityConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio / 60.0);
+
     m_followerSideMotor.Configure(
         followerSideConfig,
         rev::ResetMode::kResetSafeParameters,
