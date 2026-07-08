@@ -63,7 +63,7 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         TalonFX m_motor;
         TalonFX m_follower;
 
-        units::turns_per_second_t m_targetVelocity{40_tps}; // flywheel velocity
+        units::turns_per_second_t m_targetVelocity; // flywheel velocity
 
         nt::DoublePublisher m_rotorVelPub;
         nt::DoublePublisher m_motorWheelVelPub;
@@ -74,10 +74,6 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
         nt::DoublePublisher m_flyWheelVoltagePub;
         nt::DoublePublisher m_flyWheelTargetVelPub;
 
-        // shooter speed debugging
-        nt::DoublePublisher m_requiredSpedPub;
+        nt::DoublePublisher m_requiredSpeedPub;
         nt::DoublePublisher m_adjustedSpeedPub;
-        
-        double m_requiredSpeed;
-        double m_adjustedSpeed;        
 };

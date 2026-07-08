@@ -25,29 +25,30 @@ FlyWheelSubsystem::FlyWheelSubsystem()
     m_follower.SetControl(Follower{m_motor.GetDeviceID(), false});
 
     m_rotorVelPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/RotorVel").Publish();
+        .GetDoubleTopic("Flywheel/RotorVel").Publish();
+
     m_motorWheelVelPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/MotorWheelVel").Publish();
+        .GetDoubleTopic("Flywheel/MotorWheelVel").Publish();
     m_followerMotorWheelVelPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/FollowerMotorWheelVel").Publish();
+        .GetDoubleTopic("Flywheel/FollowerMotorWheelVel").Publish();
     m_motorCurrentPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/MotorCurrent").Publish();
+        .GetDoubleTopic("Flywheel/MotorCurrent").Publish();
     m_followerMotorCurrentPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/FollowerMotorCurrent").Publish();
+        .GetDoubleTopic("Flywheel/FollowerMotorCurrent").Publish();
 
     m_flyWheelVoltagePub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/Voltage").Publish();
+        .GetDoubleTopic("Flywheel/Voltage").Publish();
     m_flyWheelTargetVelPub = nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/TargetVelocity").Publish();
+        .GetDoubleTopic("Flywheel/TargetVelocity").Publish();
 
     m_adjustedSpeedPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/adjustedSpeed").Publish();
-    m_requiredSpedPub= nt::NetworkTableInstance::GetDefault()
-        .GetDoubleTopic("Shooter/requiredSpeed").Publish();
+        .GetDoubleTopic("Flywheel/adjustedBallSpeed").Publish();
+    m_requiredSpeedPub= nt::NetworkTableInstance::GetDefault()
+        .GetDoubleTopic("Flywheel/requiredBallSpeed").Publish();
 
     // fixme(MRT) - try uncommenting this for smart dashboard update for shooter velocity
     // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
-    // frc::SmartDashboard::PutNumber("ShooterVelocity", 0.0); // initialise shooter target velocity with default of 0.0
+    //frc::SmartDashboard::PutNumber("ShooterVelocity", 42.0); // initialise shooter target velocity with default of 0.0
 }
 
 TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
@@ -81,9 +82,6 @@ void FlyWheelSubsystem::Periodic() {
         m_motorCurrentPub.Set(m_motor.GetTorqueCurrent().GetValueAsDouble());
         m_followerMotorCurrentPub.Set(m_follower.GetTorqueCurrent().GetValueAsDouble());
         m_flyWheelVoltagePub.Set(m_motor.GetMotorVoltage().GetValueAsDouble());
-
-        m_requiredSpedPub.Set(m_requiredSpeed);
-        m_adjustedSpeedPub.Set(m_adjustedSpeed);
 }
 
 void FlyWheelSubsystem::SpinFlyWheelVoltage(units::volt_t volts){
@@ -103,7 +101,6 @@ void FlyWheelSubsystem::SetTargetVelocity(units::turns_per_second_t velocity)
         velocity, 
         FlyWheelConstants::kMinAngularVelocity, 
         FlyWheelConstants::kMaxAngularVelocity);
-
 }
 
 units::turns_per_second_t FlyWheelSubsystem::GetTargetVelocity() const{
@@ -149,25 +146,29 @@ frc2::CommandPtr FlyWheelSubsystem::ResetFlywheelVelocity()
 units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_second_t ballSpeed) {
     meters_per_second_t adjustedSpeed = AdjustedBallSpeed(ballSpeed);
 
-    m_requiredSpeed = ballSpeed.value();
-    m_adjustedSpeed = adjustedSpeed.value();
+    m_requiredSpeedPub.Set(ballSpeed.value());
+    m_adjustedSpeedPub.Set(adjustedSpeed.value());
 
-    double metresPerTurn = 2 * std::numbers::pi * FlyWheelConstants::kFlyWheelRadius.value();
-    return units::turns_per_second_t{adjustedSpeed.value() / metresPerTurn};
+    // circumferance
+    units::meter_t metresPerTurn = 2 * std::numbers::pi * FlyWheelConstants::kFlyWheelRadius;
+    units::frequency::hertz_t flywheelAngularRate = adjustedSpeed / metresPerTurn;
+    units::turns_per_second_t flywheelVelocity = units::turns_per_second_t{flywheelAngularRate.value()};
+
+    return flywheelVelocity;
 }
-
-// derived from omnicalculator trajectory formula >> https://www.omnicalculator.com/physics/trajectory-projectile-motion
-// done by rearranging the formula to find the speed for a given distance and angle 
-
 
 meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
     // coefficients found from curve fitting
-    double a = -0.8418;
-    double b = 14.6320;
-    double c = -46.5525;
+    // double a = -0.8418;
+    // double b = 14.6320;
+    // double c = -46.5525;
 
-    double x = actualSpeed.value();
+    units::meters_per_second_t x = actualSpeed;
 
-    meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
+    // meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
+
+    double b = 2.3046;
+    meters_per_second_t adjustedSpeed = (b * x);
+
     return adjustedSpeed;
 }

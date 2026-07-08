@@ -20,10 +20,6 @@ namespace FlyWheelConstants {
         inline constexpr double kA = 0;
     }
 
-    // fixme(MRT) - rename startHeight to hood height. Check this is still 0.3 metres
-    inline constexpr meter_t startHeight(0.3);
-    // fixme(MRT) - below variable isn't being used. Could be deleted
-    inline constexpr meter_t adjustedHeight = FieldConstants::HubHeight - startHeight;
     inline constexpr double kgearRatio = 1.0;
 
     inline constexpr units::meter_t kFlyWheelRadius(2_in);
