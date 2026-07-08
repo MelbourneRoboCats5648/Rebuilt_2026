@@ -18,13 +18,12 @@ class HoodSubsystem : public frc2::SubsystemBase {
     public:
     HoodSubsystem();
     void GoToAngle(units::degree_t angle);
-    frc2::CommandPtr GoToAngleCommand(units::degree_t angle); // fixme - might need t remove later
+    frc2::CommandPtr GoToAngleCommand(units::degree_t angle);
     frc2::CommandPtr GoToAngleCommand();
     void SetTargetAngle(units::turn_t angle);
     frc2::CommandPtr SetTargetAngleCommand(units::degree_t angle);
 
     frc2::CommandPtr RetractToLimitCommand();
-    frc2::CommandPtr ExtendToLimitCommand();
 
     void Periodic() override;
 
