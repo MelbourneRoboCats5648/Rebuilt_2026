@@ -9,8 +9,6 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/Commands.h>
 
-#include <choreo/trajectory/Trajectory.h>
-
 #include "commands/Autos.h"
 #include "units/math.h"
 #include "units/voltage.h"
