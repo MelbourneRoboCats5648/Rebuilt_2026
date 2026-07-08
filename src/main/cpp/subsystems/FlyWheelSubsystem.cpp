@@ -46,7 +46,6 @@ FlyWheelSubsystem::FlyWheelSubsystem()
     m_requiredSpeedPub= nt::NetworkTableInstance::GetDefault()
         .GetDoubleTopic("Flywheel/requiredBallSpeed").Publish();
 
-    // fixme(MRT) - try uncommenting this for smart dashboard update for shooter velocity
     // uncomment below to allow smart dashboard to display 'ShooterVelocity' string
     //frc::SmartDashboard::PutNumber("ShooterVelocity", 42.0); // initialise shooter target velocity with default of 0.0
 }
@@ -73,7 +72,7 @@ TalonFXConfiguration FlyWheelSubsystem::createMotorConfig(){
 void FlyWheelSubsystem::Periodic() {
         /* publish current state */
 
-        // fixme(MRT) - uncomment below to allow target velocity to be set via smart dashboard
+        //uncomment below to allow target velocity to be set via smart dashboard
         //m_targetVelocity = units::turns_per_second_t{frc::SmartDashboard::GetNumber("ShooterVelocity", 0.0)};
 
         m_rotorVelPub.Set(m_motor.GetRotorVelocity().GetValueAsDouble());
@@ -89,7 +88,6 @@ void FlyWheelSubsystem::SpinFlyWheelVoltage(units::volt_t volts){
 }
 
 void FlyWheelSubsystem::SpinAtAngularVelocity(units::turns_per_second_t angularVelocity) {
-    m_scaleFlywheelVelocity = 1.0; // fixme(MRT) - fixing for no scaling
     ctre::phoenix6::controls::VelocityVoltage velocityVoltage(angularVelocity * m_scaleFlywheelVelocity);
     m_motor.SetControl(velocityVoltage);
     m_flyWheelTargetVelPub.Set(angularVelocity.value());
@@ -158,17 +156,8 @@ units::turns_per_second_t FlyWheelSubsystem::CalculateFlyWheelSpeed(meters_per_s
 }
 
 meters_per_second_t FlyWheelSubsystem::AdjustedBallSpeed(meters_per_second_t actualSpeed) {
-    // coefficients found from curve fitting
-    // double a = -0.8418;
-    // double b = 14.6320;
-    // double c = -46.5525;
-
-    units::meters_per_second_t x = actualSpeed;
-
-    // meters_per_second_t adjustedSpeed =  meters_per_second_t(a * x * x + b * x + c);
-
     double b = 2.3046;
-    meters_per_second_t adjustedSpeed = (b * x);
+    meters_per_second_t adjustedSpeed = (b * actualSpeed);
 
     return adjustedSpeed;
 }

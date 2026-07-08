@@ -301,6 +301,7 @@ units::radian_t DriveSubsystem::HeadingToTarget()
     // which is the desired heading to turn the robot to
 }
 
+// fixme(MRT) - could use this command within autos to static align before shooting
 frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 {
     return AlignHeadingCommand([this]
