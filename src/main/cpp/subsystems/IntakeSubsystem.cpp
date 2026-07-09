@@ -82,7 +82,8 @@ m_drive(drive)
     m_retractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
     m_intakePID.SetTolerance(IntakeConstants::intake::kTolerance.value());
 
-    //SetDefaultCommand(IntakeCommand());
+    //SetDefaultCommand(IntakeCommand());  // fixme(MRT) - do we want the intake to always spin
+                                           //            - might be easier but could be an issue if we retract and the intake chews up the balls in the storage
 }
 
 void IntakeSubsystem::ConfigurePublishers()
@@ -134,7 +135,7 @@ turns_per_second_t IntakeSubsystem::CalculateIntakeSpeed(meters_per_second_t for
     meters_per_second_t adjustedIntakeSurfaceSpeed = IntakeConstants::kTargetIntakeSurfaceSpeed + forwardRobotSpeed;
 
     // calculate angular velocity of intake wheel from the desired surface tangential speed
-    meter_t distancePerTurn = IntakeConstants::PI * IntakeConstants::kIntakeWheelDiameter;
+    meter_t distancePerTurn = std::numbers::pi * IntakeConstants::kIntakeWheelDiameter;
 
     turns_per_second_t requiredIntakeWheelSpeed = turns_per_second_t{adjustedIntakeSurfaceSpeed.value() / distancePerTurn.value()};
 
@@ -253,7 +254,7 @@ void IntakeSubsystem::SetExtendRetractVoltage(units::volt_t voltage) {
     m_extendRetractVoltagePub.Set(voltage.value());
 }
 
-// fixme - this was temporarily added to test direct voltage control of the extend/retract
+// fixme(MRT) - this was temporarily added to test direct voltage control of the extend/retract
 frc2::CommandPtr IntakeSubsystem::SetExtendRetractVoltageCommand(units::volt_t voltage){
     return
         Run([this, voltage] {
