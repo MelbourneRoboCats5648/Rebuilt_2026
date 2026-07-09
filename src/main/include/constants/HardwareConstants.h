@@ -30,8 +30,8 @@ namespace HardwareConstants {
 
     // feeder
     inline constexpr int kShooterFeederID = 20;
-    inline constexpr int kShooterLeaderSideFeederID = 22;
-    inline constexpr int kShooterFollowerSideFeederID = 25;
+    inline constexpr int kShooterLeftSideFeederID = 22;
+    inline constexpr int kShooterRightSideFeederID = 25;
 
     inline constexpr int kShooterHoodID = 24;
 

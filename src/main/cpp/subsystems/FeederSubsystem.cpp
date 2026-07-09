@@ -8,8 +8,8 @@
 
 FeederSubsystem::FeederSubsystem()
     : m_motor(HardwareConstants::kShooterFeederID, rev::spark::SparkMax::MotorType::kBrushless),
-      m_leaderSideMotor(HardwareConstants::kShooterLeaderSideFeederID, rev::spark::SparkMax::MotorType::kBrushless),
-      m_followerSideMotor(HardwareConstants::kShooterFollowerSideFeederID, rev::spark::SparkMax::MotorType::kBrushless)
+      m_leftSideMotor(HardwareConstants::kShooterLeftSideFeederID, rev::spark::SparkMax::MotorType::kBrushless),
+      m_rightSideMotor(HardwareConstants::kShooterRightSideFeederID, rev::spark::SparkMax::MotorType::kBrushless)
     {
     rev::spark::SparkMaxConfig motorConfig;
 
@@ -24,35 +24,35 @@ FeederSubsystem::FeederSubsystem()
       rev::PersistMode::kPersistParameters
     );
 
-    rev::spark::SparkMaxConfig leaderSideConfig;
-    leaderSideConfig
+    rev::spark::SparkMaxConfig leftSideConfig;
+    leftSideConfig
         .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast)
         .Inverted(true);
 
-    leaderSideConfig.encoder
+    leftSideConfig.encoder
     .PositionConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio)
-    .VelocityConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio / 60.0);
+    .VelocityConversionFactor((1.0 / FeederConstants::kSideMotorGearRatio) / 60.0); //might not be necessary 
 
-    m_leaderSideMotor.Configure(
-        leaderSideConfig,
+    m_leftSideMotor.Configure(
+        leftSideConfig,
         rev::ResetMode::kResetSafeParameters,
         rev::PersistMode::kPersistParameters
     );
 
-    rev::spark::SparkMaxConfig followerSideConfig;
+    rev::spark::SparkMaxConfig rightSideConfig;
 
-    followerSideConfig
+    rightSideConfig
         .SmartCurrentLimit(FeederConstants::kCurrentLimit)
         .SetIdleMode(rev::spark::SparkMaxConfig::kCoast);
-        // .Follow(m_leaderSideMotor, true); // inverted from leader
+        // .Follow(m_leftSideMotor, true); // inverted from leader
     
-    followerSideConfig.encoder
+    rightSideConfig.encoder
     .PositionConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio)
     .VelocityConversionFactor(1.0 / FeederConstants::kSideMotorGearRatio / 60.0);
 
-    m_followerSideMotor.Configure(
-        followerSideConfig,
+    m_rightSideMotor.Configure(
+        rightSideConfig,
         rev::ResetMode::kResetSafeParameters,
         rev::PersistMode::kPersistParameters
     );
@@ -60,20 +60,20 @@ FeederSubsystem::FeederSubsystem()
 
 void FeederSubsystem::Feed() {
     m_motor.SetVoltage(FeederConstants::kFeederVoltage);
-    m_leaderSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage + m_sideFeederVoltageDifference);
-    m_followerSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage - m_sideFeederVoltageDifference);
+    m_leftSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage + m_sideFeederVoltageDifference);
+    m_rightSideMotor.SetVoltage(FeederConstants::kSideFeederVoltage - m_sideFeederVoltageDifference);
 }
 
 void FeederSubsystem::ReverseFeed() {
     m_motor.SetVoltage(-FeederConstants::kFeederVoltage);
-    m_leaderSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
-    m_followerSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
+    m_leftSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
+    m_rightSideMotor.SetVoltage(-FeederConstants::kSideFeederVoltage);
 }
 
 void FeederSubsystem::Stop() {
     m_motor.StopMotor();
-    m_leaderSideMotor.StopMotor();
-    m_followerSideMotor.StopMotor();
+    m_leftSideMotor.StopMotor();
+    m_rightSideMotor.StopMotor();
 }
 
 frc2::CommandPtr FeederSubsystem::FeedCommand() {
