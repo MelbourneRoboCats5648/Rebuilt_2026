@@ -2,7 +2,6 @@
 
 #include <rev/config/SparkMaxConfig.h>
 
-#include <constants/FlyWheelConstants.h>
 #include <constants/FeederConstants.h>
 #include <constants/HardwareConstants.h>
 
