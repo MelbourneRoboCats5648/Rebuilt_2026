@@ -23,6 +23,6 @@ public:
 
 private:
     rev::spark::SparkMax m_motor;
-    rev::spark::SparkMax m_leaderSideMotor;
-    rev::spark::SparkMax m_followerSideMotor;
+    rev::spark::SparkMax m_leftSideMotor;
+    rev::spark::SparkMax m_rightSideMotor;
 };
