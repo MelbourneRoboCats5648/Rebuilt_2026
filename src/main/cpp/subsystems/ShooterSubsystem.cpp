@@ -1,5 +1,6 @@
 #include <subsystems/ShooterSubsystem.h>
 #include <units/math.h>
+#include <RobotConfig.h>
 
 using namespace units::math;
 
@@ -108,6 +109,7 @@ void ShooterSubsystem::Periodic(){
     
     units::turns_per_second_t flywheelVelocity = m_flyWheel.CalculateFlyWheelSpeed(movingShootSolution.shootSolution.speed);
     
+    /*
     units::degree_t compensatedHoodAngle = movingShootSolution.shootSolution.angle;
     units::degree_t compensatedYawAngle = movingShootSolution.yawAngle;
 
@@ -115,7 +117,25 @@ void ShooterSubsystem::Periodic(){
 
     m_hood.SetTargetAngle(AdjustAngle(compensatedHoodAngle));
     m_flyWheel.SetTargetVelocity(flywheelVelocity);
-    m_drive.SetYawAngle(compensatedYawAngle);    
+    m_drive.SetYawAngle(compensatedYawAngle);
+    */
+   
+    if (config::enableSOTM) {
+    units::turns_per_second_t flywheelVelocity =
+    m_flyWheel.CalculateFlyWheelSpeed(movingShootSolution.shootSolution.speed);
+
+    m_hood.SetTargetAngle(AdjustAngle(movingShootSolution.shootSolution.angle));
+    m_flyWheel.SetTargetVelocity(flywheelVelocity);
+    m_drive.SetYawAngle(movingShootSolution.yawAngle);
+    } 
+    else {
+    units::turns_per_second_t flywheelVelocity =
+    m_flyWheel.CalculateFlyWheelSpeed(staticShootSolution.speed);
+
+    m_hood.SetTargetAngle(AdjustAngle(staticShootSolution.angle));
+    m_flyWheel.SetTargetVelocity(flywheelVelocity);
+    m_drive.SetYawAngle(0_deg);
+}
 }
 
 // this compensates the required hood angle based on tuning 
