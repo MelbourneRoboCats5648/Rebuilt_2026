@@ -8,6 +8,9 @@
 #include <subsystems/IntakeSubsystem.h>
 #include <subsystems/DriveSubsystem.h>
 
+#include <networktables/NetworkTableInstance.h>
+#include <networktables/DoubleTopic.h>
+
 struct ShootSolution{
     degree_t angle;
     meters_per_second_t speed;
@@ -29,11 +32,21 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     frc2::CommandPtr RetractHoodToLimitCommand();
     frc2::CommandPtr SetHoodTargetAngleCommand(units::degree_t angle);
 
+    frc2::CommandPtr SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity);
+
     frc2::CommandPtr IncreaseFeederVoltageDifference();
     frc2::CommandPtr DecreaseFeederVoltageDifference();
 
+    frc2::CommandPtr ReverseFeedCommand();
+
     ShootSolution CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed);
     ShootOnTheMoveSolution CompensateYawForTangentialSpeed(ShootSolution solution, units::meters_per_second_t robotTangentialSpeed);
+
+    bool IsStalling();
+    
+    units::degree_t GetBestAngleForDistance(meter_t distanceToTarget);
+
+    units::degree_t AdjustAngle(units::degree_t angle);
 
     private:
     FlyWheelSubsystem m_flyWheel;
@@ -43,5 +56,23 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     IntakeSubsystem& m_intake;
     DriveSubsystem& m_drive;
 
-    meters_per_second_t CalculateBallSpeed(meter_t distance, degree_t angle);
+    meters_per_second_t CalculateRequiredBallSpeed(meter_t distance, degree_t angle);
+
+    nt::DoublePublisher m_staticAnglePub;
+    nt::DoublePublisher m_staticVelocityPub;
+
+    nt::DoublePublisher m_radialCompensatedAnglePub;
+    nt::DoublePublisher m_radialCompensatedVelocityPub;
+    
+    nt::DoublePublisher m_radialCompensatedAngleDeltaPub;
+    nt::DoublePublisher m_radialCompensatedVelocityDeltaPub;
+
+    nt::DoublePublisher m_sotmAnglePub;
+    nt::DoublePublisher m_sotmVelocityPub;
+    nt::DoublePublisher m_sotmYawPub;
+
+    nt::DoublePublisher m_tangentialCompensatedAngleDeltaPub;
+    nt::DoublePublisher m_tangentialCompensatedVelocityDeltaPub;
+
+    nt::DoublePublisher m_flywheelVelocityPub;
 };
