@@ -34,7 +34,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
 
     frc2::CommandPtr SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity);
 
-    frc2::CommandPtr IncreaseFeederVoltageDifference();
+    frc2::CommandPtr IncreaseFeederVoltageDifference(); //wrapper for the feeder version (they have the same name)
     frc2::CommandPtr DecreaseFeederVoltageDifference();
 
     frc2::CommandPtr ReverseFeedCommand();

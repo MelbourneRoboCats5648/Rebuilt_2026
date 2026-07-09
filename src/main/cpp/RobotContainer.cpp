@@ -148,8 +148,15 @@ void RobotContainer::ConfigureBindings() {
     //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
     //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 
+
+
+
+//    may be worth testing if balls get jammed
 //    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
 //    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
+
+
+
 
     // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
