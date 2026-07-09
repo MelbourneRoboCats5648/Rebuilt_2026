@@ -18,7 +18,8 @@ namespace HoodConstants {
     inline constexpr units::meter_t kLowerRangeThreshold = 2.0_m;
     inline constexpr units::meter_t kUpperRangeThreshold = 6.0_m;
 
-    inline constexpr double kAngleAdjustment = 0.9631;
+    inline constexpr double kAngleScalingFactor = 0.977300517442396;
+    inline constexpr double kScalingFactorConstant = 3.14307935698589;
 
     inline constexpr units::degree_t kMaxAngleRange = kMaxAngleSoftLimit - kMinAngleSoftLimit;
     inline constexpr double kAngleDegreesPerTurn = kMaxAngleRange.value() / (18.016512 - 5.683217);
