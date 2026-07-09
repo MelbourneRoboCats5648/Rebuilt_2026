@@ -120,7 +120,8 @@ void ShooterSubsystem::Periodic(){
 
 // this compensates the required hood angle based on tuning 
 units::degree_t ShooterSubsystem::AdjustAngle(units::degree_t angle){
-    return angle * HoodConstants::kAngleAdjustment;
+    double calculatedAngle = angle.value() * HoodConstants::kAngleScalingFactor + HoodConstants::kScalingFactorConstant;
+    return degree_t(calculatedAngle);
 }
 
 ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
