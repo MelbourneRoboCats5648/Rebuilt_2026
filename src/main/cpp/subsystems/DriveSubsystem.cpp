@@ -45,6 +45,7 @@ DriveSubsystem::DriveSubsystem()
 
     m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
     // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180!
+    m_thetaController.EnableContinuousInput(-180_deg, 180_deg);
 }
 
 bool DriveSubsystem::IsBlueAlliance()
