@@ -141,6 +141,9 @@ void RobotContainer::ConfigureBindings() {
 
     m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
 
+    //fixed angle shoot in case we lose vision
+    m_mechController.B().WhileTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
+
     //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
     //m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
     //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
