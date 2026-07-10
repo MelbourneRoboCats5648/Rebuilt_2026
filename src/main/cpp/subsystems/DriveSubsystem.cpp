@@ -1,10 +1,6 @@
 #include <subsystems/DriveSubsystem.h>
 #include <frc/TimedRobot.h>
 
-#include <frc/trajectory/TrajectoryConfig.h>
-#include <frc/trajectory/TrajectoryGenerator.h>
-#include <frc2/command/SwerveControllerCommand.h>
-
 #include <commands/ChoreoTrajectoryCommand.h>
 
 #include <frc/DriverStation.h>
@@ -23,7 +19,7 @@ DriveSubsystem::DriveSubsystem()
                           .GetStructTopic<frc::Pose2d>("DriveTrain/Pose")
                           .Publish();
     m_alignedPosePublisher = nt::NetworkTableInstance::GetDefault()
-                          .GetStructTopic<frc::Pose2d>("DriveTrain/ALignedPose")
+                          .GetStructTopic<frc::Pose2d>("DriveTrain/AlignedPose")
                           .Publish();
     m_trajectoryPublisher = nt::NetworkTableInstance::GetDefault()
                                 .GetStructArrayTopic<frc::Pose2d>("DriveTrain/FollowingTrajectory")
@@ -41,20 +37,14 @@ DriveSubsystem::DriveSubsystem()
 
     /* Configure Pigeon2 */
     Pigeon2Configuration toApply{};
-
     m_gyro.GetConfigurator().Apply(toApply);
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, m_gyro.GetYaw(), m_gyro.GetGravityVectorZ());
 
     ResetGyro();
     m_gyro.SetYaw(DrivetrainConstants::kInitialGyroAngle, 100_ms);
 
-    m_holonomicController.SetTolerance(
-        frc::Pose2d(
-            Autonomous::XYController::kTolerance, Autonomous::XYController::kTolerance, // translation
-            Autonomous::ThetaController::kPositionTolerance                             // rotation
-            ));
     m_thetaController.SetTolerance(Autonomous::ThetaController::kPositionTolerance, Autonomous::ThetaController::kVelocityTolerance);
-    // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180! (set by m_holonomicController)
+    // note that m_thetaController's input range is 0 to 360 deg, not -180 to 180!
 }
 
 bool DriveSubsystem::IsBlueAlliance()
@@ -139,7 +129,6 @@ degree_t DriveSubsystem::GetGyroHeading()
 
 degree_t DriveSubsystem::GetHeading()
 {
-    // return m_gyro.GetRotation2d().Degrees();
     return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
 }
 
@@ -254,69 +243,6 @@ void DriveSubsystem::ResetHeadingWithAlliance()
             : DrivetrainConstants::kInitialRedHeading);
 }
 
-// fixme(MRT) - can remove this frc trajectory function
-frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d targetPose)
-{
-    return CreateTrajectory(
-        m_poseEstimator.GetEstimatedPosition(),
-        std::move(targetPose));
-}
-
-// fixme(MRT) - can remove this frc trajectory generator
-frc::Trajectory DriveSubsystem::CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose)
-{
-    frc::TrajectoryConfig config{DrivetrainConstants::kMaxSpeed,
-                                 DrivetrainConstants::kMaxAcceleration};
-
-    config.SetKinematics(m_kinematics);
-
-    // A trajectory to follow.  All units in meters.
-    auto traj = frc::TrajectoryGenerator::GenerateTrajectory(
-        std::move(currentPose), // current pose from pose estimatior
-        {},
-        std::move(targetPose),
-        config);
-
-    return traj;
-}
-
-// fixme(MRT) - can remove this frc trajectory command
-// Reset odometry to the initial pose of the trajectory, run path following command, then stop at the end.
-frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(frc::Trajectory trajectory)
-{
-    return RunOnce([this, initialPose = trajectory.InitialPose(), trajectory]
-                   {
-        m_poseEstimator.ResetPose(initialPose);  //fixme - this may not be required
-
-        /* publish trajectory */
-        std::vector<frc::Pose2d> poses;
-        std::vector<frc::Trajectory::State> states = trajectory.States();
-        for (frc::Trajectory::State& state : states) {
-            poses.push_back(state.pose);
-        }
-        m_trajectoryPublisher.Set(poses); })
-        .AndThen(
-            frc2::SwerveControllerCommand<4>(
-                trajectory,
-                [this]
-                { return GetPose(); },
-                m_kinematics,
-                m_holonomicController,
-                [this](std::array<frc::SwerveModuleState, 4> states)
-                { SetModuleStates(states); })
-                .ToPtr())
-        .AndThen( // keep running controller until we actually reach goal
-            Run([this, lastState = trajectory.States().back()]
-                {
-            auto desiredSpeed = m_holonomicController.Calculate(GetPose(), lastState, lastState.pose.Rotation());
-            auto desiredStates = m_kinematics.ToSwerveModuleStates(desiredSpeed);
-            SetModuleStates(desiredStates); })
-                .Until([this]
-                       { return m_holonomicController.AtReference(); }))
-        .FinallyDo([this]
-                   { this->Stop(); });
-}
-
 frc2::CommandPtr DriveSubsystem::FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample> &trajectory)
 {
     return ChoreoTrajectoryCommand(this, m_choreoController, trajectory).ToPtr();
@@ -375,6 +301,7 @@ units::radian_t DriveSubsystem::HeadingToTarget()
     // which is the desired heading to turn the robot to
 }
 
+// fixme(MRT) - could use this command within autos to static align before shooting
 frc2::CommandPtr DriveSubsystem::AlignToTargetCommand()
 {
     return AlignHeadingCommand([this]

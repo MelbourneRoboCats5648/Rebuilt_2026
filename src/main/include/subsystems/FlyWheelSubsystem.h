@@ -35,7 +35,7 @@ class FlyWheelSubsystem : public frc2::SubsystemBase {
 
     public:
         FlyWheelSubsystem();
-        units::turns_per_second_t CalculateFlyWheelSpeed(meters_per_second_t ballSpeed); //fixme - might need to refactor
+        units::turns_per_second_t CalculateFlyWheelSpeed(meters_per_second_t ballSpeed);
 
         frc2::CommandPtr SetTargetVelocityCommand(units::turns_per_second_t angularVelocity);
 

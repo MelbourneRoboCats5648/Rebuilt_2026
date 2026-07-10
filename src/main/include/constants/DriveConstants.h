@@ -42,7 +42,7 @@ namespace DriveModuleConstants {
         inline constexpr double kS = 0.0959800231072556; // found by linear regression (LR)
         inline constexpr double kV = 0.776168369501521; // found by LR in units of Volts per (turns per second)
         inline constexpr double kA = 0.0;    // tried tuning this but appears to be unused
-        // fixme: tune on final robot
+        // fixme(MRT): tune on final robot (if we have time)
 
         inline constexpr ampere_t kMaxCurrent = 50_A;
         inline constexpr ampere_t kLowerCurrentLimit = 60_A;
@@ -69,7 +69,7 @@ namespace DrivetrainConstants {
         inline constexpr frc::Translation2d kBackRight{-0.2569_m, -0.2569_m};
     };
 
-    inline constexpr meters_per_second_t kMaxSpeed = 5.0_mps; // fixme - will need to increase this for comp
+    inline constexpr meters_per_second_t kMaxSpeed = 5.0_mps; // fixme(MRT) - will need to increase this for comp
     inline constexpr meters_per_second_squared_t kMaxAcceleration = 3.0_mps_sq;
 
     inline constexpr radians_per_second_t kMaxAngularSpeed = (2 * M_PI) * 1_rad_per_s;

@@ -9,5 +9,5 @@ namespace FeederConstants {
     inline constexpr int kCurrentLimit(50);
     inline constexpr double kSideMotorGearRatio(3.0);
 
-    inline constexpr units::volt_t kSideFeederVoltageDifferenceIncrement(0.1_V);
+    inline constexpr double kStallCurrentThreshold(15.0);
 };
