@@ -15,14 +15,12 @@ using namespace units::length;
 using namespace units::voltage;
 
 namespace IntakeConstants {
-    inline constexpr double PI = 3.145; // fixme - get the const value from the correct math library
-
-    inline constexpr meters_per_second_t kTargetIntakeSurfaceSpeed = 8.0_mps;  // desired linear surface speed of the intake wheel (fixme - check this value)
+    inline constexpr meters_per_second_t kTargetIntakeSurfaceSpeed = 8.0_mps;  // desired linear surface speed of the intake wheel
     // 7.5-8.0 m/s is doable if there's a net, otherwise use 7.0 m/s
 
-    inline constexpr meter_t kIntakeWheelDiameter = 4.0_in;  // fixme - check this value
+    inline constexpr meter_t kIntakeWheelDiameter = 4.0_in;
 
-    namespace intake { //fixme - tune PID constants
+    namespace intake {
         inline constexpr double kP = 0.1;
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
@@ -35,7 +33,7 @@ namespace IntakeConstants {
     }
 
     namespace extendRetract {
-        inline constexpr double kP = 0.0; // fixme - only using feedforward. Might need to add kP if required
+        inline constexpr double kP = 0.0; // fixme(MRT) - only using feedforward. Might need to add kP if required
         inline constexpr double kI = 0.0;
         inline constexpr double kD = 0.0;
         

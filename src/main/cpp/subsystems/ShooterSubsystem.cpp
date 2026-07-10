@@ -120,7 +120,8 @@ void ShooterSubsystem::Periodic(){
 
 // this compensates the required hood angle based on tuning 
 units::degree_t ShooterSubsystem::AdjustAngle(units::degree_t angle){
-    return angle * HoodConstants::kAngleAdjustment;
+    double calculatedAngle = angle.value() * HoodConstants::kAngleScalingFactor + HoodConstants::kScalingFactorConstant;
+    return degree_t(calculatedAngle);
 }
 
 ShootSolution ShooterSubsystem::CompensateForRadialSpeed(ShootSolution ballSolution, meters_per_second_t robotRadialSpeed) {
@@ -203,16 +204,6 @@ frc2::CommandPtr ShooterSubsystem::SetHoodTargetAngleCommand(units::degree_t ang
 
 bool ShooterSubsystem::IsStalling() {
     return m_feeder.IsStalling();
-}
-
-// fixme(MRT) - can remove this function after testing
-frc2::CommandPtr ShooterSubsystem::IncreaseFeederVoltageDifference() {
-    return m_feeder.IncreaseFeederVoltageDifference();
-}
-
-// fixme(MRT) - can remove this function after testing
-frc2::CommandPtr ShooterSubsystem::DecreaseFeederVoltageDifference() {
-    return m_feeder.DecreaseFeederVoltageDifference();
 }
 
 frc2::CommandPtr ShooterSubsystem::ReverseFeedCommand(){

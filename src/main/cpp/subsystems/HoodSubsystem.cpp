@@ -122,35 +122,3 @@ frc2::CommandPtr HoodSubsystem::RetractToLimitCommand() {
             })
         );
 }
-
-// fixme - remove this function
-frc2::CommandPtr HoodSubsystem::ExtendToLimitCommand() {
-    return
-        /* retract for a bit to ensure we'll be able to extend the hood over a distance */
-        RunOnce([this] {
-            // set position to min angle to defeat soft limit
-            m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
-            // then retract the hood
-            m_angleMotor.SetVoltage(HoodConstants::kCalibrationVoltage);
-        })
-        .AndThen(frc2::cmd::Wait(HoodConstants::kCalibrationPreTime))
-        .AndThen(
-            RunOnce([this] {
-                // initially set encoder position to max angle
-                m_angleEncoder.SetPosition(HoodConstants::kMaxAngleSoftLimit.value());
-                // then pull the hood out at a slow speed
-                m_angleMotor.SetVoltage(-HoodConstants::kCalibrationVoltage);
-            })
-            .AndThen(frc2::cmd::Sequence(
-                // 1. we speed up past the threshold
-                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() < -HoodConstants::kCalibrationVelocityThreshold; }),
-                // 2. then we slow down past it again - indicating that we've reached the end
-                frc2::cmd::WaitUntil([this] { return GetAngleVelocity() > -HoodConstants::kCalibrationVelocityThreshold; })
-            ))
-            .WithTimeout(HoodConstants::kCalibrationTimeout)
-            .FinallyDo([this] {
-                m_angleMotor.StopMotor();
-                m_angleEncoder.SetPosition(HoodConstants::kMinAngleSoftLimit.value());
-            })
-        );
-}

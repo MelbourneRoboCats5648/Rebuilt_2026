@@ -9,8 +9,6 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/Commands.h>
 
-#include <choreo/trajectory/Trajectory.h>
-
 #include "commands/Autos.h"
 #include "units/math.h"
 #include "units/voltage.h"
@@ -152,9 +150,6 @@ void RobotContainer::ConfigureBindings() {
     //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
     //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 
-//    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
-//    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
-
     // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
@@ -175,13 +170,6 @@ void RobotContainer::ConfigureBindings() {
     //     },
     //     { &m_shooter }
     // ));
-
-    // fixme(MRT) - Feed command unlikely to be used alone and could be removed
-    //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
-    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
-
-    // fixme(MRT) - remove static AlignToTargetCommand and change LeftTrigger binding to DriveAlignHeadingCommandWrapper
-    //m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
 
 }
 

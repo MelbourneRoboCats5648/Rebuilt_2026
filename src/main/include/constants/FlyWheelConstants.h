@@ -30,16 +30,12 @@ namespace FlyWheelConstants {
     // fixme(MRT) - update min angular velocity after tuning 
     //            - (this needs to be lower than actual min angular velocity to give SOTM some margin to vary velocity)
     //inline constexpr units::turns_per_second_t kMinAngularVelocity(37.5);
-    inline constexpr units::turns_per_second_t kMinAngularVelocity(20);
+    inline constexpr units::turns_per_second_t kMinAngularVelocity(30); // 30 is too low since it will not reach the hub height. might be okay for passing though
 
     inline constexpr double kFlywheelVelScalingIncrement(0.05); // 5% scaling of flywheel velocity
-    inline constexpr double kDefaultFlywheelVelocityScaling(1.0); // tested on practice field, works with min angle (fixme - properly tune robot)
+    inline constexpr double kDefaultFlywheelVelocityScaling(1.0); // static tuning with scaling of 1 works on practice field
     inline constexpr double kMinFlywheelVelocityScaling(0.5); // allow flywheel speed to be reduced to 50% of nominal
     inline constexpr double kMaxFlywheelVelocityScaling(1.5); // allow flywheel velocity to be increased to 150% of nominal
 
-    inline constexpr units::meter_t kRangeThreshold = 2.0_m; // threshold for changing between min (high range) and max (low range) angle
-
     inline constexpr units::second_t kRampTime = 0.3_s; // time from stopped to ready for shooting
-
-    
 };

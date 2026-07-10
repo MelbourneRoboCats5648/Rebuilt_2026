@@ -5,7 +5,6 @@
 #include <frc2/command/Commands.h>
 #include <constants/FeederConstants.h>
 
-#include <frc/Timer.h>
 #include <rev/SparkMax.h>
 
 class FeederSubsystem : public frc2::SubsystemBase {
@@ -24,8 +23,6 @@ public:
 
 private:
     rev::spark::SparkMax m_motor;
-    rev::spark::SparkMax m_leaderSideMotor;
-    rev::spark::SparkMax m_followerSideMotor;
-
-    units::volt_t m_sideFeederVoltageDifference = 0_V;
+    rev::spark::SparkMax m_leftSideMotor;
+    rev::spark::SparkMax m_rightSideMotor;
 };

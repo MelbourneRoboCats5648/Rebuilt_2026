@@ -3,29 +3,25 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 
-#include <ctre/phoenix6/Pigeon2.hpp>
-
 #include <helpers/DriveModule.h>
 
+#include <ctre/phoenix6/Pigeon2.hpp>
 #include <constants/HardwareConstants.h>
 #include <constants/DriveConstants.h>
-
-#include <units/velocity.h>
+#include "constants/FieldConstants.h"
 
 #include <frc/kinematics/SwerveDriveKinematics.h>
-#include <frc/controller/HolonomicDriveController.h>
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 
 #include <helpers/ChoreoController.h>
 
 #include <networktables/StructArrayTopic.h>
 #include <networktables/StructTopic.h>
+
 #include <networktables/DoubleTopic.h>
 #include <frc/geometry/Rotation2d.h>
+#include <units/velocity.h>
 
-#include <frc/trajectory/Trajectory.h>
-
-#include "constants/FieldConstants.h"
 
 using namespace ctre::phoenix6::hardware;
 using namespace units::velocity;
@@ -79,9 +75,6 @@ public:
 
     bool IsFieldCentric();
 
-    frc::Trajectory CreateTrajectory(frc::Pose2d targetPose);
-    frc::Trajectory CreateTrajectory(frc::Pose2d currentPose, frc::Pose2d targetPose);
-    frc2::CommandPtr FollowTrajectoryCommand(frc::Trajectory trajectory);
     frc2::CommandPtr FollowTrajectoryCommand(choreo::Trajectory<choreo::SwerveSample>& trajectory);
 
     frc2::CommandPtr AlignHeadingCommand(std::function<radian_t()> headingLambda);
@@ -145,20 +138,6 @@ private:
         frc::TrapezoidProfile<units::radian>::Constraints{
             kMaxAngularSpeed, kMaxAngularAcceleration
         }
-    };
-
-    frc::HolonomicDriveController m_holonomicController{
-        frc::PIDController{
-            Autonomous::XYController::kP,
-            Autonomous::XYController::kI,
-            Autonomous::XYController::kD
-        },
-        frc::PIDController{
-            Autonomous::XYController::kP,
-            Autonomous::XYController::kI,
-            Autonomous::XYController::kD
-        },
-        m_thetaController
     };
 
     ChoreoController m_choreoController;
