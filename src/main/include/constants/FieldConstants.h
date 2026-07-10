@@ -18,5 +18,5 @@ namespace FieldConstants {
 
     inline constexpr frc::Translation2d kBlueHubPosition{182.11_in, 158.84_in};
     inline constexpr frc::Translation2d kRedHubPosition{651.22_in - 182.11_in, 158.84_in};
-    inline constexpr frc::Translation2d kNeutralOffset{0_in, 50_in};  // fixme - target position offset in Y either side of hub
+    inline constexpr frc::Translation2d kNeutralOffset{0_in, 50_in};  // fixme(MRT) - target position offset in Y either side of hub
 }

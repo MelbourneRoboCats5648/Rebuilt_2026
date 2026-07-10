@@ -9,14 +9,10 @@
 
 #include "constants/OperatorConstants.h"
 #include "constants/DriveConstants.h"
-#include <constants/FlyWheelConstants.h>
 
 #include "subsystems/DriveSubsystem.h"
-#include "subsystems/FlyWheelSubsystem.h"
 #include "subsystems/IntakeSubsystem.h"
 #include "subsystems/VisionSubsystem.h"
-#include "subsystems/FeederSubsystem.h"
-#include "subsystems/HoodSubsystem.h"
 #include <subsystems/ShooterSubsystem.h>
 
 #include <frc/filter/SlewRateLimiter.h>
@@ -72,6 +68,8 @@ private:
     std::optional<frc2::CommandPtr> m_SCR_ShootFromMiddle;
     std::optional<frc2::CommandPtr> m_SCR_ShootFromRight;
     std::optional<frc2::CommandPtr> m_SCR_PlayoffAuto;
+    std::optional<frc2::CommandPtr> m_MRT_StartNeutralStart;
+    std::optional<frc2::CommandPtr> m_MRT_ShootTrenchRight;
 
     // NOTE: frc2::CommandPtr doesn't have a default constructor, so we can't initialise it without using initialiser lists (which we want to avoid here).
     // the std::optional<> wrapper allows it to be assigned later in runtime

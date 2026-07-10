@@ -17,6 +17,9 @@ static choreo::Trajectory<choreo::SwerveSample> Shoot_fromRight;
 static choreo::Trajectory<choreo::SwerveSample> Shoot_fromMiddle;
 static choreo::Trajectory<choreo::SwerveSample> Playoff_InitToShoot;
 static choreo::Trajectory<choreo::SwerveSample> Playoff_ShootToTower;
+static choreo::Trajectory<choreo::SwerveSample> MRT_StartNeutralStart;
+static choreo::Trajectory<choreo::SwerveSample> MRT_ShootTrench_fromRight_1;
+static choreo::Trajectory<choreo::SwerveSample> MRT_ShootTrench_fromRight_2;
 
 void autos::LoadTrajectories() {
     ShootTrench_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
@@ -26,6 +29,9 @@ void autos::LoadTrajectories() {
     Shoot_fromRight= choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Shoot_fromRight").value();
     Playoff_InitToShoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Playoff_InitToShoot").value();
     Playoff_ShootToTower = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_Playoff_ShootToTower").value();
+    MRT_StartNeutralStart = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_Start_toNeutral_toStart").value();
+    MRT_ShootTrench_fromRight_1 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_ShootTrenchRight_Path1").value();
+    MRT_ShootTrench_fromRight_2 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_ShootTrenchRight_Path2").value();
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
@@ -51,7 +57,6 @@ frc2::CommandPtr autos::ShootCommand(FlyWheelSubsystem* flyWheel, FeederSubsyste
         frc2::cmd::Wait(FlyWheelConstants::kRampTime).AndThen(feeder->FeedCommand())
     );
 }
-
 
 
 frc2::CommandPtr autos::ChoreoAuto(DriveSubsystem* drive, choreo::Trajectory<choreo::SwerveSample>& choreoTraj) {
@@ -109,5 +114,22 @@ frc2::CommandPtr autos::PlayoffAuto(DriveSubsystem* drive, IntakeSubsystem* inta
         intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit), // too risky to extend while moving out (risk of smashing intake)
         shooter->ShootCommandWithFeeder(5_s),
         ChoreoAuto(drive, Playoff_ShootToTower)
+    );
+}
+
+frc2::CommandPtr autos::MRTStartNeutralStart(DriveSubsystem* drive) {
+    return frc2::cmd::Sequence(
+        ChoreoAuto(drive, MRT_StartNeutralStart)
+    );
+}
+
+frc2::CommandPtr autos::MRTShootTrenchRight(DriveSubsystem* drive, IntakeSubsystem* intake, ShooterSubsystem* shooter) {
+    return frc2::cmd::Sequence(
+        frc2::cmd::Parallel(
+            ChoreoAuto(drive, MRT_ShootTrench_fromRight_1),
+            intake->ExtendRetractCommand(IntakeConstants::kExtendSoftLimit)
+        ),
+        shooter->ShootCommandWithFeeder(5_s),
+        ChoreoAuto(drive, MRT_ShootTrench_fromRight_2)
     );
 }

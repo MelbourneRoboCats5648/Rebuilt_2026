@@ -38,7 +38,6 @@ void ChoreoTrajectoryCommand::Execute() {
     frc::ChassisSpeeds speed = m_controller.FollowTrajectory(sample, m_drive->GetPose());
 
     m_drive->Drive(speed.vx, speed.vy, speed.omega, /* not teleop */ false, /* field relative */ true);
-    // fixme - could overload to allow direct input of chassis speed
 }
 
 bool ChoreoTrajectoryCommand::IsFinished() {

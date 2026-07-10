@@ -9,8 +9,6 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/Commands.h>
 
-#include <choreo/trajectory/Trajectory.h>
-
 #include "commands/Autos.h"
 #include "units/math.h"
 #include "units/voltage.h"
@@ -33,6 +31,8 @@ RobotContainer::RobotContainer() {
     m_SCR_ShootFromRight = autos::ChoreoShootFromRight(&m_drive, &m_intake, &m_shooter);
     m_SCR_ShootFromMiddle = autos::ChoreoShootFromMiddle(&m_drive, &m_intake, &m_shooter);
     m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_shooter);
+    m_MRT_StartNeutralStart = autos::MRTStartNeutralStart(&m_drive);
+    m_MRT_ShootTrenchRight = autos::MRTShootTrenchRight(&m_drive, &m_intake, &m_shooter);
 
     //adding commands to the auto chooser
     m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
@@ -41,6 +41,8 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
     m_chooser.AddOption("Choreo Shoot from Middle", m_SCR_ShootFromMiddle.value().get());
     m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
+    m_chooser.AddOption("Choreo Start to Neutral to Start", m_MRT_StartNeutralStart.value().get());
+    m_chooser.AddOption("Choreo Shoot Trench from Right", m_MRT_ShootTrenchRight.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
@@ -148,16 +150,6 @@ void RobotContainer::ConfigureBindings() {
     //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
     //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
 
-
-
-
-//    may be worth testing if balls get jammed
-//    m_mechController.POVUp().OnTrue(m_shooter.IncreaseFeederVoltageDifference());
-//    m_mechController.POVDown().OnTrue(m_shooter.DecreaseFeederVoltageDifference());
-
-
-
-
     // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
     // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
     // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
@@ -178,13 +170,6 @@ void RobotContainer::ConfigureBindings() {
     //     },
     //     { &m_shooter }
     // ));
-
-    // fixme(MRT) - Feed command unlikely to be used alone and could be removed
-    //m_driverController.POVUp().WhileTrue(m_feeder.FeedCommand());
-    // m_driverController.Y().WhileTrue(m_intake.IntakeCommand(50_tps)); // 3000 RPM
-
-    // fixme(MRT) - remove static AlignToTargetCommand and change LeftTrigger binding to DriveAlignHeadingCommandWrapper
-    //m_driverController.LeftTrigger().WhileTrue(m_drive.AlignToTargetCommand());
 
 }
 
