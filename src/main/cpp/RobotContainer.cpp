@@ -128,7 +128,7 @@ void RobotContainer::ConfigureBindings() {
         };
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood().AlongWith(m_intake.IntakeCommand()));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
     // rumble if feeder is stalling 
     frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
@@ -139,7 +139,7 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
+    //m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
