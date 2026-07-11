@@ -44,6 +44,7 @@ frc2::CommandPtr MRTStartNeutralStart(DriveSubsystem* drive);
 
 frc2::CommandPtr MRTShootTrenchRight(DriveSubsystem* drive, IntakeSubsystem* intake, ShooterSubsystem* shooter);
 
+frc2::CommandPtr MRTPlayoff(DriveSubsystem* drive);
 }  // namespace autos
 
 
