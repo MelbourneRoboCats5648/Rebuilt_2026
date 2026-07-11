@@ -76,7 +76,7 @@ meters_per_second_t ShooterSubsystem::CalculateRequiredBallSpeed(meter_t distanc
 void ShooterSubsystem::Periodic(){
 
     units::meter_t distanceToTarget = m_drive.DistanceToTarget();
-    units::turn_t targetAngle = GetBestAngleForDistance(distanceToTarget);
+    units::turn_t targetAngle = GetBestAngleForDistance(distanceToTarget, 50_deg); // fixme(MRT) - this arrival angle can be set in a config file
     units::meters_per_second_t ballSpeed = CalculateRequiredBallSpeed(distanceToTarget, targetAngle);
     
     // the static shoot solution (before compensation for robot movement)
@@ -179,6 +179,7 @@ ShootOnTheMoveSolution ShooterSubsystem::CompensateYawForTangentialSpeed(ShootSo
     return movingSolution;
 }
 
+// this function returns a linear change in hood angle between the min and max distance to target
 units::degree_t ShooterSubsystem::GetBestAngleForDistance(meter_t distanceToTarget){
     auto gradient = ((HoodConstants::kMidAngle - HoodConstants::kMaxAngle) 
                         / ((HoodConstants::kUpperRangeThreshold - HoodConstants::kLowerRangeThreshold)));
@@ -188,6 +189,28 @@ units::degree_t ShooterSubsystem::GetBestAngleForDistance(meter_t distanceToTarg
     return std::clamp(angle, HoodConstants::kMidAngle, HoodConstants::kMaxAngle);
 }
 
+// this function returns the hood angle required to achieve an arrival angle at the hub at a distance to target
+// arrival angle should be within the range +0 to +90 deg measured relative to horizontal
+units::degree_t ShooterSubsystem::GetBestAngleForDistance(meter_t dist2target, units::degree_t arrivalAngle){
+    auto g = FieldConstants::gravity;
+    auto h = FieldConstants::HubHeight;
+    auto y = HoodConstants::hoodHeight;
+
+    auto cosineSquared = units::math::pow<2>(units::math::cos(arrivalAngle));
+    auto velocitySquared = g * units::math::pow<2>(dist2target)
+                            / (2 * cosineSquared * (h + dist2target * units::math::tan(arrivalAngle) - y) );
+
+    auto gradient = units::math::tan(arrivalAngle) -  g * dist2target / (velocitySquared *  cosineSquared);
+
+    // negating angle to ensure it is positive since gradient at point of interest in trajectory will be nagative
+    // atan return angle within range -pi/2 to +pi/2
+    units::degree_t angle = -1.0 * units::math::atan(gradient);
+
+    // since the robot doesn't have a hard limit at the min angle, leave a bit of margin to ensure range of motion for SOTM
+    // we can't do this for max angle unfortunately since we need to be set at max angle when robot is at min range to target
+    units::degree_t minAngleMargin = 4_deg;
+    return std::clamp(angle, HoodConstants::kMinAngle + minAngleMargin, HoodConstants::kMaxAngle);
+}
 
 frc2::CommandPtr ShooterSubsystem::SetFlywheelVelocityCommand(units::turns_per_second_t angularVelocity)
 {

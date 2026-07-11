@@ -33,9 +33,10 @@ RobotContainer::RobotContainer() {
     m_SCR_PlayoffAuto = autos::PlayoffAuto(&m_drive, &m_intake, &m_shooter);
     m_MRT_StartNeutralStart = autos::MRTStartNeutralStart(&m_drive);
     m_MRT_ShootTrenchRight = autos::MRTShootTrenchRight(&m_drive, &m_intake, &m_shooter);
+    m_MRT_Playoff = autos::MRTPlayoff(&m_drive);
 
     //adding commands to the auto chooser
-    m_chooser.SetDefaultOption("No Autonomous", m_autoNone.value().get());
+    m_chooser.AddOption("No Autonomous", m_autoNone.value().get());
     m_chooser.AddOption("Playoff Auto", m_SCR_PlayoffAuto.value().get());
     m_chooser.AddOption("Choreo Shoot Trench", m_SCR_ShootTrench.value().get());
     m_chooser.AddOption("Choreo Shoot from Left",m_SCR_ShootFromLeft.value().get());
@@ -43,6 +44,7 @@ RobotContainer::RobotContainer() {
     m_chooser.AddOption("Choreo Shoot from Right", m_SCR_ShootFromRight.value().get());
     m_chooser.AddOption("Choreo Start to Neutral to Start", m_MRT_StartNeutralStart.value().get());
     m_chooser.AddOption("Choreo Shoot Trench from Right", m_MRT_ShootTrenchRight.value().get());
+    m_chooser.SetDefaultOption("MRT Playoff", m_MRT_Playoff.value().get());
 
     //put the chooser on the dashboard
     frc::SmartDashboard::PutData("Auto Chooser", &m_chooser);
@@ -128,7 +130,7 @@ void RobotContainer::ConfigureBindings() {
         };
 
     m_driverController.LeftTrigger().WhileTrue(m_drive.DriveAlignHeadingCommandWrapper(xSpeedLambda, ySpeedLambda));
-    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood().AlongWith(m_intake.IntakeCommand()));
+    m_driverController.RightTrigger().WhileTrue(m_shooter.ShootCommandWithHood());
 
     // rumble if feeder is stalling 
     frc2::Trigger FuelStuckInFeederTrigger([this]{return m_shooter.IsStalling();});    
@@ -139,38 +141,7 @@ void RobotContainer::ConfigureBindings() {
     m_mechController.LeftBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kRetractSoftLimit));
     m_mechController.RightBumper().WhileTrue(m_intake.ExtendRetractCommand(IntakeConstants::kExtendSoftLimit));
 
-    // fixme(MRT) - temporarily used to test intake with direct voltage command. Delete after testing
-    //m_mechController.LeftBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(5_V));
-    //m_mechController.RightBumper().WhileTrue(m_intake.SetExtendRetractVoltageCommand(-5_V));
-
-    m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
-
-    //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMinAngle));
-    //m_mechController.B().OnTrue(m_shooter.SetHoodTargetAngleCommand((HoodConstants::kMinAngle + HoodConstants::kMidAngle) / 2)); // 1/4 to min
-    //m_mechController.Y().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMaxAngle));
-    //m_mechController.X().OnTrue(m_shooter.SetHoodTargetAngleCommand(HoodConstants::kMidAngle));
-
-    // fixme(MRT) - uncomment to allow tuning on flywheel velocity for competition
-    // m_mechController.POVUp().OnTrue(m_shooter.IncreaseFlywheelVelocity());
-    // m_mechController.POVDown().OnTrue(m_shooter.DecreaseFlywheelVelocity());
-    // m_mechController.POVLeft().OnTrue(m_shooter.ResetFlywheelVelocity());
-
-    // fixme(MRT) - modify some version of this default command to check that static shoot solution works for various input angles
-    //            - will be good to test this with April tags so that robot knows accurate distance to hub
-    // m_shooter.SetDefaultCommand(frc2::RunCommand(
-    //     [this] {
-    //         units::degree_t angle;
-    //         angle = (PreprocessJoystickInput(-m_driverController.GetRightY()) / 2.0 + 0.5) // idle at halfway - move up to increase, move down to decrease shooting angle
-    //                         * ShooterConstants::kMaxAngleRange + ShooterConstants::kMinAngle;
-    //         m_shooter.GoToAngle(angle);
-
-    //         units::meter_t distanceToTarget = m_drive.DistanceToTarget();
-    //         units::turns_per_second_t flyWheelSpeed = m_shooter.CalculateFlyWheelSpeed(distanceToTarget, angle);
-    //         m_shooter.ShootAngularVelocity(flyWheelSpeed);
-    //     },
-    //     { &m_shooter }
-    // ));
-
+    //m_mechController.RightTrigger().WhileTrue(m_intake.IntakeCommand());
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

@@ -45,6 +45,7 @@ class ShooterSubsystem : public frc2::SubsystemBase {
     bool IsStalling();
     
     units::degree_t GetBestAngleForDistance(meter_t distanceToTarget);
+    units::degree_t GetBestAngleForDistance(meter_t distanceToTarget, units::degree_t arrivalAngle);
 
     units::degree_t AdjustAngle(units::degree_t angle);
 

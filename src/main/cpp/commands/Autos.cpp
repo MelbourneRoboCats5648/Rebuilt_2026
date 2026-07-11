@@ -20,6 +20,7 @@ static choreo::Trajectory<choreo::SwerveSample> Playoff_ShootToTower;
 static choreo::Trajectory<choreo::SwerveSample> MRT_StartNeutralStart;
 static choreo::Trajectory<choreo::SwerveSample> MRT_ShootTrench_fromRight_1;
 static choreo::Trajectory<choreo::SwerveSample> MRT_ShootTrench_fromRight_2;
+static choreo::Trajectory<choreo::SwerveSample> MRT_Playoff;
 
 void autos::LoadTrajectories() {
     ShootTrench_Shoot = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("SCR_ShootTrench_Path1").value();
@@ -32,6 +33,7 @@ void autos::LoadTrajectories() {
     MRT_StartNeutralStart = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_Start_toNeutral_toStart").value();
     MRT_ShootTrench_fromRight_1 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_ShootTrenchRight_Path1").value();
     MRT_ShootTrench_fromRight_2 = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_ShootTrenchRight_Path2").value();
+    MRT_Playoff = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>("MRT_Playoff").value();
 }
 
 frc2::CommandPtr autos::ExampleAuto(ExampleSubsystem* subsystem) {
@@ -131,5 +133,11 @@ frc2::CommandPtr autos::MRTShootTrenchRight(DriveSubsystem* drive, IntakeSubsyst
         ),
         shooter->ShootCommandWithFeeder(5_s),
         ChoreoAuto(drive, MRT_ShootTrench_fromRight_2)
+    );
+}
+
+frc2::CommandPtr autos::MRTPlayoff(DriveSubsystem* drive) {
+    return frc2::cmd::Sequence(
+        ChoreoAuto(drive, MRT_Playoff)
     );
 }
