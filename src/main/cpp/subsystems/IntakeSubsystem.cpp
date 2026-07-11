@@ -82,8 +82,7 @@ m_drive(drive)
     m_retractPID.SetTolerance(IntakeConstants::extendRetract::kPositionTolerance, IntakeConstants::extendRetract::kVelocityTolerance);
     m_intakePID.SetTolerance(IntakeConstants::intake::kTolerance.value());
 
-    //SetDefaultCommand(IntakeCommand());  // fixme(MRT) - do we want the intake to always spin
-                                           //            - might be easier but could be an issue if we retract and the intake chews up the balls in the storage
+    SetDefaultCommand(IntakeCommand());
 }
 
 void IntakeSubsystem::ConfigurePublishers()
